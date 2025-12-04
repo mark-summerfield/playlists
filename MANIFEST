@@ -18,4 +18,6 @@ db-1.tm
 
 st.sh
 
+# See https://mplayerhq.hu/DOCS/tech/slave.txt
+
 # vim: syn=yaml
