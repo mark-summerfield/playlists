@@ -47,7 +47,7 @@ oo::define Config constructor {} {
                 foreach i [lseq 1 26] {
                     if {[set a_bookmark [ini::value $ini Bookmarks \
                             Mark$i ""]] ne ""} {
-                        lappend History $a_bookmark
+                        lappend Bookmarks $a_bookmark
                     }
                 }
             }

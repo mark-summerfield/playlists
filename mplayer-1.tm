@@ -56,7 +56,7 @@ oo::define Mplayer method ReadPipe {} {
         if {[set line [string trim $line]] ne ""} {
             if {[regexp {^A:\s*(\d+.\d+).*?of\s*(\d+.\d+)} $line _ pos \
                     total]} {
-                event generate . <<MplayerPos>> -data {$pos $total}
+                event generate . <<MplayerPos>> -data "$pos $total"
             } elseif $Debug {
                 event generate . <<MplayerDebug>> -data $line
             }
