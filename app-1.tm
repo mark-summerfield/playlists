@@ -40,7 +40,7 @@ oo::define App method on_startup {} {
 oo::define App method make_ui {} {
     my prepare_ui
     set Player [Mplayer new]
-    $Player set_debug 1
+    $Player set_debug 0
     puts "make_ui has_mplayer=[$Player has_mplayer] closed=[$Player closed] debug=[$Player debug]"
     my make_menubar
     my make_widgets
@@ -241,9 +241,13 @@ oo::define App method on_volume_up {} {
 }
 oo::define App method on_config {} {
     set config [Config new]
-    set ok [Ref new false]
-    set form [ConfigForm new $ok]
+    set ok [Ref new 0]
+    set debug [Ref new [$Player debug]]
+    set form [ConfigForm new $ok $debug]
     tkwait window [$form form]
+    if {[$ok get]} {
+        $Player set_debug [$debug get]
+    }
 }
 
 oo::define App method on_about {} {
