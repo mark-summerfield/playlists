@@ -1,7 +1,7 @@
 # NOTE volume now works
 playtrack.tk
-app-1.tm
-misc-1.tm
+app-1.tm # TODO ...
+misc-1.tm # TODO implement humanize* procs
 mplayer-1.tm
 config-1.tm # TODO add [ ] Debug (default 0)
 config_form-1.tm

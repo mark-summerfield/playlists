@@ -33,7 +33,7 @@ oo::define App method show {} {
 oo::define App method on_startup {} {
     set config [Config new]
     if {[set filename [$config last_track]] ne ""} {
-        my prepare_file_open $filename
+        my maybe_new_dir $filename
     }
 }
 
@@ -85,7 +85,7 @@ oo::define App method make_menubar {} {
 
 oo::define App method make_widgets {} {
     ttk::frame .mf
-    ttk::label .mf.label -relief sunken
+    ttk::label .mf.dirLabel -relief sunken
     ttk::treeview .mf.tv -selectmode browse -show tree -style List.Treeview
     my make_playbar
 }
@@ -108,25 +108,26 @@ oo::define App method make_playbar {} {
         -image [ui::icon media-skip-forward.svg $::MENU_ICON_SIZE]
     $tip .mf.play.nextButton "Play next"
     ttk::progressbar .mf.play.progress -anchor center
-    ttk::button .mf.play.quietButton -command [callback on_quiet] \
+    ttk::button .mf.play.volumeDownButton \
+        -command [callback on_volume_down] \
         -image [ui::icon audio-volume-low.svg $::MENU_ICON_SIZE]
-    $tip .mf.play.quietButton "Reduce volume"
-    ttk::button .mf.play.loudButton -command [callback on_loud] \
+    $tip .mf.play.volumeDownButton "Reduce volume"
+    ttk::button .mf.play.volumeUpButton -command [callback on_volume_up] \
         -image [ui::icon audio-volume-high.svg $::MENU_ICON_SIZE]
-    $tip .mf.play.loudButton "Increase volume"
+    $tip .mf.play.volumeUpButton "Increase volume"
 }
 
 oo::define App method make_layout {} {
     const opts "-pady 3 -padx 3"
-    pack .mf.label -fill x -side top {*}$opts
+    pack .mf.dirLabel -fill x -side top {*}$opts
     pack .mf.play -fill x -side bottom {*}$opts
     pack .mf.play.prevButton -side left {*}$opts
     pack .mf.play.replayButton -side left {*}$opts
     pack .mf.play.playOrPauseButton -side left {*}$opts
     pack .mf.play.nextButton -side left {*}$opts
     pack .mf.play.progress -fill both -expand 1 -side left {*}$opts
-    pack .mf.play.quietButton -side left {*}$opts
-    pack .mf.play.loudButton -side left {*}$opts
+    pack .mf.play.volumeDownButton -side left {*}$opts
+    pack .mf.play.volumeUpButton -side left {*}$opts
     pack .mf.tv -fill both -expand true
     pack .mf -fill both -expand true
 }
@@ -231,11 +232,11 @@ oo::define App method on_bookmarks_edit {} {
     puts on_bookmarks_edit
 }
 
-oo::define App method on_quiet {} {
+oo::define App method on_volume_down {} {
     if {$Player ne ""} { $Player volume_down }
 }
 
-oo::define App method on_loud {} {
+oo::define App method on_volume_up {} {
     if {$Player ne ""} { $Player volume_up }
 }
 oo::define App method on_config {} {
@@ -259,17 +260,19 @@ oo::define App method on_quit {} {
 
 oo::define App method file_open filename {
     [Config new] set_last_track $filename
-    my prepare_file_open $filename
+    wm title . "[humanize_filename $filename] — [tk appname]"
+    my maybe_new_dir $filename
     $Player play $filename
 }
 
-oo::define App method prepare_file_open filename {
-    puts "prepare_file_open $filename"
-    .mf.label configure -text [file dirname $filename]
-    wm title . "[humanize_filename $filename] — [tk appname]"
-    # TODO
-    # - clear treeview
-    # - load treeview with music files for this file's folder
-    # - highlight this file
-    # - update title bar & reset progress bar
+oo::define App method maybe_new_dir filename {
+    if {[set dir [file dirname [file normalize $filename]]] ne \
+            [.mf.dirLabel cget -text]} {
+        .mf.dirLabel configure -text $dir
+        # TODO
+        # - clear treeview
+        # - load treeview with music files for this file's folder
+        # - select filename in the treeview
+        puts "maybe_new_dir $dir $filename"
+    }
 }
