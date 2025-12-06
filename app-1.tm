@@ -181,7 +181,7 @@ oo::define App method populate_bookmarks_menu {} {
     set i [scan A %c]
     set config [Config new]
     foreach filename [$config bookmarks] {
-        set label [format "%c. %s" $i [humanize $filename]]
+        set label [format "%c. %s" $i [humanize_filename $filename]]
         .menu.bookmarks add command -label $label -underline 0 \
             -command [callback file_open $filename]
         incr i
