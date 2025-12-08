@@ -37,20 +37,13 @@ oo::define App method on_startup {} {
     focus $TrackView
 }
 
-oo::define App method play_track filename {
-    [Config new] set_last_track $filename
-    wm title . "[humanize_filename $filename] — [tk appname]"
-    my maybe_new_dir $filename
-    $Player play $filename
-}
-
 oo::define App method maybe_new_dir filename {
     if {[set dir [file dirname [file normalize $filename]]] ne \
             [.mf.dirLabel cget -text]} {
         .mf.dirLabel configure -text $dir
         $TrackView delete [$TrackView children {}]
         foreach name [lsort -dictionary \
-                [glob -directory $dir *.{mp3,ogg}]] {
+                      [glob -directory $dir *.{mp3,ogg}]] {
             $TrackView insert {} end -id $name \
                 -text [humanize_filename $name]
         }
@@ -59,4 +52,11 @@ oo::define App method maybe_new_dir filename {
             $TrackView see $filename
         }
     }
+}
+
+oo::define App method play_track filename {
+    [Config new] set_last_track $filename
+    wm title . "[humanize_filename $filename] — [tk appname]"
+    my maybe_new_dir $filename
+    $Player play $filename
 }

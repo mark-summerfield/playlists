@@ -119,7 +119,7 @@ oo::define App method make_bindings {} {
     bind . <F6> [callback on_play_next]
     bind . <F7> [callback on_volume_down]
     bind . <F8> [callback on_volume_up]
-    bind . <F9> [callback on_bookmarks_add]
+    bind . <Control-a> [callback on_bookmarks_add]
     bind . <Control-b> [callback on_bookmarks_edit]
     bind . <Control-o> [callback on_file_open]
     bind . <Control-h> [callback on_history_edit]
@@ -152,7 +152,7 @@ oo::define App method populate_history_menu {} {
 oo::define App method populate_bookmarks_menu {} {
     .menu.bookmarks delete 0 end
     .menu.bookmarks add command -command [callback on_bookmarks_add] \
-        -label "Add Current" -accelerator F9 -compound left \
+        -label "Add Current" -accelerator Ctrl+A -compound left \
         -image [ui::icon list-add.svg $::MENU_ICON_SIZE]
     .menu.bookmarks add command -command [callback on_bookmarks_remove] \
         -label "Remove Current" -compound left \

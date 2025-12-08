@@ -1,47 +1,47 @@
 # Copyright © 2025 Mark Summerfield. All rights reserved.
 
 oo::singleton create Mplayer {
-    variable Stream
+    variable Pipe
     variable Debug
     variable Exe
 }
 
 oo::define Mplayer constructor {} {
-    set Stream ""
+    set Pipe ""
     set Debug 0
     if {[set Exe [auto_execok mplayer]] ne ""} { my open }
 }
 
 oo::define Mplayer method open {} {
-    if {$Stream eq ""} {
-        set Stream [open "|$Exe -slave -idle -input nodefault-bindings \
-                    -noconfig all" r+]
-        fconfigure $Stream -blocking 0 -buffering line
-        fileevent $Stream readable [callback ReadPipe]
+    if {$Pipe eq ""} {
+        set Pipe [open "|$Exe -slave -idle -input nodefault-bindings \
+                  -noconfig all" r+]
+        fconfigure $Pipe -blocking 0 -buffering line
+        fileevent $Pipe readable [callback ReadPipe]
     }
 }
 
 oo::define Mplayer method close {} {
-    if {$Stream ne ""} {
+    if {$Pipe ne ""} {
         my stop
-        flush $Stream
-        fileevent $Stream readable {}
-        close $Stream
-        set Stream ""
+        flush $Pipe
+        fileevent $Pipe readable {}
+        close $Pipe
+        set Pipe ""
     }
 }
 
 oo::define Mplayer method has_mplayer {} { expr {$Exe ne ""} }
 
-oo::define Mplayer method closed {} { expr {$Stream eq ""} }
-
-oo::define Mplayer method replay {} { my Do "set_property time_pos 0" }
+oo::define Mplayer method closed {} { expr {$Pipe eq ""} }
 
 oo::define Mplayer method play filename {
     my stop
-    after 200        
+    after 100        
     my Do "loadfile \"$filename\""
 }
+
+oo::define Mplayer method replay {} { my Do "set_property time_pos 0" }
 
 oo::define Mplayer method pause {} { my Do pause }
 
@@ -51,10 +51,10 @@ oo::define Mplayer method volume_down {} { my Do "volume -5" }
 
 oo::define Mplayer method volume_up {} { my Do "volume +5" }
 
-oo::define Mplayer method Do action { puts $Stream $action ; flush $Stream }
+oo::define Mplayer method Do action { puts $Pipe $action ; flush $Pipe }
 
 oo::define Mplayer method ReadPipe {} {
-    foreach line [split [read $Stream] \n] {
+    foreach line [split [read $Pipe] \n] {
         if {[set line [string trim $line]] ne ""} {
             if {[regexp {^A:\s*(\d+.\d+).*?of\s*(\d+.\d+)} $line _ pos \
                     total]} {
@@ -64,10 +64,10 @@ oo::define Mplayer method ReadPipe {} {
             }
         }
     }
-    if {[eof $Stream]} {
-        fileevent $Stream readable {}
-        close $Stream
-        set Stream ""
+    if {[eof $Pipe]} {
+        fileevent $Pipe readable {}
+        close $Pipe
+        set Pipe ""
     }
 }
 
