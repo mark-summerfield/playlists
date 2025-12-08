@@ -1,5 +1,6 @@
 # TODO have mplayer generate <<MplayerDone>> when a track is complete &
 # use this to implement auto play next
+# TODO see if Debug data prints anything I can use (like A: for pos)
 
 playtrack.tk
 app-1.tm
