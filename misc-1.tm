@@ -40,5 +40,5 @@ proc get_music_dir filename {
     return $dir
 }
 
-proc SpaceForColon s { regsub -all : $s " " }
-proc ColonForSpace s { regsub -all {\s} $s : }
+proc from_id s { regsub -all @ $s " " }
+proc to_id s { regsub -all {\s} $s @ }

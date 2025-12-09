@@ -52,21 +52,21 @@ oo::define App method on_volume_up {} {
 
 oo::define App method on_history_remove {} {
     if {[set selection [$TrackView selection]] ne ""} {
-        [Config new] remove_history [SpaceForColon $selection]
+        [Config new] remove_history [from_id $selection]
         my populate_history_menu
     }
 }
 
 oo::define App method on_bookmarks_add {} {
     if {[set selection [$TrackView selection]] ne ""} {
-        [Config new] add_bookmark [SpaceForColon $selection]
+        [Config new] add_bookmark [from_id $selection]
         my populate_bookmarks_menu
     }
 }
 
 oo::define App method on_bookmarks_remove {} {
     if {[set selection [$TrackView selection]] ne ""} {
-        [Config new] remove_bookmark [SpaceForColon $selection]
+        [Config new] remove_bookmark [from_id $selection]
         my populate_bookmarks_menu
     }
 }

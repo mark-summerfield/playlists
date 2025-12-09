@@ -46,19 +46,19 @@ oo::define App method maybe_new_dir filename {
         $TrackView delete [$TrackView children {}]
         foreach name [lsort -dictionary \
                       [glob -directory $dir *.{mp3,ogg}]] {
-            $TrackView insert {} end -id [ColonForSpace $name] \
+            $TrackView insert {} end -id [to_id $name] \
                 -text [humanize_filename $name]
         }
     }
     catch {
-        set name [ColonForSpace $filename]
+        set name [to_id $filename]
         $TrackView selection set $name
         $TrackView see $name
     }
 }
 
 oo::define App method play_track filename {
-    set filename [SpaceForColon $filename]
+    set filename [from_id $filename]
     set config [Config new]
     $config set_last_track $filename
     wm title . "[humanize_filename $filename] — [tk appname]"
