@@ -97,7 +97,7 @@ oo::define App method make_playbar {} {
     ttk::button .mf.play.prevButton -command [callback on_play_prev] \
         -image [ui::icon media-skip-backward.svg $::MENU_ICON_SIZE] \
         -takefocus 0
-    $tip .mf.play.prevButton "Play previous • F2"
+    $tip .mf.play.prevButton "Play Previous • F2"
     ttk::button .mf.play.replayButton -command [callback on_play_replay] \
         -image [ui::icon edit-redo.svg $::MENU_ICON_SIZE] -takefocus 0
     $tip .mf.play.replayButton "Replay • F3"
@@ -112,16 +112,16 @@ oo::define App method make_playbar {} {
     ttk::button .mf.play.nextButton -command [callback on_play_next] \
         -image [ui::icon media-skip-forward.svg $::MENU_ICON_SIZE] \
         -takefocus 0
-    $tip .mf.play.nextButton "Play next • F6"
+    $tip .mf.play.nextButton "Play Next • F6"
     ttk::progressbar .mf.play.progress -anchor center
     ttk::button .mf.play.volumeDownButton -takefocus 0 \
         -command [callback on_volume_down] \
         -image [ui::icon audio-volume-low.svg $::MENU_ICON_SIZE]
-    $tip .mf.play.volumeDownButton "Reduce volume • F7"
+    $tip .mf.play.volumeDownButton "Reduce Volume • F7"
     ttk::button .mf.play.volumeUpButton -command [callback on_volume_up] \
         -image [ui::icon audio-volume-high.svg $::MENU_ICON_SIZE] \
         -takefocus 0
-    $tip .mf.play.volumeUpButton "Increase volume • F8"
+    $tip .mf.play.volumeUpButton "Increase Volume • F8"
 }
 
 oo::define App method make_layout {} {
@@ -154,9 +154,7 @@ oo::define App method make_bindings {} {
     bind . <F7> [callback on_volume_down]
     bind . <F8> [callback on_volume_up]
     bind . <Control-a> [callback on_bookmarks_add]
-    bind . <Control-b> [callback on_bookmarks_edit]
     bind . <Control-o> [callback on_file_open]
-    bind . <Control-h> [callback on_history_edit]
     bind . <Control-q> [callback on_quit]
     bind . <Escape> [callback on_quit]
     wm protocol . WM_DELETE_WINDOW [callback on_quit]
@@ -167,9 +165,6 @@ oo::define App method populate_history_menu {} {
     .menu.history add command -command [callback on_history_remove] \
         -label "Remove Current" -compound left \
         -image [ui::icon list-remove.svg $::MENU_ICON_SIZE]
-    .menu.history add command -command [callback on_history_edit] \
-        -label Edit… -accelerator Ctrl+H -compound left \
-        -image [ui::icon list-edit.svg $::MENU_ICON_SIZE]
     .menu.history add separator
     set MAX [expr {1 + [scan Z %c]}]
     set i [scan A %c]
@@ -191,9 +186,6 @@ oo::define App method populate_bookmarks_menu {} {
     .menu.bookmarks add command -command [callback on_bookmarks_remove] \
         -label "Remove Current" -compound left \
         -image [ui::icon list-remove.svg $::MENU_ICON_SIZE]
-    .menu.bookmarks add command -command [callback on_bookmarks_edit] \
-        -label Edit… -accelerator Ctrl+B -compound left \
-        -image [ui::icon list-edit.svg $::MENU_ICON_SIZE]
     .menu.bookmarks add separator
     set MAX [expr {1 + [scan Z %c]}]
     set i [scan A %c]

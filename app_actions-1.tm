@@ -2,14 +2,13 @@
 
 package require about_form
 package require config_form
+package require misc
 package require ref
 
 oo::define App method on_file_open {} {
-    set filename [[Config new] last_track]
     const filetypes {{{Audio Files} {.mp3 .ogg}}}
-    set dir [file home]/Music
-    set dir [expr {[file exists $dir] ? $dir : "[file home]/music]"}]
-    set dir [expr {$filename eq "" ? $dir : [file dirname $filename]}]
+    set filename [[Config new] last_track]
+    set dir [get_music_dir $filename]
     set filename [tk_getOpenFile -parent . -filetypes $filetypes \
                   -initialdir $dir]
     if {$filename ne ""} {
@@ -53,31 +52,23 @@ oo::define App method on_volume_up {} {
 
 oo::define App method on_history_remove {} {
     if {[set selection [$TrackView selection]] ne ""} {
-        [Config new] remove_history $selection
+        [Config new] remove_history [SpaceForColon $selection]
         my populate_history_menu
     }
 }
 
-oo::define App method on_history_edit {} {
-    puts on_history_edit ;# TODO like store ignore list dialog
-}
-
 oo::define App method on_bookmarks_add {} {
     if {[set selection [$TrackView selection]] ne ""} {
-        [Config new] add_bookmark $selection
+        [Config new] add_bookmark [SpaceForColon $selection]
         my populate_bookmarks_menu
     }
 }
 
 oo::define App method on_bookmarks_remove {} {
     if {[set selection [$TrackView selection]] ne ""} {
-        [Config new] remove_bookmark $selection
+        [Config new] remove_bookmark [SpaceForColon $selection]
         my populate_bookmarks_menu
     }
-}
-
-oo::define App method on_bookmarks_edit {} {
-    puts on_bookmarks_edit ;# TODO like store ignore list dialog
 }
 
 oo::define App method on_config {} {

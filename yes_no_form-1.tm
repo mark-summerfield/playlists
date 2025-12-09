@@ -52,7 +52,6 @@ oo::define YesNoForm method make_widgets {title body_text} {
 
 oo::define YesNoForm method make_layout {} {
     set opts "-padx 3 -pady 3"
-    # TODO use pack
     grid .yesno_form.frame.label -row 0 -column 0 -columnspan 2 \
         -sticky news {*}$opts
     grid .yesno_form.frame.yes_button -row 1 -column 0 -sticky e {*}$opts

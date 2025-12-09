@@ -38,32 +38,32 @@ oo::define App method on_startup {} {
 }
 
 oo::define App method maybe_new_dir filename {
-    if {[set dir [file dirname [file normalize $filename]]] ne \
+    set dir [file dirname [file normalize $filename]]
+    set home [file home](?:/\[Mm\]usic)?/?
+    if {[set dir_label [regsub -- $home $dir ""]] ne \
             [.mf.dirLabel cget -text]} {
-        .mf.dirLabel configure -text $dir
+        .mf.dirLabel configure -text $dir_label
         $TrackView delete [$TrackView children {}]
         foreach name [lsort -dictionary \
                       [glob -directory $dir *.{mp3,ogg}]] {
-            $TrackView insert {} end -id $name \
+            $TrackView insert {} end -id [ColonForSpace $name] \
                 -text [humanize_filename $name]
         }
-        catch {
-            $TrackView selection set $filename
-            $TrackView see $filename
-        }
+    }
+    catch {
+        set name [ColonForSpace $filename]
+        $TrackView selection set $name
+        $TrackView see $name
     }
 }
 
 oo::define App method play_track filename {
+    set filename [SpaceForColon $filename]
     set config [Config new]
     $config set_last_track $filename
     wm title . "[humanize_filename $filename] — [tk appname]"
     my maybe_new_dir $filename
     $Player play $filename
-    catch {
-        $TrackView selection set $filename
-        $TrackView see $filename
-    }
     $config add_history $filename
     my populate_history_menu    
 }

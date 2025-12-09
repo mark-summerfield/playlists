@@ -1,7 +1,7 @@
-playtrack.tk
+playtrack.tk # VERSION
 app-1.tm
 app_ui-1.tm
-app_actions-1.tm # TODO ...
+app_actions-1.tm
 misc-1.tm
 mplayer-1.tm
 config-1.tm

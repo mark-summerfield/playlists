@@ -23,3 +23,22 @@ proc humanize_filename filename {
     string trim [string trimleft [regsub -all {[-_.]} \
         [file tail [file rootname $filename]] " "] "0123456789"]
 }
+
+proc get_music_dir filename {
+    if {$filename ne ""} {
+        set dir [file dirname $filename]
+    } else {
+        set home [file home]
+        set dir $home/Music
+        if {![file exists $dir]} {
+            set dir $home/music
+            if {![file exists $dir]} {
+                set dir $home
+            }
+        }
+    }
+    return $dir
+}
+
+proc SpaceForColon s { regsub -all : $s " " }
+proc ColonForSpace s { regsub -all {\s} $s : }

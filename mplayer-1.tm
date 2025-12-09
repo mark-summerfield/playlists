@@ -68,6 +68,8 @@ oo::define Mplayer method ReadPipe {} {
                     if {$Playing} {
                         if {$pos + 1 >= $total} {
                             set Playing 0
+                            event generate . <<MplayerPos>> \
+                                -data "$total $total"
                             my Do stop
                             event generate . <<MplayerStopped>>
                         } else {
@@ -89,8 +91,6 @@ oo::define Mplayer method ReadPipe {} {
         set Pipe ""
     }
 }
-
-oo::define Mplayer method playing {} { return $Playing }
 
 oo::define Mplayer method debug {} { return $Debug }
 oo::define Mplayer method set_debug debug { set Debug $debug }
