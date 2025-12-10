@@ -57,8 +57,8 @@ oo::define Pld method db {} { return $Db }
 #   playlist_insert_tracks → list of tids
 #   playlist_move_track_down pid tid
 #   playlist_move_track_up pid tid
-#   playlist_remove_tracks pid list of tids
-#   track_delete tid
+#   playlist_remove_tracks pid list of tids # remove from this playlist
+#   track_delete tid # delete from all playlists
 #   track_for_tid tid
 #   track_update_secs tid secs
 #   history # list of (pid, cid) pairs order hid DESC
