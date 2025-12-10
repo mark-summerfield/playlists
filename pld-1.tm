@@ -17,12 +17,7 @@ oo::define Pld constructor filename {
     sqlite3 $Db $Filename
     $Db eval [readFile $::APPPATH/sql/prepare.sql] 
     $Db transaction {
-        if {!$exists} {
-            $Db eval [readFile $::APPPATH/sql/create.sql]
-            # TODO insert.sql
-            # create categories name, pos:
-            # Classical 1 Pop 2 Punk 3 Early Pop 4 Unclassified 5
-        }
+        if {!$exists} { $Db eval [readFile $::APPPATH/sql/create.sql] }
     }
 }
 
@@ -45,31 +40,34 @@ oo::define Pld method db {} { return $Db }
 #   pids_for_cid cid # playlists in category in pos order
 #   pids_for_tid tid # playlists containing track in pos order
 #   tids_for_pid pid # tracks in playlist in pos order
+#   cid_for_pid pid # category for playlist
 #   category_delete cid
 #   category_for_cid
 #   category_insert name → cid
+#   category_rename cid name
 #   category_move_down cid
 #   category_move_playlist_down cid pid
 #   category_move_playlist_up cid pid
 #   category_move_up cid
-#   category_rename cid name
 #   playlist_change_category pid cid
 #   playlist_delete pid
 #   playlist_for_pid pid
 #   playlist_insert name → pid
+#   playlist_rename pid name
 #   playlist_insert_tracks → list of tids
 #   playlist_move_track_down pid tid
 #   playlist_move_track_up pid tid
 #   playlist_remove_tracks pid list of tids
-#   playlist_rename pid name
 #   track_delete tid
 #   track_for_tid tid
 #   track_update_secs tid secs
 #   history # list of (pid, cid) pairs order hid DESC
+#   history_insert pid tid
 #   history_clear
 #   history_delete pid tid
 #   history_insert pid tid
 #   bookmarks # list of (pid, cid) pairs order bid DESC
+#   bookmarks_insert pid tid
 #   bookmarks_clear
 #   bookmarks_delete pid tid
 #   bookmarks_insert pid tid

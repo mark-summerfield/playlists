@@ -23,16 +23,13 @@ CREATE TABLE Categories (
     CHECK(pos >= 0)
 );
 
--- Only ever has one record: must be updated when history inserted using:
--- DELETE FROM LastItem;
--- INSERT INTO LastItem (cid, pid, tid) VALUES (:cid, :pid, :tid);
+-- Only ever has one record: should be updated when history inserted.
+-- cid can be inferred since a playlist may only be in one category
 CREATE TABLE LastItem (
-    cid INTEGER NOT NULL,
     pid INTEGER NOT NULL,
     tid INTEGER NOT NULL,
 
-    PRIMARY KEY(cid, pid, tid),
-    FOREIGN KEY(cid) REFERENCES Categories(cid),
+    PRIMARY KEY(pid, tid),
     FOREIGN KEY(pid) REFERENCES Playlists(pid),
     FOREIGN KEY(tid) REFERENCES Tracks(tid)
 );
@@ -79,6 +76,12 @@ CREATE TABLE History (
     FOREIGN KEY(tid) REFERENCES Tracks(tid)
 );
 
+-- Guarantees we have only one last item record
+CREATE TRIGGER InsertLastItemTrigger BEFORE DELETE ON LastItem FOR EACH ROW
+    BEGIN
+        DELETE FROM LastItem;
+    END;
+
 -- Tracks may be freely deleted.
 CREATE TRIGGER DeleteTrackTrigger BEFORE DELETE ON Tracks FOR EACH ROW
     BEGIN
@@ -107,3 +110,10 @@ FOR EACH ROW
             RAISE(ABORT, 'category in use so cannot delete')
         END;
     END;
+
+-- next category pos is: SELECT MAX(pos) FROM Categories WHERE pos < 99999;
+INSERT INTO Categories (name, pos) VALUES ('Classical', 1);
+INSERT INTO Categories (name, pos) VALUES ('Pop', 2);
+INSERT INTO Categories (name, pos) VALUES ('Punk', 3);
+INSERT INTO Categories (name, pos) VALUES ('Uncategorized', 99999);
+INSERT INTO Categories (name, pos) VALUES ('Early Pop', 4);
