@@ -44,7 +44,7 @@ oo::define App method maybe_new_dir filename {
             [.mf.dirLabel cget -text]} {
         .mf.dirLabel configure -text $dir_label
         $TrackView delete [$TrackView children {}]
-        my ShowTracks [glob -directory $dir *.{mp3,ogg}]
+        my PopulateTrackView [glob -directory $dir *.{mp3,ogg}]
     }
     catch {
         set name [to_id $filename]
@@ -53,7 +53,7 @@ oo::define App method maybe_new_dir filename {
     }
 }
 
-oo::define App method ShowTracks filenames {
+oo::define App method PopulateTrackView filenames {
     set width 0
     set n 0
     foreach name [lsort -dictionary $filenames] {
@@ -62,8 +62,10 @@ oo::define App method ShowTracks filenames {
         $TrackView insert {} end -id [to_id $name] -text "[incr n]. " \
             -values [list $track]
     }
-    set span [string repeat W $width]
-    $TrackView column 0 -width [font measure TkDefaultFont $span]
+    if {[set width [font measure TkDefaultFont [string repeat W $width]]] \
+            > [$TrackView column 0 -minwidth]} {
+        $TrackView column 0 -minwidth $width
+    }
 }
 
 oo::define App method play_track filename {

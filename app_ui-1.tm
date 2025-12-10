@@ -88,7 +88,7 @@ oo::define App method make_widgets {} {
     set TrackView [ttk::treeview .mf.sa.tv -selectmode browse -show tree \
                    -style List.Treeview -striped 1 -columns {n track}]
     $sa setwidget $TrackView
-    set nwidth [font measure TkDefaultFont 9999]
+    set nwidth [font measure TkDefaultFont 999.]
     $TrackView column #0 -width $nwidth -stretch 0 -anchor e
     $TrackView column 0 -stretch 1 -anchor w
     my make_playbar

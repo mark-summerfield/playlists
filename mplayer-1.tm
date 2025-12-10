@@ -3,7 +3,7 @@
 oo::singleton create Mplayer {
     variable Pipe
     variable Playing
-    variable Skipper
+    variable Pos
     variable Debug
     variable Exe
 }
@@ -11,7 +11,7 @@ oo::singleton create Mplayer {
 oo::define Mplayer constructor {} {
     set Pipe ""
     set Playing 0
-    set Skipper 0
+    set Pos 0.0
     set Debug 0
     if {[set Exe [auto_execok mplayer]] ne ""} { my open }
 }
@@ -63,8 +63,8 @@ oo::define Mplayer method ReadPipe {} {
         if {[set line [string trim $line]] ne ""} {
             if {[regexp {^A:\s*(\d+.\d+).*?of\s*(\d+.\d+)} $line _ pos \
                     total]} {
-                if {$Skipper == 5} {
-                    set Skipper [expr {($Skipper + 1) % 5}]
+                if {[set rpos [expr {round($pos * 5) / 5.0}]] != $Pos} {
+                    set Pos $rpos ;# Every ⅕th sec (200ms).
                     if {$Playing} {
                         if {$pos + 1 >= $total} {
                             set Playing 0
@@ -77,8 +77,6 @@ oo::define Mplayer method ReadPipe {} {
                                 -data "$pos $total"
                         }
                     }
-                } else {
-                    incr Skipper
                 }
             } elseif {$Debug} {
                 event generate . <<MplayerDebug>> -data "$line"
