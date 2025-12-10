@@ -6,7 +6,7 @@ misc-1.tm
 mplayer-1.tm
 config-1.tm
 config_form-1.tm
-pld-1.tm
+pld-1.tm # TODO
 
 sql/prepare.sql
 sql/create.sql

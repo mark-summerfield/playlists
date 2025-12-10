@@ -17,10 +17,24 @@ CREATE TABLE Playlists (
 
 CREATE TABLE Categories (
     cid INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-    name TEXT NOT NULL,
-    pos INTEGER UNIQUE NOT NULL, -- position of category
+    name TEXT UNIQUE NOT NULL,
+    pos INTEGER UNIQUE NOT NULL, -- position of category in tree
 
     CHECK(pos >= 0)
+);
+
+-- Only ever has one record: must be updated when history inserted using:
+-- DELETE FROM LastItem;
+-- INSERT INTO LastItem (cid, pid, tid) VALUES (:cid, :pid, :tid);
+CREATE TABLE LastItem (
+    cid INTEGER NOT NULL,
+    pid INTEGER NOT NULL,
+    tid INTEGER NOT NULL,
+
+    PRIMARY KEY(cid, pid, tid),
+    FOREIGN KEY(cid) REFERENCES Categories(cid),
+    FOREIGN KEY(pid) REFERENCES Playlists(pid),
+    FOREIGN KEY(tid) REFERENCES Tracks(tid)
 );
 
 CREATE TABLE PlaylistTracks (
@@ -45,8 +59,8 @@ CREATE TABLE CategoryPlaylists (
     CHECK(pos >= 0)
 );
 
-CREATE TABLE History (
-    hid INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+CREATE TABLE Bookmarks (
+    bid INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
     pid INTEGER NOT NULL,
     tid INTEGER NOT NULL,
 
@@ -55,8 +69,8 @@ CREATE TABLE History (
     FOREIGN KEY(tid) REFERENCES Tracks(tid)
 );
 
-CREATE TABLE Bookmarks (
-    bid INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+CREATE TABLE History (
+    hid INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
     pid INTEGER NOT NULL,
     tid INTEGER NOT NULL,
 
