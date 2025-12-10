@@ -1,9 +1,3 @@
-# TODO
-# - create a screenshot
-# - add a README.md
-# - make public
-# - add note to tcl wiki
-
 playtrack.tk # VERSION
 app-1.tm
 app_ui-1.tm
@@ -25,6 +19,8 @@ yes_no_form-1.tm
 ui-1.tm
 
 db-1.tm
+
+README.md
 
 st.sh
 
