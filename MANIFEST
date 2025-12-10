@@ -1,8 +1,15 @@
 # TODO
-# - UI: panedwindow left is playlist treeview right is track list (treeview)
-# - Add &Category menu: &Add &Rename D&elete
-# - Add &List menu: &Add &Rename Move &Up Move &Down D&elete
 # - Design database ~/.config/Playlist.pld
+# oo::define App method on_file_open {} {
+#     const FILETYPES {{{Audio Files} {.mp3 .ogg}}}
+#     set filename [[Config new] last_track]
+#     set dir [get_music_dir $filename]
+#     set filename [tk_getOpenFile -parent . -filetypes $FILETYPES \
+#                   -initialdir $dir]
+#     if {$filename ne ""} {
+#         my play_track $filename
+#     }
+# }
 
 playlists.tk # VERSION
 app-1.tm
@@ -12,6 +19,9 @@ misc-1.tm
 mplayer-1.tm
 config-1.tm
 config_form-1.tm
+
+sql/prepare.sql
+sql/create.sql
 
 ref-1.tm
 util-1.tm

@@ -24,6 +24,11 @@ oo::define App method prepare_ui {} {
 oo::define App method make_menubar {} {
     menu .menu
     my make_file_menu
+    # TODO make_category_menu
+    # - &Category menu: &New… &Rename… Move &Up Move &Down D&elete…
+    # TODO make_list_menu
+    # - &List menu: &New… &Rename… Add &Folder… Add &Track… &Merge List…
+    #               Move &Up Move &Down D&elete…
     my make_track_menu
     menu .menu.history
     .menu add cascade -menu .menu.history -label History -underline 0
@@ -37,10 +42,6 @@ oo::define App method make_menubar {} {
 oo::define App method make_file_menu {} {
     menu .menu.file
     .menu add cascade -menu .menu.file -label File -underline 0
-    .menu.file add command -command [callback on_file_open] -label Open… \
-        -underline 0 -accelerator Ctrl+O -compound left \
-        -image [ui::icon document-open.svg $::MENU_ICON_SIZE]
-    .menu.file add separator
     .menu.file add command -command [callback on_config] -label Config… \
         -underline 0  -compound left \
         -image [ui::icon preferences-system.svg $::MENU_ICON_SIZE]
@@ -79,18 +80,27 @@ oo::define App method make_track_menu {} {
         -label "Increase Volume" -underline 0 -compound left \
         -accelerator F8 \
         -image [ui::icon audio-volume-high.svg $::MENU_ICON_SIZE]
+    # TODO Find… (to find a track by (partial) case-insensitive name)
 }
 
 oo::define App method make_widgets {} {
     ttk::frame .mf
-    ttk::label .mf.dirLabel -relief sunken
-    set sa [scrollutil::scrollarea .mf.sa]
-    set TrackView [ttk::treeview .mf.sa.tv -selectmode browse -show tree \
-                   -style List.Treeview -striped 1 -columns {n track}]
-    $sa setwidget $TrackView
-    set nwidth [font measure TkDefaultFont 999.]
-    $TrackView column #0 -width $nwidth -stretch 0 -anchor e
+    ttk::panedwindow .mf.pw -orient horizontal
+    set left [scrollutil::scrollarea .mf.pw.left]
+    set ListTree [ttk::treeview .mf.pw.left.tv -selectmode browse \
+        -show tree -striped 1]
+    $left setwidget $ListTree
+    .mf.pw add $left
+    set right [scrollutil::scrollarea .mf.pw.right]
+    set TrackView [ttk::treeview .mf.pw.right.tv -selectmode browse \
+        -show tree -style List.Treeview -striped 1 -columns {n track secs}]
+    $right setwidget $TrackView
+    .mf.pw add $right
+    set width [font measure TkDefaultFont 999.]
+    $TrackView column #0 -width $width -stretch 0 -anchor e
     $TrackView column 0 -stretch 1 -anchor w
+    set width [font measure TkDefaultFont 1h59m59sW]
+    $TrackView column 1 -width $width -stretch 0 -anchor e
     my make_playbar
 }
 
@@ -129,7 +139,6 @@ oo::define App method make_playbar {} {
 
 oo::define App method make_layout {} {
     const opts "-pady 3 -padx 3"
-    pack .mf.dirLabel -fill x -side top {*}$opts
     pack .mf.play -fill x -side bottom {*}$opts
     pack .mf.play.prevButton -side left {*}$opts
     pack .mf.play.replayButton -side left {*}$opts
@@ -139,7 +148,7 @@ oo::define App method make_layout {} {
     pack .mf.play.progress -fill both -expand 1 -side left {*}$opts
     pack .mf.play.volumeDownButton -side left {*}$opts
     pack .mf.play.volumeUpButton -side left {*}$opts
-    pack .mf.sa -fill both -expand 1
+    pack .mf.pw -fill both -expand 1
     pack .mf -fill both -expand 1
 }
 
@@ -171,14 +180,15 @@ oo::define App method populate_history_menu {} {
     .menu.history add separator
     set MAX [expr {1 + [scan Z %c]}]
     set i [scan A %c]
-    set config [Config new]
-    foreach filename [$config history] {
-        set label [format "%c. %s" $i [humanize_filename $filename]]
-        .menu.history add command -label $label -underline 0 \
-            -command [callback play_track $filename]
-        incr i
-        if {$i == $MAX} { break }
-    }
+    puts populate_history_menu ;# TODO get from db
+    #set config [Config new]
+    #foreach filename [$config history] {
+    #    set label [format "%c. %s" $i [humanize_filename $filename]]
+    #    .menu.history add command -label $label -underline 0 \
+    #        -command [callback play_track $filename]
+    #    incr i
+    #    if {$i == $MAX} { break }
+    #}
 }
 
 oo::define App method populate_bookmarks_menu {} {
@@ -192,20 +202,26 @@ oo::define App method populate_bookmarks_menu {} {
     .menu.bookmarks add separator
     set MAX [expr {1 + [scan Z %c]}]
     set i [scan A %c]
-    set config [Config new]
-    foreach filename [$config bookmarks] {
-        set label [format "%c. %s" $i [humanize_filename $filename]]
-        .menu.bookmarks add command -label $label -underline 0 \
-            -command [callback play_track $filename]
-        incr i
-        if {$i == $MAX} { break }
-    }
+    puts populate_bookmarks_menu ;# TODO get from db
+    #set config [Config new]
+    #foreach filename [$config bookmarks] {
+    #    set label [format "%c. %s" $i [humanize_filename $filename]]
+    #    .menu.bookmarks add command -label $label -underline 0 \
+    #        -command [callback play_track $filename]
+    #    incr i
+    #    if {$i == $MAX} { break }
+    #}
 }
 
 oo::define App method on_pos data {
     lassign $data pos total
     .mf.play.progress configure -value $pos -maximum $total \
         -text "[humanize_secs $pos]/[humanize_secs $total]"
+    if {!$GotSecs} {
+        set GotSecs 1
+        # TODO update db with track's secs
+        # TODO update TrackView with track's secs
+    }
 }
 
 oo::define App method on_done {} {

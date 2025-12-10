@@ -5,17 +5,6 @@ package require config_form
 package require misc
 package require ref
 
-oo::define App method on_file_open {} {
-    const filetypes {{{Audio Files} {.mp3 .ogg}}}
-    set filename [[Config new] last_track]
-    set dir [get_music_dir $filename]
-    set filename [tk_getOpenFile -parent . -filetypes $filetypes \
-                  -initialdir $dir]
-    if {$filename ne ""} {
-        my play_track $filename
-    }
-}
-
 oo::define App method on_play_prev {} {
     if {[set prev [$TrackView prev [$TrackView selection]]] ne ""} {
         $TrackView selection set $prev
@@ -83,12 +72,14 @@ oo::define App method on_config {} {
 }
 
 oo::define App method on_about {} {
-    AboutForm new "Play tracks" \
-        https://github.com/mark-summerfield/playtrack-tcl
+    AboutForm new "Play and manage playlists" \
+        https://github.com/mark-summerfield/playlists
 }
 
 oo::define App method on_quit {} {
     $Player close 
-    [Config new] save
+    set config [Config new]
+    $config set_sashpos [.mf.pw sashpos 0]
+    $config save
     exit
 }
