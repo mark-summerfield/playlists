@@ -14,7 +14,7 @@ package require app_ui
 
 oo::define App constructor {} {
     ui::wishinit
-    tk appname PlayTrack
+    tk appname Playlists
     Config new ;# we need tk scaling done early
     set Player ""
     my make_ui

@@ -1,4 +1,9 @@
-playtrack.tk # VERSION
+# TODO
+# - UI: panedwindow left is playlist treeview right is track list (treeview)
+# - Add &Category menu: &Add &Rename D&elete
+# - Add &List menu: &Add &Rename Move &Up Move &Down D&elete
+
+playlists.tk # VERSION
 app-1.tm
 app_ui-1.tm
 app_actions-1.tm
