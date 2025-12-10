@@ -45,9 +45,31 @@ CREATE TABLE CategoryPlaylists (
     CHECK(pos >= 0)
 );
 
+CREATE TABLE History (
+    hid INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    pid INTEGER NOT NULL,
+    tid INTEGER NOT NULL,
+
+    UNIQUE(pid, tid),
+    FOREIGN KEY(pid) REFERENCES Playlists(pid),
+    FOREIGN KEY(tid) REFERENCES Tracks(tid)
+);
+
+CREATE TABLE Bookmarks (
+    bid INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    pid INTEGER NOT NULL,
+    tid INTEGER NOT NULL,
+
+    UNIQUE(pid, tid),
+    FOREIGN KEY(pid) REFERENCES Playlists(pid),
+    FOREIGN KEY(tid) REFERENCES Tracks(tid)
+);
+
 -- Tracks may be freely deleted.
 CREATE TRIGGER DeleteTrackTrigger BEFORE DELETE ON Tracks FOR EACH ROW
     BEGIN
+        DELETE FROM History WHERE tid = OLD.tid;
+        DELETE FROM Bookmarks WHERE tid = OLD.tid;
         DELETE FROM PlaylistTracks WHERE tid = OLD.tid;
     END;
 
@@ -56,6 +78,8 @@ CREATE TRIGGER DeleteTrackTrigger BEFORE DELETE ON Tracks FOR EACH ROW
 CREATE TRIGGER DeletePlaylistTrigger BEFORE DELETE ON Playlists
     FOR EACH ROW
     BEGIN
+        DELETE FROM History WHERE pid = OLD.pid;
+        DELETE FROM Bookmarks WHERE pid = OLD.pid;
         DELETE FROM PlaylistTracks WHERE pid = OLD.pid;
         DELETE FROM CategoryPlaylists WHERE pid = OLD.pid;
     END;

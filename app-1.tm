@@ -2,6 +2,7 @@
 
 package require config
 package require misc
+package require pld
 package require ui
 package require util
 
@@ -10,7 +11,7 @@ oo::singleton create App {
     variable ListTree
     variable TrackView
     variable GotSecs
-    variable Db
+    variable Pldb
 }
 
 package require app_actions
@@ -20,7 +21,7 @@ oo::define App constructor {} {
     ui::wishinit
     tk appname Playlists
     set config [Config new] ;# we need tk scaling done early
-    set pld [regsub {.ini$} [util::get_ini_filename] .pld]
+    set Pldb [Pld new [get_db_dir]]
     set Player ""
     set GotSecs 0
     my make_ui
@@ -41,9 +42,9 @@ oo::define App method on_startup {} {
     puts on_startup ;# TODO select last category/playlist/track from pld
 }
 
-oo::define App method play_track filename {
+oo::define App method play_track tid {
     set GotSecs 0
-    set filename [from_id $filename]
+    set filename "" ;# TODO get from db using tid
     wm title . "[humanize_filename $filename] — [tk appname]"
     $Player play $filename
     #$config add_history $filename ;# TODO pld
