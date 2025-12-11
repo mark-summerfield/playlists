@@ -24,12 +24,9 @@ oo::define App method prepare_ui {} {
 oo::define App method make_menubar {} {
     menu .menu
     my make_file_menu
-    # TODO make_category_menu
-    # - &Category menu: &New… &Rename… Move &Up Move &Down D&elete…
-    # TODO make_list_menu
-    # - &List menu: &New… &Rename… Add &Folder… Add &Tracks… &Merge List…
-    #               Remove Track Move &Up Move &Down D&elete…
+    my make_list_menu
     my make_track_menu
+    my make_play_menu
     menu .menu.history
     .menu add cascade -menu .menu.history -label History -underline 0
     my populate_history_menu
@@ -54,33 +51,56 @@ oo::define App method make_file_menu {} {
         -image [ui::icon quit.svg $::MENU_ICON_SIZE]
 }
 
+oo::define App method make_list_menu {} {
+    menu .menu.list
+    .menu add cascade -menu .menu.list -label List -underline 0
+    # TODO &New…
+    # TODO &Rename…
+    # TODO Add &Folder…
+    # TODO Add &Tracks…
+    # TODO &Merge List…
+    # TODO &Delete…
+}
+
 oo::define App method make_track_menu {} {
     menu .menu.track
     .menu add cascade -menu .menu.track -label Track -underline 0
-    .menu.track add command -command [callback on_play_prev] \
+    # TODO &Find… (to find a track by (partial) case-insensitive name)
+    # TODO Move &Up
+    # TODO Move &Down
+    # TODO &Move To List…
+    # TODO &Copy To List…
+    # TODO &Remove from List # If List is Uncategorized only option is Delete
+    # TODO &Delete… # Offer (*) Move to Uncategorized ( ) Permanently
+    # Delete unless in Uncategorized in which case Yes or No
+}
+
+oo::define App method make_play_menu {} {
+    menu .menu.play
+    .menu add cascade -menu .menu.play -label Play -underline 0
+    .menu.play add command -command [callback on_play_prev] \
         -label "Play Previous" -underline 8 -compound left -accelerator F2 \
         -image [ui::icon media-skip-backward.svg $::MENU_ICON_SIZE]
-    .menu.track add command -command [callback on_play_replay] \
+    .menu.play add command -command [callback on_play_replay] \
         -label Replay -underline 0 -compound left -accelerator F3 \
         -image [ui::icon edit-redo.svg $::MENU_ICON_SIZE]
-    .menu.track add command -command [callback on_play_pause_resume] \
+    .menu.play add command -command [callback on_play_pause_resume] \
         -label Pause/Resume -underline 4 -compound left -accelerator F4 \
         -image [ui::icon media-playback-pause.svg $::MENU_ICON_SIZE]
-    .menu.track add command -command [callback on_play] \
+    .menu.play add command -command [callback on_play] \
         -label Play -underline 0 -compound left -accelerator F5 \
         -image [ui::icon media-playback-start.svg $::MENU_ICON_SIZE]
-    .menu.track add command -command [callback on_play_next] \
+    .menu.play add command -command [callback on_play_next] \
         -label "Play Next" -underline 5 -compound left -accelerator F6 \
         -image [ui::icon media-skip-forward.svg $::MENU_ICON_SIZE]
-    .menu.track add separator
-    .menu.track add command -command [callback on_volume_down] \
+    .menu.play add separator
+    .menu.play add command -command [callback on_volume_down] \
         -label "Reduce Volume" -underline 7 -compound left -accelerator F7 \
         -image [ui::icon audio-volume-low.svg $::MENU_ICON_SIZE]
-    .menu.track add command -command [callback on_volume_up] \
+    .menu.play add command -command [callback on_volume_up] \
         -label "Increase Volume" -underline 0 -compound left \
         -accelerator F8 \
         -image [ui::icon audio-volume-high.svg $::MENU_ICON_SIZE]
-    # TODO Find… (to find a track by (partial) case-insensitive name)
 }
 
 oo::define App method make_widgets {} {
