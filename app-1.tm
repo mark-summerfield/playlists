@@ -21,7 +21,7 @@ oo::define App constructor {} {
     ui::wishinit
     tk appname Playlists
     set config [Config new] ;# we need tk scaling done early
-    set Pldb [Pld new [get_db_dir]]
+    set Pldb [Pld new [get_db_filename]]
     set Player ""
     set GotSecs 0
     my make_ui

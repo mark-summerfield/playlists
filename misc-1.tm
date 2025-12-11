@@ -41,11 +41,11 @@ proc get_music_dir filename {
     return $dir
 }
 
-proc get_db_dir {} {
+proc get_db_filename {} {
     set home [file home]
     set dir $home/data
     if {![file exists $dir]} {
         set dir $home
     }
-    return $dir/Playlists.pld
+    return $dir/[info hostname].pld
 }
