@@ -39,7 +39,8 @@ oo::define App method show {} {
 oo::define App method on_startup {} {
     set config [Config new]
     if {[set sashpos [$config sashpos]]} { .mf.pw sashpos 0 $sashpos }
-    puts on_startup ;# TODO select last category/playlist/track from pld
+    lassign [$Pldb last_item] lid tid
+    my populate_listtree $lid:$tid
 }
 
 oo::define App method play_track tid {
@@ -49,4 +50,43 @@ oo::define App method play_track tid {
     $Player play $filename
     #$config add_history $filename ;# TODO pld
     #my populate_history_menu    
+}
+
+oo::define App method populate_listtree {{sel_id "0:0"}} {
+    $ListTree delete [$ListTree children {}]
+    set prev_parent {}
+    set prev_category ""
+    set first ""
+    foreach row [$Pldb lists] {
+        lassign $row lid name
+        set parent {}
+        set category ""
+        if {[set i [string first / $name]] != -1} {
+            set category [string range $name 0 $i-1]
+            set name [string range $name $i+1 end]
+        }
+        if {$category ne ""} {
+            if {$category eq $prev_category} {
+                set parent $prev_parent
+            } else {
+                set parent [$ListTree insert {} end -text $category]
+                set prev_parent $parent
+                set prev_category $category
+            }
+        }
+        set playlist [$ListTree insert $parent end -id $lid -text $name]
+        if {$first eq ""} { set first $playlist } ;# TODO $track
+        foreach track [$Pldb tids_for_lid $lid] {
+            puts $track
+        }
+        # TODO insert all the list's tracks as children of $playlist
+        # using: -id L$lidT$tid and humanized names
+    }
+    if {$sel_id ne "" && $sel_id ne "0:0"} { set first $sel_id }
+    if {$first ne "" && $first ne "0:0"} {
+        $ListTree selection set $first
+        $ListTree see $first
+        $ListTree focus $first
+    }
+    focus $ListTree
 }
