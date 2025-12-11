@@ -1,5 +1,11 @@
 # Copyright © 2025 Mark Summerfield. All rights reserved.
 
+proc select_tree_item {tree id} {
+    $tree selection set $id
+    $tree see $id
+    $tree focus $id
+}
+
 proc humanize_secs secs {
     if {![set secs [expr {int(round($secs))}]]} {
         return "0s"

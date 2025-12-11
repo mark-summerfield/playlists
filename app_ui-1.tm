@@ -112,15 +112,15 @@ oo::define App method make_widgets {} {
     $left setwidget $ListTree
     .mf.pw add $left
     set right [scrollutil::scrollarea .mf.pw.right]
-    set TrackView [ttk::treeview .mf.pw.right.tv -selectmode browse \
+    set TrackTree [ttk::treeview .mf.pw.right.tv -selectmode browse \
         -show tree -style List.Treeview -striped 1 -columns {n track secs}]
-    $right setwidget $TrackView
+    $right setwidget $TrackTree
     .mf.pw add $right
     set width [font measure TkDefaultFont 999.]
-    $TrackView column #0 -width $width -stretch 0 -anchor e
-    $TrackView column 0 -stretch 1 -anchor w
+    $TrackTree column #0 -width $width -stretch 0 -anchor e
+    $TrackTree column 0 -stretch 1 -anchor w
     set width [font measure TkDefaultFont 1h59m59sW]
-    $TrackView column 1 -width $width -stretch 0 -anchor e
+    $TrackTree column 1 -width $width -stretch 0 -anchor e
     my make_playbar
 }
 
@@ -176,8 +176,8 @@ oo::define App method make_bindings {} {
     bind . <<MplayerPos>> [callback on_pos %d]
     bind . <<MplayerStopped>> [callback on_done]
     bind . <<MplayerDebug>> [callback on_debug %d]
-    bind $TrackView <Return> [callback on_play]
-    bind $TrackView <Double-1> [callback on_play]
+    bind $TrackTree <Return> [callback on_play]
+    bind $TrackTree <Double-1> [callback on_play]
     bind . <F2> [callback on_play_prev]
     bind . <F3> [callback on_play_replay]
     bind . <F4> [callback on_play_pause_resume]
@@ -239,8 +239,8 @@ oo::define App method on_pos data {
         -text "[humanize_secs $pos]/[humanize_secs $total]"
     if {!$GotSecs} {
         set GotSecs 1
-        # TODO update db with track's secs
-        # TODO update TrackView with track's secs
+        # TODO update db with track's secs ($total)
+        # TODO update TrackTree with track's secs ($total)
     }
 }
 

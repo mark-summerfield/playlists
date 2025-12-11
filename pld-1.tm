@@ -34,6 +34,8 @@ oo::define Pld constructor filename {
                     VALUES (:lid, :tid9, 9)}
                 $Db eval {INSERT INTO ListTracks (lid, tid, pos)
                     VALUES (:lid, :tid2, 2)}
+                $Db eval {INSERT INTO LastItem (lid, tid)
+                    VALUES (:lid, :tid9)}
             }
         }
     }
@@ -68,7 +70,7 @@ oo::define Pld method last_item {} {
     return $item
 }
 
-oo::define Pld method tids_for_lid lid {
+oo::define Pld method tracks_for_lid lid {
     set tracks [list]
     $Db eval {SELECT DISTINCT Tracks.tid, filename, secs
               FROM Tracks, ListTracks
@@ -79,6 +81,15 @@ oo::define Pld method tids_for_lid lid {
         lappend tracks [list $tid $filename $secs]
     }
     return $tracks
+}
+
+oo::define Pld method track_for_tid tid {
+    set track [$Db eval {SELECT filename, secs FROM Tracks
+                         WHERE tid = :tid LIMIT 1}]
+    if {![llength $track]} {
+        set track [list "" 0]
+    }
+    return $track
 }
 
 # API
@@ -99,7 +110,6 @@ oo::define Pld method tids_for_lid lid {
 #                                           # Track → Remove from
 #   track_delete tid # delete the track and remove from all playlists
 #       # Track → Delete
-#   track_for_tid tid → track_item
 #   track_update_secs tid secs
 #   history # list of (lid, cid) pairs order hid DESC
 #   history_insert lid tid

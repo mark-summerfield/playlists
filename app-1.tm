@@ -9,7 +9,7 @@ package require util
 oo::singleton create App {
     variable Player
     variable ListTree
-    variable TrackView
+    variable TrackTree
     variable GotSecs
     variable Pldb
 }
@@ -39,26 +39,33 @@ oo::define App method show {} {
 oo::define App method on_startup {} {
     set config [Config new]
     if {[set sashpos [$config sashpos]]} { .mf.pw sashpos 0 $sashpos }
-    lassign [$Pldb last_item] lid tid
-    my populate_listtree $lid:$tid
+    my populate {*}[$Pldb last_item]
 }
 
 oo::define App method play_track tid {
     set GotSecs 0
-    set filename "" ;# TODO get from db using tid
-    wm title . "[humanize_filename $filename] — [tk appname]"
-    $Player play $filename
-    #$config add_history $filename ;# TODO pld
-    #my populate_history_menu    
+    lassign [$Pldb track_for_tid $tid] filename secs
+    if {$filename ne ""} {
+        if {$secs} { set GotSecs 1 }
+        wm title . "[humanize_trackname $filename] — [tk appname]"
+        $Player play $filename
+        #$config add_history $filename ;# TODO pld
+        #my populate_history_menu    
+    }
 }
 
-oo::define App method populate_listtree {{sel_id "0:0"}} {
+oo::define App method populate {{sel_lid 0} {sel_tid 0}} {
+    my populate_listtree $sel_lid
+    my populate_tracktree $sel_lid $sel_tid
+}
+
+oo::define App method populate_listtree {{sel_lid 0}} {
     $ListTree delete [$ListTree children {}]
     set prev_parent {}
     set prev_category ""
-    set first ""
     foreach row [$Pldb lists] {
         lassign $row lid name
+        if {!$sel_lid} { set sel_lid $lid }
         set parent {}
         set category ""
         if {[set i [string first / $name]] != -1} {
@@ -74,19 +81,25 @@ oo::define App method populate_listtree {{sel_id "0:0"}} {
                 set prev_category $category
             }
         }
-        set playlist [$ListTree insert $parent end -id $lid -text $name]
-        if {$first eq ""} { set first $playlist } ;# TODO $track
-        foreach track [$Pldb tids_for_lid $lid] {
-            puts $track
-        }
-        # TODO insert all the list's tracks as children of $playlist
-        # using: -id L$lidT$tid and humanized names
+        $ListTree insert $parent end -id $lid -text $name
     }
-    if {$sel_id ne "" && $sel_id ne "0:0"} { set first $sel_id }
-    if {$first ne "" && $first ne "0:0"} {
-        $ListTree selection set $first
-        $ListTree see $first
-        $ListTree focus $first
+    if {$sel_lid} { select_tree_item $ListTree $sel_lid }
+}
+
+oo::define App method populate_tracktree {lid {sel_tid 0}} {
+    $TrackTree delete [$TrackTree children {}]
+    set n 0
+    foreach row [$Pldb tracks_for_lid $lid] {
+        lassign $row tid filename secs
+        set secs [expr {$secs ? [humanize_secs $secs] : ""}]
+        $TrackTree insert {} end -id $lid:$tid -text [incr n]. \
+            -values [list [humanize_trackname $filename] $secs]
+        if {!$sel_tid} { set sel_tid $tid }
     }
-    focus $ListTree
+    if {$n} {
+        select_tree_item $TrackTree $lid:$sel_tid
+        focus $TrackTree
+    } else {
+        focus $ListTree
+    }
 }
