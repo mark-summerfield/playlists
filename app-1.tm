@@ -8,7 +8,6 @@ oo::singleton create App {
     variable Player
     variable ListTree
     variable TrackTree
-    variable GotSecs
     variable Pldb
 }
 
@@ -23,7 +22,6 @@ oo::define App constructor {} {
     Config new ;# we need tk scaling done early
     set Pldb [Pld new [get_db_filename]]
     set Player ""
-    set GotSecs 0
     my make_ui
 }
 
@@ -50,14 +48,9 @@ oo::define App method get_current_lid {} {
 }
 
 oo::define App method play_track ttid {
-    set GotSecs 0
     lassign [split $ttid :] lid tid
     lassign [$Pldb track_for_tid $tid] filename secs
     if {$filename ne ""} {
-        if {!$GotSecs && $secs} {
-            $Pldb track_update_secs $tid $secs
-            set GotSecs 1
-        }
         $Pldb history_insert $lid $tid
         wm title . "[humanize_trackname $filename] — [tk appname]"
         $Player play $filename
