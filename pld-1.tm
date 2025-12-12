@@ -21,8 +21,10 @@ oo::define Pld constructor filename {
             $Db eval [readFile $::APPPATH/sql/create.sql]
             # TODO delete; this is for testing
             $Db transaction {
-                $Db eval {INSERT INTO Lists (name) VALUES ('Pop/Beatles')}
-                $Db eval {INSERT INTO Lists (name) VALUES ('Pop/ABBA')}
+                $Db eval {INSERT INTO Lists (cid, name)
+                    VALUES (2, 'Beatles')}
+                $Db eval {INSERT INTO Lists (cid, name)
+                    VALUES (2, 'ABBA')}
                 set lid [$Db last_insert_rowid]
                 $Db eval {INSERT INTO Tracks (filename)
                     VALUES ('/home/mark/Music/ABBA/CD2/09-One_of_Us.ogg')}
@@ -30,10 +32,10 @@ oo::define Pld constructor filename {
                 $Db eval {INSERT INTO Tracks (filename)
                     VALUES ('/home/mark/Music/ABBA/CD2/02-Angeleyes.ogg')}
                 set tid2 [$Db last_insert_rowid]
-                $Db eval {INSERT INTO ListTracks (lid, tid, pos)
-                    VALUES (:lid, :tid9, 9)}
-                $Db eval {INSERT INTO ListTracks (lid, tid, pos)
-                    VALUES (:lid, :tid2, 2)}
+                $Db eval {INSERT INTO List_x_Tracks (lid, tid)
+                    VALUES (:lid, :tid9)}
+                $Db eval {INSERT INTO List_x_Tracks (lid, tid)
+                    VALUES (:lid, :tid2)}
                 $Db eval {INSERT INTO LastItem (lid, tid)
                     VALUES (:lid, :tid9)}
             }
@@ -54,10 +56,18 @@ oo::define Pld method version {} { $Db eval {PRAGMA USER_VERSION} }
 
 oo::define Pld method db {} { return $Db }
 
+oo::define Pld method categories {} {
+    set categories [list]
+    $Db eval {SELECT cid, name FROM CategoriesView} {
+        lappend categories [list $cid $name]
+    }
+    return $categories
+}
+
 oo::define Pld method lists {} {
     set lists [list]
-    $Db eval {SELECT lid, name FROM ListsView} {
-        lappend lists [list $lid $name]
+    $Db eval {SELECT cid, lid, name FROM ListsView} {
+        lappend lists [list $cid $lid $name]
     }
     return $lists
 }
@@ -72,12 +82,11 @@ oo::define Pld method last_item {} {
 
 oo::define Pld method tracks_for_lid lid {
     set tracks [list]
-    $Db eval {SELECT DISTINCT Tracks.tid, filename, secs
-              FROM Tracks, ListTracks
-              WHERE
-                Tracks.tid IN (SELECT tid FROM ListTracks WHERE lid = :lid)
-                AND Tracks.tid = ListTracks.tid
-              ORDER BY pos} {
+    $Db eval {SELECT Tracks.tid, filename, secs FROM Tracks, List_x_Tracks
+              WHERE Tracks.tid IN (SELECT tid FROM List_x_Tracks
+                                   WHERE lid = :lid)
+                AND Tracks.tid = List_x_Tracks.tid
+              ORDER BY LOWER(filename)} {
         lappend tracks [list $tid $filename $secs]
     }
     return $tracks
@@ -94,7 +103,7 @@ oo::define Pld method track_for_tid tid {
 
 # API
 #   current → lid tid # from LastItem table
-#   pids_for_tid tid # playlists containing track in pos order
+#   pids_for_tid tid # playlists containing track in filename order
 #   playlist_for_lid lid → playlist_item
 #   playlist_insert name → lid # List → New
 #   playlist_rename lid name # List → Rename

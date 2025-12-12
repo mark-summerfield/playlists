@@ -61,29 +61,16 @@ oo::define App method populate {{sel_lid 0} {sel_tid 0}} {
 
 oo::define App method populate_listtree {{sel_lid 0}} {
     $ListTree delete [$ListTree children {}]
-    set prev_parent {}
-    set prev_category ""
-    foreach row [$Pldb lists] {
-        lassign $row lid name
-        if {!$sel_lid} { set sel_lid $lid }
-        set parent {}
-        set category ""
-        if {[set i [string first / $name]] != -1} {
-            set category [string range $name 0 $i-1]
-            set name [string range $name $i+1 end]
-        }
-        if {$category ne ""} {
-            if {$category eq $prev_category} {
-                set parent $prev_parent
-            } else {
-                set parent [$ListTree insert {} end -text $category]
-                set prev_parent $parent
-                set prev_category $category
-            }
-        }
-        $ListTree insert $parent end -id $lid -text $name
+    foreach row [$Pldb categories] {
+        lassign $row cid name
+        $ListTree insert {} end -id C$cid -text $name
     }
-    if {$sel_lid} { select_tree_item $ListTree $sel_lid }
+    foreach row [$Pldb lists] {
+        lassign $row cid lid name
+        if {!$sel_lid} { set sel_lid $lid }
+        $ListTree insert C$cid end -id L$lid -text $name
+    }
+    if {$sel_lid} { select_tree_item $ListTree L$sel_lid }
 }
 
 oo::define App method populate_tracktree {lid {sel_tid 0}} {

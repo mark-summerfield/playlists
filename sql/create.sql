@@ -2,10 +2,17 @@
 
 PRAGMA USER_VERSION = 1;
 
--- name may be of form Category/Name or plain Name
+CREATE TABLE Categories (
+    cid INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    name TEXT UNIQUE NOT NULL
+);
+
 CREATE TABLE Lists (
     lid INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-    name TEXT NOT NULL
+    cid INTEGER DEFAULT 0 NOT NULL,
+    name TEXT NOT NULL,
+
+    FOREIGN KEY(cid) REFERENCES Categories(cid)
 );
 
 CREATE TABLE Tracks (
@@ -18,7 +25,7 @@ CREATE TABLE Tracks (
 
 -- Only ever has one record: auto updated when history inserted.
 CREATE TABLE LastItem (
-    lid INTEGER NOT NULL,
+    lid INTEGER NOT NULL, -- lid → cid
     tid INTEGER NOT NULL,
 
     PRIMARY KEY(lid, tid),
@@ -26,21 +33,18 @@ CREATE TABLE LastItem (
     FOREIGN KEY(tid) REFERENCES Tracks(tid)
 );
 
-CREATE TABLE ListTracks (
-    lid INTEGER NOT NULL,
+CREATE TABLE List_x_Tracks (
+    lid INTEGER NOT NULL, -- lid → cid
     tid INTEGER NOT NULL,
-    pos INTEGER NOT NULL, -- position of track (within list)
 
-    UNIQUE(lid, pos),
     PRIMARY KEY (lid, tid),
     FOREIGN KEY(lid) REFERENCES Lists(lid),
-    FOREIGN KEY(tid) REFERENCES Tracks(tid),
-    CHECK(pos >= 0)
+    FOREIGN KEY(tid) REFERENCES Tracks(tid)
 );
 
 CREATE TABLE Bookmarks (
     bid INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-    lid INTEGER NOT NULL,
+    lid INTEGER NOT NULL, -- lid → cid
     tid INTEGER NOT NULL,
 
     UNIQUE(lid, tid),
@@ -50,7 +54,7 @@ CREATE TABLE Bookmarks (
 
 CREATE TABLE History (
     hid INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-    lid INTEGER NOT NULL,
+    lid INTEGER NOT NULL, -- lid → cid
     tid INTEGER NOT NULL,
 
     UNIQUE(lid, tid),
@@ -58,8 +62,13 @@ CREATE TABLE History (
     FOREIGN KEY(tid) REFERENCES Tracks(tid)
 );
 
+CREATE VIEW CategoriesView AS
+    SELECT cid, name FROM Categories ORDER BY LOWER(name);
+
 CREATE VIEW ListsView AS
-    SELECT lid, name FROM Lists ORDER BY LOWER(name);
+    SELECT Lists.cid, Lists.lid, Lists.name FROM Lists, Categories
+        WHERE Lists.cid = Categories.cid
+        ORDER BY LOWER(Categories.name), LOWER(Lists.name);
 
 CREATE VIEW BookmarksView AS
     SELECT lid, tid FROM Bookmarks ORDER BY bid DESC;
@@ -87,18 +96,18 @@ CREATE TRIGGER DeleteTrackTrigger BEFORE DELETE ON Tracks
     BEGIN
         DELETE FROM History WHERE tid = OLD.tid;
         DELETE FROM Bookmarks WHERE tid = OLD.tid;
-        DELETE FROM ListTracks WHERE tid = OLD.tid;
+        DELETE FROM List_x_Tracks WHERE tid = OLD.tid;
     END;
 
 -- If we delete a list then we must remove any of its tracks from
--- ListTracks; Uncategorized may not be deleted.
+-- List_x_Tracks; Uncategorized may not be deleted.
 CREATE TRIGGER DeleteListTrigger1 BEFORE DELETE ON Lists
     FOR EACH ROW
         WHEN OLD.lid != 0
     BEGIN
         DELETE FROM History WHERE lid = OLD.lid;
         DELETE FROM Bookmarks WHERE lid = OLD.lid;
-        DELETE FROM ListTracks WHERE lid = OLD.lid;
+        DELETE FROM List_x_Tracks WHERE lid = OLD.lid;
     END;
 
 CREATE TRIGGER DeleteListTrigger2 BEFORE DELETE ON Lists
@@ -111,7 +120,7 @@ CREATE TRIGGER DeleteListTrigger2 BEFORE DELETE ON Lists
 -- If we move a track from one list to another we must update its
 -- history & bookmark (if present).
 CREATE TRIGGER UpdateListTracksTrigger AFTER UPDATE OF lid 
-        ON ListTracks
+        ON List_x_Tracks
     FOR EACH ROW
     BEGIN
         UPDATE Bookmarks SET lid = NEW.lid
@@ -122,13 +131,15 @@ CREATE TRIGGER UpdateListTracksTrigger AFTER UPDATE OF lid
 
 -- If we delete a track from its last list it must be moved to the
 -- Uncategorized list (unless it is already there).
-CREATE TRIGGER DeleteListTracksTrigger AFTER DELETE ON ListTracks
+CREATE TRIGGER DeleteListTracksTrigger AFTER DELETE ON List_x_Tracks
     FOR EACH ROW
-        WHEN (SELECT COUNT(*) FROM ListTracks WHERE tid = OLD.tid) = 0
+        WHEN (SELECT COUNT(*) FROM List_x_Tracks WHERE tid = OLD.tid) = 0
               AND OLD.lid != 0
     BEGIN
-        INSERT INTO ListTracks (lid, tid) VALUES (0, OLD.tid);
+        INSERT INTO List_x_Tracks (lid, tid) VALUES (0, OLD.tid);
     END;
 
-INSERT INTO Lists (lid, name) VALUES (0, 'Uncategorized');
-INSERT INTO Lists (name) VALUES ('Ad-hoc Favourites');
+INSERT INTO Categories (cid, name) VALUES (0, 'Uncategorized');
+INSERT INTO Categories (cid, name) VALUES (1, 'Classical');
+INSERT INTO Categories (cid, name) VALUES (2, 'Pop');
+INSERT INTO Lists (lid, cid, name) VALUES (0, 0, 'Orphans');
