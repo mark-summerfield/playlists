@@ -1,5 +1,7 @@
 # Copyright © 2025 Mark Summerfield. All rights reserved.
 
+package require util
+
 proc select_tree_item {tree id} {
     $tree selection set $id
     $tree see $id
@@ -47,11 +49,4 @@ proc get_music_dir filename {
     return $dir
 }
 
-proc get_db_filename {} {
-    set home [file home]
-    set dir $home/data
-    if {![file exists $dir]} {
-        set dir $home
-    }
-    return $dir/[info hostname].pld
-}
+proc get_db_filename {} { regsub {.ini$} [util::get_ini_filename] .pld }
