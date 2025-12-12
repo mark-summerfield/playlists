@@ -24,6 +24,7 @@ oo::define App method prepare_ui {} {
 oo::define App method make_menubar {} {
     menu .menu
     my make_file_menu
+    my make_category_menu
     my make_list_menu
     my make_track_menu
     my make_play_menu
@@ -51,15 +52,27 @@ oo::define App method make_file_menu {} {
         -image [ui::icon quit.svg $::MENU_ICON_SIZE]
 }
 
+oo::define App method make_category_menu {} {
+    menu .menu.category
+    .menu add cascade -menu .menu.category -label Category -underline 0
+    # TODO &New…
+    # TODO &Rename…
+    # TODO &Delete…
+}
+
 oo::define App method make_list_menu {} {
     menu .menu.list
     .menu add cascade -menu .menu.list -label List -underline 0
+    .menu.list add command -command [callback on_list_new] -label New… \
+        -underline 0 -compound left \
+        -image [ui::icon quit.svg $::MENU_ICON_SIZE]
     # TODO &New…
     # TODO &Rename…
     # TODO Add &Folder…
     # TODO Add &Tracks…
-    # TODO &Merge List…
-    # TODO &Delete…
+    # TODO Merge &List…
+    # TODO &Move To Category…
+    # TODO &Delete… # Offer (*) Move to Uncategorized ( ) Permanently Delete
 }
 
 oo::define App method make_track_menu {} {
@@ -69,7 +82,7 @@ oo::define App method make_track_menu {} {
     # TODO &Move To List…
     # TODO &Copy To List…
     # TODO &Remove from List # If List is Uncategorized only option is Delete
-    # TODO &Delete… # Offer (*) Move to Uncategorized ( ) Permanently
+    # TODO &Delete… # Offer (*) Move to Uncategorized/Unlisted ( ) Permanently
     # Delete unless in Uncategorized in which case Yes or No
 }
 
