@@ -14,6 +14,7 @@ oo::singleton create App {
     variable Pldb
 }
 
+package require app_actions
 package require app_play_actions
 package require app_populate
 package require app_ui

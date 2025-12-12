@@ -174,6 +174,7 @@ oo::define App method make_bindings {} {
     bind . <<MplayerPos>> [callback on_pos %d]
     bind . <<MplayerStopped>> [callback on_done]
     bind . <<MplayerDebug>> [callback on_debug %d]
+    bind $ListTree <<TreeviewSelect>> [callback on_list_select]
     bind $TrackTree <Return> [callback on_play]
     bind $TrackTree <Double-1> [callback on_play]
     bind . <F2> [callback on_play_prev]

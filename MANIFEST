@@ -1,7 +1,8 @@
 playlists.tk # VERSION
 app-1.tm
-app_populate-1.tm
 app_ui-1.tm # TODO (1)
+app_populate-1.tm
+app_actions-1.tm
 app_play_actions-1.tm
 misc-1.tm
 mplayer-1.tm
