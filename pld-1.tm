@@ -97,6 +97,12 @@ oo::define Pld method track_for_tid tid {
     return $track
 }
 
+oo::define Pld method track_secs tid {
+    set secs [$Db eval {SELECT secs FROM Tracks WHERE tid = :tid LIMIT 1}]
+    if {![llength $secs]} { return 0 }
+    lindex $secs 0
+}
+
 oo::define Pld method track_update_secs {tid secs} {
     $Db eval {UPDATE Tracks SET secs = :secs WHERE tid = :tid}
 }

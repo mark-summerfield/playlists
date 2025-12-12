@@ -236,14 +236,16 @@ oo::define App method on_pos data {
     lassign $data pos total
     .mf.play.progress configure -value $pos -maximum $total \
         -text "[humanize_secs $pos]/[humanize_secs $total]"
-    if {$pos > 1} {
-        # TODO read secs from DB & if 0 set to total & update db & update
-        # track tree
-        # set ttid [$TrackTree selection]
-        # lassign [split $ttid :] _ tid
-        # $Pldb track_update_secs $tid $total
-        # lassign [$TrackTree item $ttid -values] name _
-        # $TrackTree item $ttid -values [list $name [humanize_secs $total]]
+    if {!$GotSecs} {
+        set GotSecs 1
+        set ttid [$TrackTree selection]
+        lassign [split $ttid :] _ tid
+        if {![set secs [$Pldb track_secs $tid]]} {
+            $Pldb track_update_secs $tid $total
+            lassign [$TrackTree item $ttid -values] name _
+            $TrackTree item $ttid \
+                -values [list $name [humanize_secs $total]]
+        }
     }
 }
 
