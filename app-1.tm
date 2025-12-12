@@ -1,10 +1,8 @@
 # Copyright © 2025 Mark Summerfield. All rights reserved.
 
 package require config
-package require misc
 package require pld
 package require ui
-package require util
 
 oo::singleton create App {
     variable Player
@@ -22,7 +20,7 @@ package require app_ui
 oo::define App constructor {} {
     ui::wishinit
     tk appname Playlists
-    set config [Config new] ;# we need tk scaling done early
+    Config new ;# we need tk scaling done early
     set Pldb [Pld new [get_db_filename]]
     set Player ""
     set GotSecs 0

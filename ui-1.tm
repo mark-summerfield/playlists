@@ -1,7 +1,5 @@
 # Copyright © 2025 Mark Summerfield. All rights reserved.
 
-package require autoscroll 1
-
 namespace eval ui {}
 
 proc ui::wishinit {} {
