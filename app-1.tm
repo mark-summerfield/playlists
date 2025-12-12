@@ -14,7 +14,8 @@ oo::singleton create App {
     variable Pldb
 }
 
-package require app_actions
+package require app_play_actions
+package require app_populate
 package require app_ui
 
 oo::define App constructor {} {
@@ -42,51 +43,24 @@ oo::define App method on_startup {} {
     my populate {*}[$Pldb last_item]
 }
 
-oo::define App method play_track tid {
+oo::define App method get_current_lid {} {
+    if {[set lid [$ListTree selection]] ne ""} {
+        if {[string match C* $lid]} { return }
+        return [string trimleft $lid L]
+    }
+}
+
+oo::define App method play_track ttid {
     set GotSecs 0
+    lassign [split $ttid :] lid tid
     lassign [$Pldb track_for_tid $tid] filename secs
     if {$filename ne ""} {
-        if {$secs} { set GotSecs 1 }
+        if {!$GotSecs && $secs} {
+            $Pldb track_update_secs $tid $secs
+            set GotSecs 1
+        }
+        $Pldb history_insert $lid $tid
         wm title . "[humanize_trackname $filename] — [tk appname]"
         $Player play $filename
-        #$config add_history $filename ;# TODO pld
-        #my populate_history_menu    
-    }
-}
-
-oo::define App method populate {{sel_lid 0} {sel_tid 0}} {
-    my populate_listtree $sel_lid
-    my populate_tracktree $sel_lid $sel_tid
-}
-
-oo::define App method populate_listtree {{sel_lid 0}} {
-    $ListTree delete [$ListTree children {}]
-    foreach row [$Pldb categories] {
-        lassign $row cid name
-        $ListTree insert {} end -id C$cid -text $name
-    }
-    foreach row [$Pldb lists] {
-        lassign $row cid lid name
-        if {!$sel_lid} { set sel_lid $lid }
-        $ListTree insert C$cid end -id L$lid -text $name
-    }
-    if {$sel_lid} { select_tree_item $ListTree L$sel_lid }
-}
-
-oo::define App method populate_tracktree {lid {sel_tid 0}} {
-    $TrackTree delete [$TrackTree children {}]
-    set n 0
-    foreach row [$Pldb tracks_for_lid $lid] {
-        lassign $row tid filename secs
-        set secs [expr {$secs ? [humanize_secs $secs] : ""}]
-        $TrackTree insert {} end -id $lid:$tid -text [incr n]. \
-            -values [list [humanize_trackname $filename] $secs]
-        if {!$sel_tid} { set sel_tid $tid }
-    }
-    if {$n} {
-        select_tree_item $TrackTree $lid:$sel_tid
-        focus $TrackTree
-    } else {
-        focus $ListTree
     }
 }

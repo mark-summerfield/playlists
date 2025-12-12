@@ -8,8 +8,8 @@ CREATE TABLE Categories (
 );
 
 CREATE TABLE Lists (
-    lid INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
     cid INTEGER DEFAULT 0 NOT NULL,
+    lid INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
     name TEXT NOT NULL,
 
     FOREIGN KEY(cid) REFERENCES Categories(cid)
@@ -77,7 +77,7 @@ CREATE VIEW HistoryView AS
     SELECT lid, tid FROM History ORDER BY hid DESC;
 
 -- Guarantees we have only one last item record
-CREATE TRIGGER InsertLastItemTrigger BEFORE DELETE ON LastItem
+CREATE TRIGGER InsertLastItemTrigger BEFORE INSERT ON LastItem
     FOR EACH ROW
     BEGIN
         DELETE FROM LastItem;
@@ -90,17 +90,15 @@ CREATE TRIGGER InsertHistoryTrigger AFTER INSERT ON History
         INSERT INTO LastItem (lid, tid) VALUES (NEW.lid, NEW.tid);
     END;
 
--- Tracks may be freely deleted. Better to move to Uncategorized.
-CREATE TRIGGER DeleteTrackTrigger BEFORE DELETE ON Tracks
+CREATE TRIGGER DeleteCategoryTrigger BEFORE DELETE ON Categories
     FOR EACH ROW
+        WHEN OLD.cid = 0
     BEGIN
-        DELETE FROM History WHERE tid = OLD.tid;
-        DELETE FROM Bookmarks WHERE tid = OLD.tid;
-        DELETE FROM List_x_Tracks WHERE tid = OLD.tid;
+        SELECT RAISE(ABORT, 'cannot delete the Uncategorized category');
     END;
 
 -- If we delete a list then we must remove any of its tracks from
--- List_x_Tracks; Uncategorized may not be deleted.
+-- List_x_Tracks; the Unlisted list may not be deleted.
 CREATE TRIGGER DeleteListTrigger1 BEFORE DELETE ON Lists
     FOR EACH ROW
         WHEN OLD.lid != 0
@@ -114,7 +112,7 @@ CREATE TRIGGER DeleteListTrigger2 BEFORE DELETE ON Lists
     FOR EACH ROW
         WHEN OLD.lid = 0
     BEGIN
-        SELECT RAISE(ABORT, 'cannot delete the Uncategorized list');
+        SELECT RAISE(ABORT, 'cannot delete the Unlisted list');
     END;
 
 -- If we move a track from one list to another we must update its
@@ -130,7 +128,7 @@ CREATE TRIGGER UpdateListTracksTrigger AFTER UPDATE OF lid
     END;
 
 -- If we delete a track from its last list it must be moved to the
--- Uncategorized list (unless it is already there).
+-- Unlisted list (unless it is already there).
 CREATE TRIGGER DeleteListTracksTrigger AFTER DELETE ON List_x_Tracks
     FOR EACH ROW
         WHEN (SELECT COUNT(*) FROM List_x_Tracks WHERE tid = OLD.tid) = 0
@@ -139,7 +137,16 @@ CREATE TRIGGER DeleteListTracksTrigger AFTER DELETE ON List_x_Tracks
         INSERT INTO List_x_Tracks (lid, tid) VALUES (0, OLD.tid);
     END;
 
+-- Tracks may be freely deleted. Better to move to Unlisted.
+CREATE TRIGGER DeleteTrackTrigger BEFORE DELETE ON Tracks
+    FOR EACH ROW
+    BEGIN
+        DELETE FROM History WHERE tid = OLD.tid;
+        DELETE FROM Bookmarks WHERE tid = OLD.tid;
+        DELETE FROM List_x_Tracks WHERE tid = OLD.tid;
+    END;
+
 INSERT INTO Categories (cid, name) VALUES (0, 'Uncategorized');
+INSERT INTO Lists (cid, lid, name) VALUES (0, 0, 'Unlisted');
 INSERT INTO Categories (cid, name) VALUES (1, 'Classical');
 INSERT INTO Categories (cid, name) VALUES (2, 'Pop');
-INSERT INTO Lists (lid, cid, name) VALUES (0, 0, 'Orphans');

@@ -66,8 +66,6 @@ oo::define App method make_track_menu {} {
     menu .menu.track
     .menu add cascade -menu .menu.track -label Track -underline 0
     # TODO &Find… (to find a track by (partial) case-insensitive name)
-    # TODO Move &Up
-    # TODO Move &Down
     # TODO &Move To List…
     # TODO &Copy To List…
     # TODO &Remove from List # If List is Uncategorized only option is Delete
