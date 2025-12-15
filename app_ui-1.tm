@@ -96,7 +96,7 @@ oo::define App method make_track_menu {} {
     menu .menu.track
     .menu add cascade -menu .menu.track -label Track -underline 0
     .menu.track add command -command [callback on_track_find] \
-        -label Find… -underline 0 -compound left \
+        -label Find… -underline 0 -accelerator Ctrl+F -compound left \
         -image [ui::icon track-find.svg $::MENU_ICON_SIZE]
     .menu.track add command -command [callback on_track_copy_to_list] \
         -label "Copy to List…" -underline 0 -compound left \
@@ -224,49 +224,11 @@ oo::define App method make_bindings {} {
     bind . <F7> [callback on_volume_down]
     bind . <F8> [callback on_volume_up]
     bind . <Control-a> [callback on_bookmarks_add]
+    bind . <Control-f> [callback on_track_find]
     bind . <Control-o> [callback on_file_open]
     bind . <Control-q> [callback on_quit]
     bind . <Escape> [callback on_quit]
     wm protocol . WM_DELETE_WINDOW [callback on_quit]
-}
-
-oo::define App method populate_history_menu {} {
-    .menu.history delete 0 end
-    .menu.history add command -command [callback on_history_remove] \
-        -label "Remove Current" -compound left \
-        -image [ui::icon history-remove.svg $::MENU_ICON_SIZE]
-    .menu.history add separator
-    set MAX [expr {1 + [scan Z %c]}]
-    set i [scan A %c]
-    foreach tuple [$Pldb history] {
-        lassign $tuple lid tid filename
-        set label [format "%c. %s" $i [humanize_trackname $filename]]
-        .menu.history add command -label $label -underline 0 \
-            -command [callback play_db_track $lid $tid $filename true]
-        incr i
-        if {$i == $MAX} { break }
-    }
-}
-
-oo::define App method populate_bookmarks_menu {} {
-    .menu.bookmarks delete 0 end
-    .menu.bookmarks add command -command [callback on_bookmarks_add] \
-        -label "Add Current" -accelerator Ctrl+A -compound left \
-        -image [ui::icon bookmark-add.svg $::MENU_ICON_SIZE]
-    .menu.bookmarks add command -command [callback on_bookmarks_remove] \
-        -label "Remove Current" -compound left \
-        -image [ui::icon bookmark-remove.svg $::MENU_ICON_SIZE]
-    .menu.bookmarks add separator
-    set MAX [expr {1 + [scan Z %c]}]
-    set i [scan A %c]
-    foreach tuple [$Pldb bookmarks] {
-        lassign $tuple lid tid filename
-        set label [format "%c. %s" $i [humanize_trackname $filename]]
-        .menu.bookmarks add command -label $label -underline 0 \
-            -command [callback play_db_track $lid $tid $filename true]
-        incr i
-        if {$i == $MAX} { break }
-    }
 }
 
 oo::define App method on_pos data {

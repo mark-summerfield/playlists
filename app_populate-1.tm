@@ -1,5 +1,44 @@
 # Copyright © 2025 Mark Summerfield. All rights reserved.
 
+oo::define App method populate_history_menu {} {
+    .menu.history delete 0 end
+    .menu.history add command -command [callback on_history_remove] \
+        -label "Remove Current" -compound left \
+        -image [ui::icon history-remove.svg $::MENU_ICON_SIZE]
+    .menu.history add separator
+    set MAX [expr {1 + [scan Z %c]}]
+    set i [scan A %c]
+    foreach tuple [$Pldb history] {
+        lassign $tuple lid tid filename
+        set label [format "%c. %s" $i [humanize_trackname $filename]]
+        .menu.history add command -label $label -underline 0 \
+            -command [callback play_db_track $lid $tid $filename true]
+        incr i
+        if {$i == $MAX} { break }
+    }
+}
+
+oo::define App method populate_bookmarks_menu {} {
+    .menu.bookmarks delete 0 end
+    .menu.bookmarks add command -command [callback on_bookmarks_add] \
+        -label "Add Current" -accelerator Ctrl+A -compound left \
+        -image [ui::icon bookmark-add.svg $::MENU_ICON_SIZE]
+    .menu.bookmarks add command -command [callback on_bookmarks_remove] \
+        -label "Remove Current" -compound left \
+        -image [ui::icon bookmark-remove.svg $::MENU_ICON_SIZE]
+    .menu.bookmarks add separator
+    set MAX [expr {1 + [scan Z %c]}]
+    set i [scan A %c]
+    foreach tuple [$Pldb bookmarks] {
+        lassign $tuple lid tid filename
+        set label [format "%c. %s" $i [humanize_trackname $filename]]
+        .menu.bookmarks add command -label $label -underline 0 \
+            -command [callback play_db_track $lid $tid $filename true]
+        incr i
+        if {$i == $MAX} { break }
+    }
+}
+
 oo::define App method populate_listtree {{sel_lid 0}} {
     $ListTree delete [$ListTree children {}]
     foreach row [$Pldb categories] {
