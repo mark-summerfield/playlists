@@ -64,6 +64,11 @@ oo::define Pld method categories {} {
     return $categories
 }
 
+oo::define Pld method category_insert category {
+    $Db eval {INSERT INTO Categories (name) VALUES (:category)}
+    $Db last_insert_rowi
+}
+
 oo::define Pld method lists {} {
     set lists [list]
     $Db eval {SELECT cid, lid, name FROM ListsView} {

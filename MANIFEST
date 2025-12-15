@@ -3,9 +3,9 @@ app-1.tm
 app_ui-1.tm
 app_populate-1.tm
 app_actions-1.tm
-app_category_actions-1.tm
-app_list_actions-1.tm
-app_track_actions-1.tm
+app_category_actions-1.tm # TODO
+app_list_actions-1.tm # TODO
+app_track_actions-1.tm # TODO
 app_play_actions-1.tm
 misc-1.tm
 mplayer-1.tm
@@ -24,6 +24,7 @@ about_form-1.tm
 abstract_form-1.tm
 maybe_save_form-1.tm
 message_form-1.tm
+entry_form-1.tm
 yes_no_form-1.tm
 ui-1.tm
 

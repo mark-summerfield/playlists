@@ -1,10 +1,5 @@
 # Copyright © 2025 Mark Summerfield. All rights reserved.
 
-oo::define App method populate {{sel_lid 0} {sel_tid 0}} {
-    my populate_listtree $sel_lid
-    my populate_tracktree $sel_lid $sel_tid
-}
-
 oo::define App method populate_listtree {{sel_lid 0}} {
     $ListTree delete [$ListTree children {}]
     foreach row [$Pldb categories] {
