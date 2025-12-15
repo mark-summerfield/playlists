@@ -71,10 +71,12 @@ CREATE VIEW ListsView AS
         ORDER BY LOWER(Categories.name), LOWER(Lists.name);
 
 CREATE VIEW BookmarksView AS
-    SELECT lid, tid FROM Bookmarks ORDER BY bid DESC;
+    SELECT lid, Tracks.tid, filename FROM Bookmarks, Tracks
+        WHERE Tracks.tid = Bookmarks.tid ORDER BY bid DESC;
 
 CREATE VIEW HistoryView AS
-    SELECT lid, tid FROM History ORDER BY hid DESC;
+    SELECT lid, Tracks.tid, filename FROM History, Tracks
+        WHERE Tracks.tid = History.tid ORDER BY hid DESC;
 
 -- Guarantees we have only one last item record
 CREATE TRIGGER InsertLastItemTrigger BEFORE INSERT ON LastItem

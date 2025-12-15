@@ -3,9 +3,11 @@
 package require util
 
 proc select_tree_item {tree id} {
-    $tree selection set $id
-    $tree see $id
-    $tree focus $id
+    if {[llength [$tree children {}]]} {
+        $tree selection set $id
+        $tree see $id
+        $tree focus $id
+    }
 }
 
 proc humanize_secs secs {

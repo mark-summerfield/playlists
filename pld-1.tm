@@ -107,11 +107,27 @@ oo::define Pld method track_update_secs {tid secs} {
     $Db eval {UPDATE Tracks SET secs = :secs WHERE tid = :tid}
 }
 
+oo::define Pld method history {} {
+    set history [list]
+    $Db eval {SELECT lid, tid, filename FROM HistoryView} {
+        lappend history [list $lid $tid $filename]
+    }
+    return $history
+}
+
 oo::define Pld method history_insert {lid tid} {
     $Db transaction {
         $Db eval {DELETE FROM History WHERE lid = :lid AND tid = :tid}
         $Db eval {INSERT INTO History (lid, tid) VALUES (:lid, :tid)}
     }
+}
+
+oo::define Pld method bookmarks {} {
+    set bookmarks [list]
+    $Db eval {SELECT lid, tid, filename FROM BookmarksView} {
+        lappend bookmarks [list $lid $tid $filename]
+    }
+    return $bookmarks
 }
 
 # API
@@ -129,10 +145,8 @@ oo::define Pld method history_insert {lid tid} {
 #                                           # Track → Remove from
 #   track_delete tid # delete the track and remove from all lists
 #       # Track → Delete
-#   history # list of (lid, cid) pairs order hid DESC
 #   history_clear
 #   history_remove lid tid
-#   bookmarks # list of (lid, cid) pairs order bid DESC
 #   bookmarks_insert lid tid
 #   bookmarks_clear
 #   bookmarks_remove lid tid

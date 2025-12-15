@@ -238,15 +238,14 @@ oo::define App method populate_history_menu {} {
     .menu.history add separator
     set MAX [expr {1 + [scan Z %c]}]
     set i [scan A %c]
-    puts populate_history_menu ;# TODO get from db
-    #set config [Config new]
-    #foreach filename [$config history] {
-    #    set label [format "%c. %s" $i [humanize_filename $filename]]
-    #    .menu.history add command -label $label -underline 0 \
-    #        -command [callback play_track $filename]
-    #    incr i
-    #    if {$i == $MAX} { break }
-    #}
+    foreach tuple [$Pldb history] {
+        lassign $tuple lid tid filename
+        set label [format "%c. %s" $i [humanize_trackname $filename]]
+        .menu.history add command -label $label -underline 0 \
+            -command [callback play_db_track $lid $tid $filename true]
+        incr i
+        if {$i == $MAX} { break }
+    }
 }
 
 oo::define App method populate_bookmarks_menu {} {
@@ -260,15 +259,14 @@ oo::define App method populate_bookmarks_menu {} {
     .menu.bookmarks add separator
     set MAX [expr {1 + [scan Z %c]}]
     set i [scan A %c]
-    puts populate_bookmarks_menu ;# TODO get from db
-    #set config [Config new]
-    #foreach filename [$config bookmarks] {
-    #    set label [format "%c. %s" $i [humanize_filename $filename]]
-    #    .menu.bookmarks add command -label $label -underline 0 \
-    #        -command [callback play_track $filename]
-    #    incr i
-    #    if {$i == $MAX} { break }
-    #}
+    foreach tuple [$Pldb bookmarks] {
+        lassign $tuple lid tid filename
+        set label [format "%c. %s" $i [humanize_trackname $filename]]
+        .menu.bookmarks add command -label $label -underline 0 \
+            -command [callback play_db_track $lid $tid $filename true]
+        incr i
+        if {$i == $MAX} { break }
+    }
 }
 
 oo::define App method on_pos data {

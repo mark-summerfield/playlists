@@ -1,6 +1,6 @@
 playlists.tk # VERSION
 app-1.tm
-app_ui-1.tm # TODO
+app_ui-1.tm
 app_populate-1.tm
 app_actions-1.tm
 app_category_actions-1.tm
@@ -11,7 +11,7 @@ misc-1.tm
 mplayer-1.tm
 config-1.tm
 config_form-1.tm
-pld-1.tm # TODO
+pld-1.tm
 
 sql/prepare.sql
 sql/create.sql

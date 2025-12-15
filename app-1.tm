@@ -16,8 +16,8 @@ package require app_actions
 package require app_category_actions
 package require app_list_actions
 package require app_play_actions
-package require app_track_actions
 package require app_populate
+package require app_track_actions
 package require app_ui
 
 oo::define App constructor {} {
@@ -55,10 +55,32 @@ oo::define App method get_current_lid {} {
 oo::define App method play_track ttid {
     lassign [split $ttid :] lid tid
     lassign [$Pldb track_for_tid $tid] filename _
+    my play_db_track $lid $tid $filename
+}
+
+oo::define App method play_db_track {lid tid filename {goto false}} {
     if {$filename ne ""} {
+        if {$goto} { my goto_track $lid $tid $filename }
         set GotSecs 0
         $Pldb history_insert $lid $tid
         wm title . "[humanize_trackname $filename] — [tk appname]"
         $Player play $filename
     }
+}
+
+oo::define App method goto_track {lid tid filename} {
+    if {[$ListTree selection] ne "L$lid"} {
+        set done 0
+        foreach tcid [$ListTree children {}] {
+            foreach tlid [$ListTree children $tcid] {
+                if {$tlid eq "L$lid"} {
+                    $ListTree selection set L$lid
+                    set done 1
+                    break
+                }
+            }
+            if {$done} { break }
+        }
+    }
+    after idle [list select_tree_item $TrackTree $lid:$tid]
 }
