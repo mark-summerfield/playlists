@@ -55,9 +55,15 @@ oo::define App method make_file_menu {} {
 oo::define App method make_category_menu {} {
     menu .menu.category
     .menu add cascade -menu .menu.category -label Category -underline 0
-    # TODO &New…
-    # TODO &Rename…
-    # TODO &Delete…
+    .menu.category add command -command [callback on_category_new] \
+        -label New… -underline 0 -compound left \
+        -image [ui::icon category-new.svg $::MENU_ICON_SIZE]
+    .menu.category add command -command [callback on_category_rename] \
+        -label Rename… -underline 0 -compound left \
+        -image [ui::icon category-rename.svg $::MENU_ICON_SIZE]
+    .menu.category add command -command [callback on_category_delete] \
+        -label Delete… -underline 0 -compound left \
+        -image [ui::icon category-delete.svg $::MENU_ICON_SIZE]
 }
 
 oo::define App method make_list_menu {} {
@@ -65,25 +71,45 @@ oo::define App method make_list_menu {} {
     .menu add cascade -menu .menu.list -label List -underline 0
     .menu.list add command -command [callback on_list_new] -label New… \
         -underline 0 -compound left \
-        -image [ui::icon quit.svg $::MENU_ICON_SIZE]
-    # TODO &New…
-    # TODO &Rename…
-    # TODO Add &Folder…
-    # TODO Add &Tracks…
-    # TODO Merge &List…
-    # TODO &Move To Category…
-    # TODO &Delete… # Offer (*) Move to Uncategorized ( ) Permanently Delete
+        -image [ui::icon list-new.svg $::MENU_ICON_SIZE]
+    .menu.list add command -command [callback on_list_rename] \
+        -label Rename… -underline 0 -compound left \
+        -image [ui::icon list-rename.svg $::MENU_ICON_SIZE]
+    .menu.list add command -command [callback on_list_add_folder] \
+        -label "Add Folder…" -underline 4 -compound left \
+        -image [ui::icon list-add-folder.svg $::MENU_ICON_SIZE]
+    .menu.list add command -command [callback on_list_add_tracks] \
+        -label "Add Tracks…" -underline 4 -compound left \
+        -image [ui::icon list-add-tracks.svg $::MENU_ICON_SIZE]
+    .menu.list add command -command [callback on_list_merge] \
+        -label "Merge List…" -underline 6 -compound left \
+        -image [ui::icon list-merge.svg $::MENU_ICON_SIZE]
+    .menu.list add command -command [callback on_list_move_to_category] \
+        -label "Move to Category…" -underline 0 -compound left \
+        -image [ui::icon list-move-to-category.svg $::MENU_ICON_SIZE]
+    .menu.list add command -command [callback on_list_delete] \
+        -label Delete… -underline 0 -compound left \
+        -image [ui::icon list-delete.svg $::MENU_ICON_SIZE]
 }
 
 oo::define App method make_track_menu {} {
     menu .menu.track
     .menu add cascade -menu .menu.track -label Track -underline 0
-    # TODO &Find… (to find a track by (partial) case-insensitive name)
-    # TODO &Move To List…
-    # TODO &Copy To List…
-    # TODO &Remove from List # If List is Uncategorized only option is Delete
-    # TODO &Delete… # Offer (*) Move to Uncategorized/Unlisted ( ) Permanently
-    # Delete unless in Uncategorized in which case Yes or No
+    .menu.track add command -command [callback on_track_find] \
+        -label Find… -underline 0 -compound left \
+        -image [ui::icon track-find.svg $::MENU_ICON_SIZE]
+    .menu.track add command -command [callback on_track_copy_to_list] \
+        -label "Copy to List…" -underline 0 -compound left \
+        -image [ui::icon track-copy-to-list.svg $::MENU_ICON_SIZE]
+    .menu.track add command -command [callback on_track_move_to_list] \
+        -label "Move to List…" -underline 0 -compound left \
+        -image [ui::icon track-move-to-list.svg $::MENU_ICON_SIZE]
+    .menu.track add command -command [callback on_track_remove_from_list] \
+        -label "Remove from List…" -underline 0 -compound left \
+        -image [ui::icon track-remove-from-list.svg $::MENU_ICON_SIZE]
+    .menu.track add command -command [callback on_track_delete] \
+        -label Delete… -underline 0 -compound left \
+        -image [ui::icon track-delete.svg $::MENU_ICON_SIZE]
 }
 
 oo::define App method make_play_menu {} {
@@ -208,7 +234,7 @@ oo::define App method populate_history_menu {} {
     .menu.history delete 0 end
     .menu.history add command -command [callback on_history_remove] \
         -label "Remove Current" -compound left \
-        -image [ui::icon list-remove.svg $::MENU_ICON_SIZE]
+        -image [ui::icon history-remove.svg $::MENU_ICON_SIZE]
     .menu.history add separator
     set MAX [expr {1 + [scan Z %c]}]
     set i [scan A %c]
@@ -227,10 +253,10 @@ oo::define App method populate_bookmarks_menu {} {
     .menu.bookmarks delete 0 end
     .menu.bookmarks add command -command [callback on_bookmarks_add] \
         -label "Add Current" -accelerator Ctrl+A -compound left \
-        -image [ui::icon list-add.svg $::MENU_ICON_SIZE]
+        -image [ui::icon bookmark-add.svg $::MENU_ICON_SIZE]
     .menu.bookmarks add command -command [callback on_bookmarks_remove] \
         -label "Remove Current" -compound left \
-        -image [ui::icon list-remove.svg $::MENU_ICON_SIZE]
+        -image [ui::icon bookmark-remove.svg $::MENU_ICON_SIZE]
     .menu.bookmarks add separator
     set MAX [expr {1 + [scan Z %c]}]
     set i [scan A %c]

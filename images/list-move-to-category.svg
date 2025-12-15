@@ -4,7 +4,7 @@
    id="svg4198"
    height="48px"
    width="48px"
-   sodipodi:docname="list.svg"
+   sodipodi:docname="list-move-to-category.svg"
    inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
@@ -27,15 +27,34 @@
      inkscape:window-height="480"
      id="namedview101"
      showgrid="false"
-     inkscape:zoom="5.8115339"
-     inkscape:cx="-4.8180051"
-     inkscape:cy="24.520205"
+     inkscape:zoom="8.2187501"
+     inkscape:cx="-22.996198"
+     inkscape:cy="26.342205"
      inkscape:current-layer="svg4198"
      inkscape:showpageshadow="2"
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1" />
   <defs
      id="defs4200">
+    <marker
+       style="overflow:visible"
+       id="TriangleStart"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="TriangleStart"
+       markerWidth="2.3239999"
+       markerHeight="2.6867051"
+       viewBox="0 0 5.3244081 6.1553851"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         id="path135" />
+    </marker>
     <linearGradient
        id="linearGradient3076"
        inkscape:swatch="solid">
@@ -454,6 +473,34 @@
          style="stop-color:#fff;stop-opacity:.37931"
          offset="1" />
     </linearGradient>
+    <radialGradient
+       id="radialGradient3218"
+       gradientUnits="userSpaceOnUse"
+       cy="552.38"
+       cx="320.41"
+       gradientTransform="matrix(0.70650004,-0.25397999,0.16441001,0.45733998,-104.09998,-14.260001)"
+       r="210.59"
+       inkscape:collect="always">
+      <stop
+         id="stop3212"
+         style="stop-color:#e3e8fb"
+         offset="0" />
+      <stop
+         id="stop3214"
+         style="stop-color:#b1e4f3"
+         offset="1" />
+    </radialGradient>
+    <inkscape:path-effect
+       effect="bspline"
+       id="path-effect929"
+       is_visible="true"
+       lpeversion="1"
+       weight="33.333333"
+       steps="2"
+       helper_size="0"
+       apply_no_weight="true"
+       apply_with_weight="true"
+       only_selected="false" />
   </defs>
   <metadata
      id="metadata4203">
@@ -750,4 +797,21 @@
          d="m 71.542,16.852 c 0,0 22.417,33.863 6.518,35.93 3.657,-4.292 3.816,-16.534 -6.518,-35.93 z" />
     </g>
   </g>
+  <g
+     transform="matrix(3.4098674,0,0,3.4098674,219.72985,68.22217)"
+     id="g12863-6-9" />
+  <path
+     id="path2396"
+     style="fill:url(#radialGradient3218);stroke:#000000;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none"
+     d="m 29.019655,20.265583 c -1.199285,0.854479 -1.993433,2.142275 -2.156006,3.441409 -0.828339,0.0097 -1.701836,0.194386 -2.567595,0.569384 -3.148852,1.365549 -5.019068,4.755121 -4.175245,7.568022 0.09677,0.323164 0.227084,0.62446 0.383849,0.903077 -1.268961,1.210041 -1.888279,2.9433 -1.436048,4.450587 0.48836,1.627157 2.076655,2.501076 3.859135,2.297782 -0.266436,0.783207 -0.313529,1.606909 -0.08451,2.371488 0.616095,2.052372 2.979831,2.909283 5.277765,1.913063 0.532227,-0.230831 1.014135,-0.541845 1.433466,-0.907936 1.52572,1.501617 4.073962,1.906586 6.568657,0.825324 3.353359,-1.453833 5.35389,-5.050749 4.493295,-8.053985 0.260629,-0.08099 0.52255,-0.175755 0.78318,-0.289145 3.376582,-1.463552 5.380983,-5.099344 4.475873,-8.11392 -0.523192,-1.744597 -1.907628,-2.898754 -3.635272,-3.280232 0.107737,-0.617169 0.0858,-1.242438 -0.09161,-1.83369 -0.661252,-2.204639 -3.202397,-3.123105 -5.670644,-2.053183 -0.532874,0.230831 -1.018006,0.535367 -1.44637,0.894167 -0.874789,-1.57694 -2.965636,-2.153614 -5.006167,-1.269166 -0.358688,0.155507 -0.696088,0.346652 -1.00575,0.566954 z"
+     inkscape:export-ydpi="26.945248"
+     inkscape:export-filename="I:\Documents and Settings\Eric\Bureau\Isometric Cloud Base.png"
+     inkscape:export-xdpi="26.945248" />
+  <path
+     style="fill:none;fill-rule:evenodd;stroke:#ff00ff;stroke-width:7;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#TriangleStart)"
+     d="m 15.69481,12.495353 c 2.946737,-0.149636 5.89238,-0.299216 8.943934,0.611695 3.051554,0.910912 6.208608,2.881319 7.70371,5.837641 1.495103,2.956322 1.329474,6.897034 1.163798,10.83886"
+     id="path927"
+     inkscape:path-effect="#path-effect929"
+     inkscape:original-d="m 15.69481,12.495353 c 2.946795,-0.148497 5.892438,-0.298076 8.836928,-0.448741 3.158397,1.971609 6.31545,3.942017 9.471541,5.911459 -0.164526,3.94299 -0.497027,11.825478 -0.497027,11.825478"
+     sodipodi:nodetypes="cccc" />
 </svg>
