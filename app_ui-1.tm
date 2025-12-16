@@ -235,15 +235,17 @@ oo::define App method on_pos data {
     lassign $data pos total
     .mf.play.progress configure -value $pos -maximum $total \
         -text "[humanize_secs $pos]/[humanize_secs $total]"
-    if {!$GotSecs} {
-        set GotSecs 1
+    if {$GotSecs < 2} {
+        incr GotSecs ;# Need to double-check in case of fast track change
         set ttid [$TrackTree selection]
         lassign [split $ttid :] _ tid
-        if {![set secs [$Pldb track_secs $tid]]} {
+        set secs [$Pldb track_secs $tid]
+        if {$secs != $total} {
             $Pldb track_update_secs $tid $total
             lassign [$TrackTree item $ttid -values] name _
             $TrackTree item $ttid \
                 -values [list $name [humanize_secs $total]]
+            after idle [callback populate_history_menu]
         }
     }
 }
