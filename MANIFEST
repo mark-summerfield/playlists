@@ -3,7 +3,7 @@ app-1.tm
 app_ui-1.tm
 app_populate-1.tm
 app_actions-1.tm
-app_category_actions-1.tm # TODO
+app_category_actions-1.tm
 app_list_actions-1.tm # TODO
 app_track_actions-1.tm # TODO
 app_play_actions-1.tm

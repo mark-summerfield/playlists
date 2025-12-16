@@ -73,9 +73,35 @@ oo::define Pld method categories {} {
     return $categories
 }
 
-oo::define Pld method category_insert category {
-    $Db eval {INSERT INTO Categories (name) VALUES (:category)}
-    $Db last_insert_rowi
+oo::define Pld method category_info cid {
+    set info [list "" 0]
+    $Db eval {SELECT Categories.name AS name,
+              (SELECT COUNT(*) FROM Lists WHERE cid = :cid) AS n
+              FROM Categories WHERE cid = :cid LIMIT 1} {
+        set info [list $name $n]
+    }
+    return $info
+}
+
+oo::define Pld method category_name cid {
+    $Db eval {SELECT name FROM Categories WHERE cid = :cid}
+}
+
+oo::define Pld method category_list_count cid {
+    $Db eval {SELECT COUNT(*) FROM Lists WHERE cid = :cid}
+}
+
+oo::define Pld method category_insert name {
+    $Db eval {INSERT INTO Categories (name) VALUES (:name)}
+    $Db last_insert_rowid
+}
+
+oo::define Pld method category_update {cid name} {
+    $Db eval {UPDATE Categories SET name = :name WHERE cid = :cid}
+}
+
+oo::define Pld method category_delete cid {
+    $Db eval {DELETE FROM Categories WHERE cid = :cid}
 }
 
 oo::define Pld method lists {} {
