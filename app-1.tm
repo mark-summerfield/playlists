@@ -60,7 +60,7 @@ oo::define App method play_track ttid {
     my play_db_track $lid $tid $filename
 }
 
-oo::define App method play_db_track {lid tid filename {goto false}} {
+oo::define App method play_db_track {lid tid filename {goto 0}} {
     if {$filename ne ""} {
         if {$goto} { my goto_track $lid $tid $filename }
         set GotSecs 0

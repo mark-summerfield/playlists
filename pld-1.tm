@@ -56,6 +56,15 @@ oo::define Pld method filename {} { return $Filename }
 
 oo::define Pld method version {} { $Db eval {PRAGMA USER_VERSION} }
 
+oo::define Pld method category_names {{casefold 0}} {
+    set categories [list]
+    $Db eval {SELECT name FROM CategoriesView} {
+        lappend categories [expr {$casefold ? [string tolower $name] \
+                                            : $name}]
+    }
+    return $categories
+}
+
 oo::define Pld method categories {} {
     set categories [list]
     $Db eval {SELECT cid, name FROM CategoriesView} {

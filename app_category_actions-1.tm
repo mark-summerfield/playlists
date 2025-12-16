@@ -5,15 +5,7 @@ package require message_form
 
 oo::define App method on_category_new {} {
     if {[set name [EntryForm show "New Category — [tk appname]" \
-            "Enter a new category name"]] ne ""} {
-        foreach pair [$Pldb categories] {
-            lassign $pair _ category
-            if {[string equal -nocase $name $category]} {
-                MessageForm show "Existing Category — [tk appname]" \
-                    "Category $name already exists." OK warning
-                return
-            }
-        }
+            "Enter a new category name" [$Pldb category_names 1]]] ne ""} {
         set cid [$Pldb category_insert $name]
         my populate_listtree
         after idle [my select_category $cid]
@@ -21,6 +13,12 @@ oo::define App method on_category_new {} {
 }
 
 oo::define App method on_category_rename {} {
+    # TODO
+    # - get current category name
+    # - use EntryForm as above to choose a new name not already used
+    # - call (new method) $Pldb category_update $cid $name
+    # my populate_listtree
+    # after idle [my select_category $cid]
     puts on_category_rename ;# TODO
 }
 

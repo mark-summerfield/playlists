@@ -8,21 +8,23 @@ oo::class create EntryForm {
     superclass AbstractForm
 
     variable Reply
+    variable Disallowed
 }
 
-oo::define EntryForm classmethod show {title body_text} {
+oo::define EntryForm classmethod show {title body_text {disallowed {}}} {
     set reply [Ref new ""]
-    set form [EntryForm new $reply $title $body_text]
+    set form [EntryForm new $reply $title $body_text $disallowed]
     tkwait window .entry_form
     $reply get
 }
 
-oo::define EntryForm constructor {reply title body_text} {
+oo::define EntryForm constructor {reply title body_text disallowed} {
     set Reply $reply
+    set Disallowed $disallowed
     my make_widgets $title $body_text
     my make_layout
     my make_bindings
-    next .entry_form [callback on_done]
+    next .entry_form [callback on_done 0]
     my show_modal .entry_form.mf.entry
 }
 
@@ -37,12 +39,13 @@ oo::define EntryForm method make_widgets {title body_text} {
     wm title .entry_form $title
     ttk::frame .entry_form.mf
     ttk::label .entry_form.mf.label -text $body_text
-    ttk::entry .entry_form.mf.entry
+    ttk::entry .entry_form.mf.entry -validate key \
+        -validatecommand [callback on_validate %P]
     ui::apply_edit_bindings .entry_form.mf.entry
     ttk::frame .entry_form.mf.bf
     ttk::button .entry_form.mf.bf.ok_button -text OK \
         -underline 0 -compound left -command [callback on_done 1] \
-        -image [ui::icon ok.svg $size]
+        -image [ui::icon ok.svg $size] -state disabled
     ttk::button .entry_form.mf.bf.cancel_button -text Cancel \
         -underline 0 -compound left -command [callback on_done 0] \
         -image [ui::icon close.svg $size]
@@ -59,10 +62,22 @@ oo::define EntryForm method make_layout {} {
 }
 
 oo::define EntryForm method make_bindings {} {
-    bind .entry_form <Escape> [callback on_done 0]
-    bind .entry_form <Return> [callback on_done 1]
-    bind .entry_form <Alt-o> [callback on_done 1]
-    bind .entry_form <Alt-c> [callback on_done 0]
+    bind .entry_form <Escape> {.entry_form.mf.bf.cancel_button invoke}
+    bind .entry_form <Return> {.entry_form.mf.bf.ok_button invoke}
+    bind .entry_form <Alt-o> {.entry_form.mf.bf.ok_button invoke}
+    bind .entry_form <Alt-c> {.entry_form.mf.bf.cancel_button invoke}
+}
+
+oo::define EntryForm method on_validate txt {
+    set txt [string tolower [string trim $txt]]
+    if {$txt ne "" && $txt ni $Disallowed} {
+        .entry_form.mf.bf.ok_button configure -state normal
+        .entry_form.mf.entry configure -foreground black
+    } else {
+        .entry_form.mf.bf.ok_button configure -state disabled
+        .entry_form.mf.entry configure -foreground red
+    }
+    return 1
 }
 
 oo::define EntryForm method on_done ok {
