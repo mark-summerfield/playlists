@@ -13,13 +13,27 @@ oo::define App method on_category_new {} {
 }
 
 oo::define App method on_category_rename {} {
-    # TODO
-    # - get current category name
-    # - use EntryForm as above to choose a new name not already used
-    # - call (new method) $Pldb category_update $cid $name
-    # my populate_listtree
-    # after idle [my select_category $cid]
-    puts on_category_rename ;# TODO
+    if {[string match L* [set tcid [$ListTree selection]]]} {
+        set tcid [$ListTree parent $tcid]
+    }
+    if {$tcid eq "C0"} {
+        MessageForm show "Rename Category — [tk appname]" \
+            "Cannot rename the Uncategorized category." OK warning
+        return
+    }
+    if {[string match C* $tcid]} {
+        set name [$ListTree item $tcid -text]
+        if {[set name [EntryForm show "Rename Category — [tk appname]" \
+                "Enter a new category name to replace:\n$name" \
+                [$Pldb category_names 1] $name]] ne ""} {
+            puts "newname=$name"
+            # TODO
+            # - call (new method) $Pldb category_update $cid $name
+            # my populate_listtree
+            # after idle [my select_category $cid]
+            puts on_category_rename ;# TODO
+        }
+    }
 }
 
 oo::define App method on_category_delete {} {

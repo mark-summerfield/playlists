@@ -11,20 +11,26 @@ oo::class create EntryForm {
     variable Disallowed
 }
 
-oo::define EntryForm classmethod show {title body_text {disallowed {}}} {
+oo::define EntryForm classmethod show {title body_text {disallowed {}} \
+        {default ""}} {
     set reply [Ref new ""]
-    set form [EntryForm new $reply $title $body_text $disallowed]
+    set form [EntryForm new $reply $title $body_text $disallowed $default]
     tkwait window .entry_form
     $reply get
 }
 
-oo::define EntryForm constructor {reply title body_text disallowed} {
+oo::define EntryForm constructor {reply title body_text disallowed \
+        default} {
     set Reply $reply
     set Disallowed $disallowed
     my make_widgets $title $body_text
     my make_layout
     my make_bindings
     next .entry_form [callback on_done 0]
+    if {$default ne ""} {
+        .entry_form.mf.entry insert 0 $default
+        .entry_form.mf.entry selection range 0 end
+    }
     my show_modal .entry_form.mf.entry
 }
 
