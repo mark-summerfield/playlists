@@ -12,7 +12,7 @@ oo::define App method populate_history_menu {} {
         lassign $tuple lid tid filename
         set label [format "%c. %s" $i [humanize_trackname $filename]]
         .menu.history add command -label $label -underline 0 \
-            -command [callback play_db_track $lid $tid $filename true]
+            -command [callback play_db_track $lid $tid $filename 1]
         incr i
         if {$i == $MAX} { break }
     }
@@ -33,7 +33,7 @@ oo::define App method populate_bookmarks_menu {} {
         lassign $tuple lid tid filename
         set label [format "%c. %s" $i [humanize_trackname $filename]]
         .menu.bookmarks add command -label $label -underline 0 \
-            -command [callback play_db_track $lid $tid $filename true]
+            -command [callback play_db_track $lid $tid $filename 1]
         incr i
         if {$i == $MAX} { break }
     }
