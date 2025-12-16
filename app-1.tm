@@ -50,7 +50,7 @@ oo::define App method on_startup {} {
 oo::define App method get_current_lid {} {
     if {[set lid [$ListTree selection]] ne ""} {
         if {[string match C* $lid]} { return }
-        return [string trimleft $lid L]
+        return [string range $lid 1 end]
     }
 }
 
