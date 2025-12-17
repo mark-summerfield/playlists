@@ -73,6 +73,10 @@ oo::define Pld method categories {} {
     return $categories
 }
 
+oo::define Pld method cid_for_name name {
+    $Db eval {SELECT cid FROM Categories WHERE name = :name LIMIT 1}
+}
+
 oo::define Pld method category_info cid {
     $Db eval {SELECT Categories.name AS name,
               (SELECT COUNT(*) FROM Lists WHERE cid = :cid) AS n
@@ -83,7 +87,7 @@ oo::define Pld method category_info cid {
 }
 
 oo::define Pld method category_name cid {
-    $Db eval {SELECT name FROM Categories WHERE cid = :cid}
+    $Db eval {SELECT name FROM Categories WHERE cid = :cid LIMIT 1}
 }
 
 oo::define Pld method category_list_count cid {
@@ -103,6 +107,23 @@ oo::define Pld method category_delete cid {
     $Db eval {DELETE FROM Categories WHERE cid = :cid}
 }
 
+oo::define Pld method category_lists {cid {casefold 0}} {
+    set lists [list]
+    $Db eval {SELECT lid, name FROM ListsView WHERE cid = :cid} {
+        lappend lists [list $lid [expr {$casefold ? [string tolower $name] \
+                                                  : $name}]]
+    }
+    return $lists
+}
+
+oo::define Pld method category_list_names {cid {casefold 0}} {
+    set names [list]
+    $Db eval {SELECT name FROM ListsView WHERE cid = :cid} {
+        lappend names [expr {$casefold ? [string tolower $name] : $name}]
+    }
+    return $names
+}
+
 oo::define Pld method lists {} {
     set lists [list]
     $Db eval {SELECT cid, lid, name FROM ListsView} {
@@ -118,6 +139,15 @@ oo::define Pld method list_info lid {
         return [list $name $cid $category]
     }
     list "" 0 ""
+}
+
+oo::define Pld method list_insert {cid name} {
+    $Db eval {INSERT INTO Lists (cid, name) VALUES (:cid, :name)}
+    $Db last_insert_rowid
+}
+
+oo::define Pld method list_update {cid lid name} {
+    $Db eval {UPDATE Lists SET cid = :cid, name = :name WHERE lid = :lid}
 }
 
 oo::define Pld method last_item {} {

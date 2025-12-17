@@ -3,12 +3,17 @@
 package require add_edit_list_form
 
 oo::define App method on_list_new {} {
-    AddEditListForm show $Pldb
+    if {[set lid [AddEditListForm show $Pldb]]} {
+        my populate_listtree $lid
+    }
 }
 
 oo::define App method on_list_edit {} {
     if {[set tlid [my get_tlid]] ne ""} {
-        AddEditListForm show $Pldb [string range $tlid 1 end]
+        set lid [string range $tlid 1 end]
+        if {[AddEditListForm show $Pldb $lid]} {
+            my populate_listtree $lid
+        }
     }
 }
 

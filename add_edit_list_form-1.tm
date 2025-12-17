@@ -7,26 +7,30 @@ package require ui
 oo::class create AddEditListForm {
     superclass AbstractForm
 
+    variable Reply
     variable Pldb
     variable Lid
+    variable CategoryCombo
+    variable ListNameEntry
 }
 
 # lid 0 → new ; else edit
 oo::define AddEditListForm classmethod show {pldb {lid 0}} {
-    set form [AddEditListForm new $pldb $lid]
+    set reply [Ref new 0]
+    set form [AddEditListForm new $reply $pldb $lid]
     tkwait window .add_edit_list_form
+    $reply get
 }
 
-oo::define AddEditListForm constructor {pldb lid} {
+oo::define AddEditListForm constructor {reply pldb lid} {
+    set Reply $reply
     set Pldb $pldb
     set Lid $lid
     my make_widgets
     my make_layout
     my make_bindings
     next .add_edit_list_form [callback on_done 0]
-    set widget [expr {$Lid ? ".add_edit_list_form.mf.listEntry" \
-                           : ".add_edit_list_form.mf.categoryCombo"}]
-    my show_modal $widget
+    my show_modal [expr {$Lid ? $ListNameEntry : $CategoryCombo}]
 }
 
 oo::define AddEditListForm method make_widgets {} {
@@ -42,14 +46,14 @@ oo::define AddEditListForm method make_widgets {} {
     ttk::frame .add_edit_list_form.mf
     ttk::label .add_edit_list_form.mf.categoryLabel -text Category \
         -underline 1
-    set categories [lmap category [$Pldb categories] {lindex $category 1}]
-    ttk::combobox .add_edit_list_form.mf.categoryCombo -values $categories
-    .add_edit_list_form.mf.categoryCombo state readonly
+    set CategoryCombo [ttk::combobox .add_edit_list_form.mf.categoryCombo \
+        -values [$Pldb category_names]]
+    $CategoryCombo state readonly
     ttk::label .add_edit_list_form.mf.listLabel -text "List Name" \
         -underline 0
-    ttk::entry .add_edit_list_form.mf.listEntry -validate key \
-        -validatecommand [callback on_validate %P]
-    ui::apply_edit_bindings .add_edit_list_form.mf.listEntry
+    set ListNameEntry [ttk::entry .add_edit_list_form.mf.listNameEntry \
+        -validate key -validatecommand [callback on_validate %P]]
+    ui::apply_edit_bindings $ListNameEntry
     ttk::frame .add_edit_list_form.mf.bf
     ttk::button .add_edit_list_form.mf.bf.ok_button -text OK \
         -underline 0 -compound left -command [callback on_done 1] \
@@ -60,23 +64,21 @@ oo::define AddEditListForm method make_widgets {} {
     if {$Lid} {
         lassign [$Pldb list_info $Lid] name cid category
         if {$cid} {
-            .add_edit_list_form.mf.categoryCombo set $category
-            .add_edit_list_form.mf.listEntry insert 0 $name
-            .add_edit_list_form.mf.listEntry selection range 0 end
+            $CategoryCombo set $category
+            $ListNameEntry insert 0 $name
+            $ListNameEntry selection range 0 end
         }
     } else {
-        .add_edit_list_form.mf.categoryCombo set Uncategorized
+        $CategoryCombo set Uncategorized
     }
 }
 
 oo::define AddEditListForm method make_layout {} {
     set opts "-padx 3 -pady 3"
     grid .add_edit_list_form.mf.categoryLabel -row 0 -column 0 {*}$opts
-    grid .add_edit_list_form.mf.categoryCombo -row 0 -column 1 -sticky we \
-        {*}$opts
+    grid $CategoryCombo -row 0 -column 1 -sticky we {*}$opts
     grid .add_edit_list_form.mf.listLabel -row 1 -column 0 {*}$opts
-    grid .add_edit_list_form.mf.listEntry -row 1 -column 1 -sticky we \
-        {*}$opts
+    grid $ListNameEntry -row 1 -column 1 -sticky we {*}$opts
     grid .add_edit_list_form.mf.bf -row 2 -column 1 -columnspan 2 \
         -sticky we {*}$opts
     grid columnconfigure .add_edit_list_form.mf 1 -weight 1
@@ -86,9 +88,12 @@ oo::define AddEditListForm method make_layout {} {
 }
 
 oo::define AddEditListForm method make_bindings {} {
+    bind $CategoryCombo <<ComboboxSelected>> \
+        [callback on_validate [.add_edit_list_form.mf.listNameEntry get]]
     bind .add_edit_list_form <a> {
         focus .add_edit_list_form.mf.categoryCombo}
-    bind .add_edit_list_form <l> {focus .add_edit_list_form.mf.listEntry}
+    bind .add_edit_list_form <l> {
+        focus .add_edit_list_form.mf.listNameEntry}
     bind .add_edit_list_form <Escape> {
         .add_edit_list_form.mf.bf.cancel_button invoke}
     bind .add_edit_list_form <Return> {
@@ -101,21 +106,31 @@ oo::define AddEditListForm method make_bindings {} {
 
 oo::define AddEditListForm method on_validate name {
     set name [string tolower [string trim $name]]
-    # TODO
-    set disallowed {}
+    set cid [$Pldb cid_for_name [$CategoryCombo get]]
+    set disallowed [$Pldb category_list_names $cid 1]
     if {$name ne "" && $name ni $disallowed} {
         .add_edit_list_form.mf.bf.ok_button configure -state normal
-        .add_edit_list_form.mf.listEntry configure -foreground black
+        $ListNameEntry configure -foreground black
     } else {
         .add_edit_list_form.mf.bf.ok_button configure -state disabled
-        .add_edit_list_form.mf.listEntry configure -foreground red
+        $ListNameEntry configure -foreground red
+        focus $ListNameEntry
     }
     return 1
 }
 
 oo::define AddEditListForm method on_done ok {
     if {$ok} {
-        puts "add/edit name & category" 
+        set cid [$Pldb cid_for_name [$CategoryCombo get]]
+        set name [string trim [$ListNameEntry get]]
+        if {!$Lid} {
+            set Lid [$Pldb list_insert $cid $name]
+        } else {
+            $Pldb list_update $cid $Lid $name
+        }
+        $Reply set $Lid
+    } else {
+        $Reply set 0
     }
     my delete
 }
