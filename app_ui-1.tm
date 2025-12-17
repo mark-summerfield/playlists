@@ -61,6 +61,7 @@ oo::define App method make_category_menu {} {
     .menu.category add command -command [callback on_category_rename] \
         -label Rename… -underline 0 -compound left \
         -image [ui::icon category-rename.svg $::MENU_ICON_SIZE]
+    .menu.category add separator
     .menu.category add command -command [callback on_category_delete] \
         -label Delete… -underline 0 -compound left \
         -image [ui::icon category-delete.svg $::MENU_ICON_SIZE]
@@ -84,6 +85,7 @@ oo::define App method make_list_menu {} {
     .menu.list add command -command [callback on_list_merge] \
         -label "Merge List…" -underline 6 -compound left \
         -image [ui::icon list-merge.svg $::MENU_ICON_SIZE]
+    .menu.list add separator
     .menu.list add command -command [callback on_list_delete] \
         -label Delete… -underline 0 -compound left \
         -image [ui::icon list-delete.svg $::MENU_ICON_SIZE]
@@ -104,6 +106,7 @@ oo::define App method make_track_menu {} {
     .menu.track add command -command [callback on_track_remove_from_list] \
         -label "Remove from List…" -underline 0 -compound left \
         -image [ui::icon track-remove-from-list.svg $::MENU_ICON_SIZE]
+    .menu.track add separator
     .menu.track add command -command [callback on_track_delete] \
         -label Delete… -underline 0 -compound left \
         -image [ui::icon track-delete.svg $::MENU_ICON_SIZE]
