@@ -74,13 +74,12 @@ oo::define Pld method categories {} {
 }
 
 oo::define Pld method category_info cid {
-    set info [list "" 0]
     $Db eval {SELECT Categories.name AS name,
               (SELECT COUNT(*) FROM Lists WHERE cid = :cid) AS n
               FROM Categories WHERE cid = :cid LIMIT 1} {
-        set info [list $name $n]
+        return [list $name $n]
     }
-    return $info
+    list "" 0
 }
 
 oo::define Pld method category_name cid {
@@ -110,6 +109,15 @@ oo::define Pld method lists {} {
         lappend lists [list $cid $lid $name]
     }
     return $lists
+}
+
+oo::define Pld method list_info lid {
+    $Db eval {SELECT Lists.name AS name, Categories.cid AS cid,
+                     Categories.name AS category FROM Lists, Categories
+              WHERE lid = :lid AND Lists.cid = Categories.cid LIMIT 1} {
+        return [list $name $cid $category]
+    }
+    list "" 0 ""
 }
 
 oo::define Pld method last_item {} {

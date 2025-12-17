@@ -72,8 +72,8 @@ oo::define App method make_list_menu {} {
     .menu.list add command -command [callback on_list_new] -label New… \
         -underline 0 -compound left \
         -image [ui::icon list-new.svg $::MENU_ICON_SIZE]
-    .menu.list add command -command [callback on_list_rename] \
-        -label Rename… -underline 0 -compound left \
+    .menu.list add command -command [callback on_list_edit] \
+        -label Edit… -underline 0 -compound left \
         -image [ui::icon list-rename.svg $::MENU_ICON_SIZE]
     .menu.list add command -command [callback on_list_add_folder] \
         -label "Add Folder…" -underline 4 -compound left \
@@ -84,9 +84,6 @@ oo::define App method make_list_menu {} {
     .menu.list add command -command [callback on_list_merge] \
         -label "Merge List…" -underline 6 -compound left \
         -image [ui::icon list-merge.svg $::MENU_ICON_SIZE]
-    .menu.list add command -command [callback on_list_move_to_category] \
-        -label "Move to Category…" -underline 0 -compound left \
-        -image [ui::icon list-move-to-category.svg $::MENU_ICON_SIZE]
     .menu.list add command -command [callback on_list_delete] \
         -label Delete… -underline 0 -compound left \
         -image [ui::icon list-delete.svg $::MENU_ICON_SIZE]
