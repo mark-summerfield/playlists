@@ -14,7 +14,7 @@ oo::class create AddEditListForm {
     variable ListNameEntry
 }
 
-# lid 0 → new ; else edit
+# lid 0 → new ; else edit • Returns 0 on Cancel or New|Edited lid on OK
 oo::define AddEditListForm classmethod show {pldb {lid 0}} {
     set reply [Ref new 0]
     set form [AddEditListForm new $reply $pldb $lid]
@@ -27,6 +27,7 @@ oo::define AddEditListForm constructor {reply pldb lid} {
     set Pldb $pldb
     set Lid $lid
     my make_widgets
+    my prepare
     my make_layout
     my make_bindings
     next .add_edit_list_form [callback on_done 0]
@@ -61,6 +62,9 @@ oo::define AddEditListForm method make_widgets {} {
     ttk::button .add_edit_list_form.mf.bf.cancel_button -text Cancel \
         -underline 0 -compound left -command [callback on_done 0] \
         -image [ui::icon close.svg $size]
+}
+
+oo::define AddEditListForm method prepare {} {
     if {$Lid} {
         lassign [$Pldb list_info $Lid] name cid category
         if {$cid} {
