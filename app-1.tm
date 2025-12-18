@@ -70,6 +70,19 @@ oo::define App method play_db_track {lid tid filename {goto 0}} {
     }
 }
 
+oo::define App method play_saved_track {lid tid filename {goto 0} \
+        {history 0}} {
+    if {[$Pldb track_exists $lid $tid]} {
+        my play_db_track $lid $tid $filename $goto
+    } elseif {$history} {
+        $Pldb history_delete $lid $tid
+        my populate_history_menu
+    } else {
+        $Pldb bookmarks_delete $lid $tid
+        my populate_bookmarks_menu
+    }
+}
+
 oo::define App method goto_track {lid tid filename} {
     if {[$ListTree selection] ne "L$lid"} {
         set done 0

@@ -12,7 +12,7 @@ oo::define App method populate_history_menu {} {
         lassign $tuple lid tid filename
         set label [format "%c. %s" $i [humanize_trackname $filename]]
         .menu.history add command -label $label -underline 0 \
-            -command [callback play_db_track $lid $tid $filename 1]
+            -command [callback play_saved_track $lid $tid $filename 1 1]
         incr i
         if {$i == $MAX} { break }
     }
@@ -33,7 +33,7 @@ oo::define App method populate_bookmarks_menu {} {
         lassign $tuple lid tid filename
         set label [format "%c. %s" $i [humanize_trackname $filename]]
         .menu.bookmarks add command -label $label -underline 0 \
-            -command [callback play_db_track $lid $tid $filename 1]
+            -command [callback play_saved_track $lid $tid $filename 1 0]
         incr i
         if {$i == $MAX} { break }
     }
@@ -50,7 +50,7 @@ oo::define App method populate_listtree {{sel_lid 0}} {
         if {!$sel_lid} { set sel_lid $lid }
         $ListTree insert C$cid end -id L$lid -text $name
     }
-    if {$sel_lid} { select_tree_item $ListTree L$sel_lid }
+    select_tree_item $ListTree L$sel_lid
 }
 
 oo::define App method populate_tracktree {lid {sel_tid 0}} {

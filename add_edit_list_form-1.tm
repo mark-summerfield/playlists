@@ -66,12 +66,10 @@ oo::define AddEditListForm method make_widgets {} {
 
 oo::define AddEditListForm method prepare {} {
     if {$Lid} {
-        lassign [$Pldb list_info $Lid] name cid category
-        if {$cid} {
-            $CategoryCombo set $category
-            $ListNameEntry insert 0 $name
-            $ListNameEntry selection range 0 end
-        }
+        lassign [$Pldb list_info $Lid] name cid category _
+        $CategoryCombo set $category
+        $ListNameEntry insert 0 $name
+        $ListNameEntry selection range 0 end
     } else {
         $CategoryCombo set Uncategorized
     }
@@ -86,7 +84,7 @@ oo::define AddEditListForm method make_layout {} {
     grid .add_edit_list_form.mf.bf -row 2 -column 1 -columnspan 2 \
         -sticky we {*}$opts
     grid columnconfigure .add_edit_list_form.mf 1 -weight 1
-    pack .add_edit_list_form.mf.bf.ok_button -side left {*}$opts
+    pack .add_edit_list_form.mf.bf.ok_button -side right {*}$opts
     pack .add_edit_list_form.mf.bf.cancel_button -side right {*}$opts
     pack .add_edit_list_form.mf -fill both -expand 1
 }

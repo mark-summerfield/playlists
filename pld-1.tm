@@ -134,11 +134,13 @@ oo::define Pld method lists {} {
 
 oo::define Pld method list_info lid {
     $Db eval {SELECT Lists.name AS name, Categories.cid AS cid,
-                     Categories.name AS category FROM Lists, Categories
+                     Categories.name AS category,
+                     (SELECT COUNT(*) FROM List_x_Tracks
+                      WHERE lid = :lid) AS n FROM Lists, Categories
               WHERE lid = :lid AND Lists.cid = Categories.cid LIMIT 1} {
-        return [list $name $cid $category]
+        return [list $name $cid $category $n]
     }
-    list "" 0 ""
+    list "" 0 "" 0
 }
 
 oo::define Pld method list_insert {cid name} {
@@ -150,10 +152,23 @@ oo::define Pld method list_update {cid lid name} {
     $Db eval {UPDATE Lists SET cid = :cid, name = :name WHERE lid = :lid}
 }
 
+oo::define Pld method list_update_category {cid lid} {
+    $Db eval {UPDATE Lists SET cid = :cid WHERE lid = :lid}
+}
+
+oo::define Pld method list_delete lid {
+    $Db eval {DELETE FROM Lists WHERE lid = :lid}
+}
+
 oo::define Pld method last_item {} {
     set item [$Db eval {SELECT lid, tid FROM LastItem LIMIT 1}]
     if {![llength $item]} { set item [list 0 0] }
     return $item
+}
+
+oo::define Pld method track_exists {lid tid} {
+    $Db eval {SELECT COUNT(*) FROM List_x_Tracks
+              WHERE lid = :lid AND tid = :tid}
 }
 
 oo::define Pld method tracks_for_lid lid {
@@ -200,6 +215,14 @@ oo::define Pld method history_insert {lid tid} {
     }
 }
 
+oo::define Pld method history_delete {lid {tid 0}} {
+    if {$tid} {
+        $Db eval {DELETE FROM History WHERE lid = :lid AND tid = :tid}
+    } else {
+        $Db eval {DELETE FROM History WHERE lid = :lid}
+    }
+}
+
 oo::define Pld method bookmarks {} {
     set bookmarks [list]
     $Db eval {SELECT lid, tid, filename FROM BookmarksView} {
@@ -208,6 +231,13 @@ oo::define Pld method bookmarks {} {
     return $bookmarks
 }
 
+oo::define Pld method bookmarks_delete {lid {tid 0}} {
+    if {$tid} {
+        $Db eval {DELETE FROM Bookmarks WHERE lid = :lid AND tid = :tid}
+    } else {
+        $Db eval {DELETE FROM Bookmarks WHERE lid = :lid}
+    }
+}
 # API
 #   lids_for_tid tid # lists containing track in filename order
 #   list_for_lid lid → list_item

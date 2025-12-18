@@ -107,8 +107,9 @@ CREATE TRIGGER DeleteListTrigger2 BEFORE DELETE ON Lists
     FOR EACH ROW
         WHEN OLD.lid != 0
     BEGIN
-        DELETE FROM History WHERE lid = OLD.lid;
+        DELETE FROM LastItem WHERE lid = OLD.lid;
         DELETE FROM Bookmarks WHERE lid = OLD.lid;
+        DELETE FROM History WHERE lid = OLD.lid;
         DELETE FROM List_x_Tracks WHERE lid = OLD.lid;
     END;
 
