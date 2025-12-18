@@ -36,7 +36,8 @@ oo::define App method on_list_add_tracks {} {
 oo::define App method on_list_merge {} {
     lassign [my get_tlid_and_lid] tlid lid
     if {$tlid ne ""} {
-        puts on_list_merge ;# TODO
+        set pairs [$Pldb category_and_nonempy_list_names $lid]
+        puts "on_list_merge pairs={$pairs}";# TODO
     }
 }
 

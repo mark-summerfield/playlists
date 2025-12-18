@@ -26,6 +26,9 @@ oo::define Pld constructor {filename {max_history 26}} {
                 $Db eval {INSERT INTO Lists (cid, name)
                     VALUES (2, 'Beatles')}
                 $Db eval {INSERT INTO Lists (cid, name)
+                    VALUES (2, 'Blondie')}
+                set lid2 [$Db last_insert_rowid]
+                $Db eval {INSERT INTO Lists (cid, name)
                     VALUES (2, 'ABBA')}
                 set lid [$Db last_insert_rowid]
                 $Db eval {INSERT INTO Tracks (filename)
@@ -40,6 +43,16 @@ oo::define Pld constructor {filename {max_history 26}} {
                     VALUES (:lid, :tid2)}
                 $Db eval {INSERT INTO LastItem (lid, tid)
                     VALUES (:lid, :tid9)}
+                $Db eval {INSERT INTO Tracks (filename)
+                    VALUES ('/home/mark/Music/Blondie/01-Atomic.ogg')}
+                set tid9 [$Db last_insert_rowid]
+                $Db eval {INSERT INTO Tracks (filename)
+                    VALUES ('/home/mark/Music/Blondie/06-Denis.ogg')}
+                set tid2 [$Db last_insert_rowid]
+                $Db eval {INSERT INTO List_x_Tracks (lid, tid)
+                    VALUES (:lid2, :tid9)}
+                $Db eval {INSERT INTO List_x_Tracks (lid, tid)
+                    VALUES (:lid2, :tid2)}
             }
         }
     }
@@ -122,6 +135,20 @@ oo::define Pld method category_list_names {cid {casefold 0}} {
         lappend names [expr {$casefold ? [string tolower $name] : $name}]
     }
     return $names
+}
+
+oo::define Pld method category_and_nonempy_list_names ignore_lid {
+    set pairs [list]
+    $Db eval {SELECT Categories.name AS category_name,
+                     Lists.name AS list_name
+              FROM Categories, Lists
+              WHERE Categories.cid = Lists.cid
+              AND (SELECT COUNT(*) FROM List_x_Tracks
+                   WHERE List_x_Tracks.lid = Lists.lid) > 0
+              AND Lists.lid != :ignore_lid} {
+        lappend pairs [list $category_name $list_name]
+    }
+    return $pairs
 }
 
 oo::define Pld method lists {} {
