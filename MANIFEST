@@ -1,3 +1,7 @@
+# TODO
+# - Delete List→Add {Folder,Tracks}
+# - Add buttons [Add from &Folder…] [Add &Tracks…] to AddEditListForm
+
 playlists.tk # VERSION
 app-1.tm
 app_ui-1.tm
