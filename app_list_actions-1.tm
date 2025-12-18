@@ -11,8 +11,8 @@ oo::define App method on_list_new {} {
 }
 
 oo::define App method on_list_edit {} {
-    if {[set tlid [my get_tlid]] ne ""} {
-        set lid [string range $tlid 1 end]
+    lassign [my get_tlid_and_lid] tlid lid
+    if {$tlid ne ""} {
         if {[AddEditListForm show $Pldb $lid]} {
             my populate_listtree $lid
         }
@@ -20,26 +20,29 @@ oo::define App method on_list_edit {} {
 }
 
 oo::define App method on_list_add_folder {} {
-    if {[set tlid [my get_tlid]] ne ""} {
+    lassign [my get_tlid_and_lid] tlid lid
+    if {$tlid ne ""} {
         puts on_list_add_folder ;# TODO
     }
 }
 
 oo::define App method on_list_add_tracks {} {
-    if {[set tlid [my get_tlid]] ne ""} {
+    lassign [my get_tlid_and_lid] tlid lid
+    if {$tlid ne ""} {
         puts on_list_add_tracks ;# TODO
     }
 }
 
 oo::define App method on_list_merge {} {
-    if {[set tlid [my get_tlid]] ne ""} {
+    lassign [my get_tlid_and_lid] tlid lid
+    if {$tlid ne ""} {
         puts on_list_merge ;# TODO
     }
 }
 
 oo::define App method on_list_delete {} {
-    if {[set tlid [my get_tlid]] ne ""} {
-        set lid [string range $tlid 1 end]
+    lassign [my get_tlid_and_lid] tlid lid
+    if {$tlid ne ""} {
         if {!$lid} {
             MessageForm show "Delete List — [tk appname]" \
                 "Cannot delete the “Unlisted” list from the\
@@ -64,9 +67,10 @@ oo::define App method on_list_delete {} {
     }
 }
 
-# Returns "" if a category is selected rather than a list.
-oo::define App method get_tlid {} {
+# Returns {"" 0} if a category is selected rather than a list.
+oo::define App method get_tlid_and_lid {} {
     if {[string match L* [set tlid [$ListTree selection]]]} {
-        return $tlid
+        return [list $tlid [string range $tlid 1 end]]
     }
+    list "" 0
 }

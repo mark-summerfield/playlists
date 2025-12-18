@@ -23,7 +23,7 @@ CREATE TABLE Tracks (
     CHECK(secs >= 0)
 );
 
--- Only ever has one record: auto updated when history inserted.
+-- Only ever has zero or one record: auto updated when history inserted.
 CREATE TABLE LastItem (
     lid INTEGER NOT NULL, -- lid → cid
     tid INTEGER NOT NULL,
@@ -114,11 +114,13 @@ CREATE TRIGGER DeleteListTrigger2 BEFORE DELETE ON Lists
     END;
 
 -- If we move a track from one list to another we must update its
--- history & bookmark (if present).
+-- history & bookmark & last item (if present).
 CREATE TRIGGER UpdateListTracksTrigger AFTER UPDATE OF lid 
         ON List_x_Tracks
     FOR EACH ROW
     BEGIN
+        UPDATE LastItem SET lid = NEW.lid
+            WHERE lid = OLD.lid AND tid = OLD.tid;
         UPDATE Bookmarks SET lid = NEW.lid
             WHERE lid = OLD.lid AND tid = OLD.tid;
         UPDATE History SET lid = NEW.lid
@@ -139,12 +141,13 @@ CREATE TRIGGER DeleteListTracksTrigger AFTER DELETE ON List_x_Tracks
 CREATE TRIGGER DeleteTrackTrigger BEFORE DELETE ON Tracks
     FOR EACH ROW
     BEGIN
+        DELETE FROM LastItem WHERE tid = OLD.tid;
         DELETE FROM History WHERE tid = OLD.tid;
         DELETE FROM Bookmarks WHERE tid = OLD.tid;
         DELETE FROM List_x_Tracks WHERE tid = OLD.tid;
     END;
 
--- Guarantees we have only one last item record
+-- Guarantees we have only zero or one last item record
 CREATE TRIGGER InsertLastItemTrigger BEFORE INSERT ON LastItem
     FOR EACH ROW
     BEGIN
