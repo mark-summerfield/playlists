@@ -23,21 +23,21 @@ CREATE TABLE Tracks (
     CHECK(secs >= 0)
 );
 
+CREATE TABLE List_x_Tracks (
+    lid INTEGER NOT NULL, -- lid → cid
+    tid INTEGER NOT NULL,
+
+    PRIMARY KEY (lid, tid),
+    FOREIGN KEY(lid) REFERENCES Lists(lid),
+    FOREIGN KEY(tid) REFERENCES Tracks(tid)
+);
+
 -- Only ever has zero or one record: auto updated when history inserted.
 CREATE TABLE LastItem (
     lid INTEGER NOT NULL, -- lid → cid
     tid INTEGER NOT NULL,
 
     PRIMARY KEY(lid, tid),
-    FOREIGN KEY(lid) REFERENCES Lists(lid),
-    FOREIGN KEY(tid) REFERENCES Tracks(tid)
-);
-
-CREATE TABLE List_x_Tracks (
-    lid INTEGER NOT NULL, -- lid → cid
-    tid INTEGER NOT NULL,
-
-    PRIMARY KEY (lid, tid),
     FOREIGN KEY(lid) REFERENCES Lists(lid),
     FOREIGN KEY(tid) REFERENCES Tracks(tid)
 );

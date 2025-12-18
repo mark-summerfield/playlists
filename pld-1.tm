@@ -137,18 +137,35 @@ oo::define Pld method category_list_names {cid {casefold 0}} {
     return $names
 }
 
-oo::define Pld method category_and_nonempy_list_names ignore_lid {
-    set pairs [list]
+oo::define Pld method list_merge_data ignore_lid {
+    set data [list]
     $Db eval {SELECT Categories.name AS category_name,
-                     Lists.name AS list_name
+                     Lists.name AS list_name, Lists.lid AS lid
               FROM Categories, Lists
               WHERE Categories.cid = Lists.cid
               AND (SELECT COUNT(*) FROM List_x_Tracks
                    WHERE List_x_Tracks.lid = Lists.lid) > 0
-              AND Lists.lid != :ignore_lid} {
-        lappend pairs [list $category_name $list_name]
+              AND Lists.lid != :ignore_lid
+              ORDER BY LOWER(list_name), LOWER(category_name) } {
+        lappend data [list $category_name $list_name $lid]
     }
-    return $pairs
+    return $data
+}
+
+oo::define Pld method list_merge {to_lid from_lid} {
+    $Db transaction {
+        set tids [list]
+        $Db eval {SELECT tid FROM List_x_Tracks
+                  WHERE lid = :from_lid
+                  AND tid NOT IN (SELECT tid FROM List_x_Tracks
+                                  WHERE lid = :to_lid)} {
+            lappend tids $tid
+        }
+        foreach tid $tids {
+            $Db eval {INSERT INTO List_x_Tracks (lid, tid)
+                      VALUES (:to_lid, :tid)}
+        }
+    }
 }
 
 oo::define Pld method lists {} {
@@ -157,6 +174,10 @@ oo::define Pld method lists {} {
         lappend lists [list $cid $lid $name]
     }
     return $lists
+}
+
+oo::define Pld method list_name lid {
+    $Db eval {SELECT name FROM Lists WHERE lid = :lid LIMIT 1}
 }
 
 oo::define Pld method list_info lid {
@@ -168,6 +189,11 @@ oo::define Pld method list_info lid {
         return [list $name $cid $category $n]
     }
     list "" 0 "" 0
+}
+
+oo::define Pld method lid_for_cid_and_name {cid name} {
+    $Db eval {SELECT lid FROM Lists WHERE name = :name AND cid = :cid
+              LIMIT 1}
 }
 
 oo::define Pld method list_insert {cid name} {
@@ -184,7 +210,11 @@ oo::define Pld method list_update_category {cid lid} {
 }
 
 oo::define Pld method list_delete lid {
-    $Db eval {DELETE FROM Lists WHERE lid = :lid}
+    $Db transaction {
+        $Db eval {DELETE FROM Lists WHERE lid = :lid}
+        $Db eval {DELETE FROM History WHERE lid = :lid}
+        $Db eval {DELETE FROM Bookmarks WHERE lid = :lid}
+    }
 }
 
 oo::define Pld method last_item {} {
@@ -204,6 +234,7 @@ oo::define Pld method tracks_for_lid lid {
               WHERE Tracks.tid IN (SELECT tid FROM List_x_Tracks
                                    WHERE lid = :lid)
                 AND Tracks.tid = List_x_Tracks.tid
+                AND List_x_Tracks.lid = :lid
               ORDER BY LOWER(filename)} {
         lappend tracks [list $tid $filename $secs]
     }
@@ -265,25 +296,5 @@ oo::define Pld method bookmarks_delete {lid {tid 0}} {
         $Db eval {DELETE FROM Bookmarks WHERE lid = :lid}
     }
 }
-# API
-#   lids_for_tid tid # lists containing track in filename order
-#   list_for_lid lid → list_item
-#   list_insert name → lid # List → New
-#   list_rename lid name # List → Rename
-#   list_insert_tracks → list of tids # List → Add {Folder,Tracks}
-#   list_merge lid other_lid # List → Merge List
-#   list_delete lid # List → Delete
-#   find_track pattern → list of tid # Track → Find
-#   list_move_track_to_list new_lid old_lid tid # Track → Move to
-#   list_copy_track_to_list new_lid old_lid tid # Track → Copy to
-#   list_remove_tracks lid list of tids # remove from this list
-#                                           # Track → Remove from
-#   track_delete tid # delete the track and remove from all lists
-#       # Track → Delete
-#   history_clear
-#   history_remove lid tid
-#   bookmarks_insert lid tid
-#   bookmarks_clear
-#   bookmarks_remove lid tid
 
 oo::define Pld method to_string {} { return "Pld \"$Filename\"" }

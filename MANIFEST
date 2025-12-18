@@ -8,6 +8,7 @@ app_list_actions-1.tm # TODO
 app_track_actions-1.tm # TODO
 app_play_actions-1.tm
 add_edit_list_form-1.tm
+merge_list_form-1.tm
 delete_list_form-1.tm
 misc-1.tm
 mplayer-1.tm

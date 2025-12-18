@@ -2,6 +2,7 @@
 
 package require add_edit_list_form
 package require delete_list_form
+package require merge_list_form
 package require message_form
 
 oo::define App method on_list_new {} {
@@ -36,8 +37,15 @@ oo::define App method on_list_add_tracks {} {
 oo::define App method on_list_merge {} {
     lassign [my get_tlid_and_lid] tlid lid
     if {$tlid ne ""} {
-        set pairs [$Pldb category_and_nonempy_list_names $lid]
-        puts "on_list_merge pairs={$pairs}";# TODO
+        set data [$Pldb list_merge_data $lid]
+        if {![llength $data]} {
+            MessageForm show "Merge List — [tk appname]" \
+                "There are no nonempty lists to merge from." OK warning
+            return
+        }
+        if {[MergeListForm show $Pldb $lid $data]} {
+            my populate_listtree $lid
+        }
     }
 }
 
@@ -58,8 +66,6 @@ oo::define App method on_list_delete {} {
             }
             2 {
                 $Pldb list_delete $lid
-                $Pldb history_delete $lid
-                $Pldb bookmarks_delete $lid
                 my populate_listtree
                 my populate_history_menu
                 my populate_bookmarks_menu
