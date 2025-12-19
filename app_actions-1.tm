@@ -9,7 +9,7 @@ oo::define App method on_list_select {} {
     }
 }
 
-# TODO busy
+# TODO busy indicator (+ progress indication?)
 oo::define App method maybe_add_tracks {} {
     if {[YesNoForm show "Discover Tracks — [tk appname]" \
             "Add Lists of Tracks from the music folder?"] eq "yes"} {
