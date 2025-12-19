@@ -23,42 +23,7 @@ oo::define Pld constructor {filename {max_history 26}} {
     sqlite3 $Db $Filename
     $Db eval [readFile $::APPPATH/sql/prepare.sql] 
     $Db transaction {
-        if {!$exists} {
-            $Db eval [readFile $::APPPATH/sql/create.sql]
-            # TODO delete; this is for testing
-            $Db transaction {
-                $Db eval {INSERT INTO Lists (cid, name)
-                    VALUES (2, 'Beatles')}
-                $Db eval {INSERT INTO Lists (cid, name)
-                    VALUES (2, 'Blondie')}
-                set lid2 [$Db last_insert_rowid]
-                $Db eval {INSERT INTO Lists (cid, name)
-                    VALUES (2, 'ABBA')}
-                set lid [$Db last_insert_rowid]
-                $Db eval {INSERT INTO Tracks (filename)
-                    VALUES ('/home/mark/Music/ABBA/CD2/09-One_of_Us.ogg')}
-                set tid9 [$Db last_insert_rowid]
-                $Db eval {INSERT INTO Tracks (filename)
-                    VALUES ('/home/mark/Music/ABBA/CD2/02-Angeleyes.ogg')}
-                set tid2 [$Db last_insert_rowid]
-                $Db eval {INSERT INTO List_x_Tracks (lid, tid)
-                    VALUES (:lid, :tid9)}
-                $Db eval {INSERT INTO List_x_Tracks (lid, tid)
-                    VALUES (:lid, :tid2)}
-                $Db eval {INSERT INTO LastItem (lid, tid)
-                    VALUES (:lid, :tid9)}
-                $Db eval {INSERT INTO Tracks (filename)
-                    VALUES ('/home/mark/Music/Blondie/01-Atomic.ogg')}
-                set tid9 [$Db last_insert_rowid]
-                $Db eval {INSERT INTO Tracks (filename)
-                    VALUES ('/home/mark/Music/Blondie/06-Denis.ogg')}
-                set tid2 [$Db last_insert_rowid]
-                $Db eval {INSERT INTO List_x_Tracks (lid, tid)
-                    VALUES (:lid2, :tid9)}
-                $Db eval {INSERT INTO List_x_Tracks (lid, tid)
-                    VALUES (:lid2, :tid2)}
-            }
-        }
+        if {!$exists} { $Db eval [readFile $::APPPATH/sql/create.sql] }
     }
 }
 

@@ -18,7 +18,7 @@ oo::define App method on_track_remove_from_list {} {
 }
 
 oo::define App method on_track_delete {} {
-    # TODO Offer (*) Move to Uncategorized/Unlisted ( ) Permanently
-    # Delete unless in Uncategorized in which case Yes or No
+    # TODO Offer Move to Uncategorized/Unlisted -or- Permanently Delete
+    # unless in Uncategorized in which case Yes or No
     puts on_track_delete ;# TODO
 }

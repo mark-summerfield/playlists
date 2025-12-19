@@ -12,6 +12,7 @@ oo::class create AddEditListForm {
     variable Lid
     variable CategoryCombo
     variable ListNameEntry
+    variable Folder
 }
 
 # lid 0 → new ; else edit • Returns 0 on Cancel or New|Edited lid on OK
@@ -26,12 +27,14 @@ oo::define AddEditListForm constructor {reply pldb lid} {
     set Reply $reply
     set Pldb $pldb
     set Lid $lid
+    set Folder ""
     my make_widgets
     my prepare
     my make_layout
     my make_bindings
     next .add_edit_list_form [callback on_done 0]
-    my show_modal [expr {$Lid ? $ListNameEntry : $CategoryCombo}]
+    my show_modal [expr {$Lid ? $ListNameEntry \
+                              : ".add_edit_list_form.mf.folderButton" }]
 }
 
 oo::define AddEditListForm method make_widgets {} {
@@ -45,6 +48,12 @@ oo::define AddEditListForm method make_widgets {} {
     set what [expr {$Lid ? "Edit" : "New"}]
     wm title .add_edit_list_form "$what List — [tk appname]"
     ttk::frame .add_edit_list_form.mf
+    if {!$Lid} {
+        ttk::button .add_edit_list_form.mf.folderButton \
+            -text "Add Folder’s Tracks…" -underline 4 -compound left \
+            -command [callback on_list_add_folder] \
+            -image [ui::icon list-add-folder.svg $::ICON_SIZE]
+    }
     ttk::label .add_edit_list_form.mf.categoryLabel -text Category \
         -underline 1
     set CategoryCombo [ttk::combobox .add_edit_list_form.mf.categoryCombo \
@@ -77,13 +86,15 @@ oo::define AddEditListForm method prepare {} {
 
 oo::define AddEditListForm method make_layout {} {
     set opts "-padx 3 -pady 3"
-    grid .add_edit_list_form.mf.categoryLabel -row 0 -column 0 {*}$opts
-    grid $CategoryCombo -row 0 -column 1 -sticky we {*}$opts
-    grid .add_edit_list_form.mf.listLabel -row 1 -column 0 {*}$opts
-    grid $ListNameEntry -row 1 -column 1 -sticky we {*}$opts
-    grid .add_edit_list_form.mf.bf -row 2 -column 1 -columnspan 2 \
-        -sticky we {*}$opts
-    grid columnconfigure .add_edit_list_form.mf 1 -weight 1
+    if {!$Lid} {
+        grid .add_edit_list_form.mf.folderButton -row 0 -column 0 \
+            -columnspan 2 -sticky w {*}$opts
+    }
+    grid .add_edit_list_form.mf.categoryLabel -row 1 -column 0 {*}$opts
+    grid $CategoryCombo -row 1 -column 1 -sticky we {*}$opts
+    grid .add_edit_list_form.mf.listLabel -row 2 -column 0 {*}$opts
+    grid $ListNameEntry -row 2 -column 1 -sticky we {*}$opts
+    grid .add_edit_list_form.mf.bf -row 3 -column 1 -sticky we {*}$opts
     pack .add_edit_list_form.mf.bf.ok_button -side right {*}$opts
     pack .add_edit_list_form.mf.bf.cancel_button -side right {*}$opts
     pack .add_edit_list_form.mf -fill both -expand 1
@@ -94,6 +105,10 @@ oo::define AddEditListForm method make_bindings {} {
         [callback on_validate [.add_edit_list_form.mf.listNameEntry get]]
     bind .add_edit_list_form <a> {
         focus .add_edit_list_form.mf.categoryCombo}
+    if {!$Lid} {
+        bind .add_edit_list_form <f> {
+            .add_edit_list_form.mf.folderButton invoke}
+    }
     bind .add_edit_list_form <l> {
         focus .add_edit_list_form.mf.listNameEntry}
     bind .add_edit_list_form <Escape> {
@@ -107,7 +122,9 @@ oo::define AddEditListForm method make_bindings {} {
 }
 
 oo::define AddEditListForm method on_validate name {
-    set name [string tolower [string trim $name]]
+    if {[set name [string tolower [string trim $name]]] eq ""} {
+        set name [string tolower [string trim [$ListNameEntry get]]]
+    }
     set cid [$Pldb cid_for_name [$CategoryCombo get]]
     set disallowed [$Pldb category_list_names $cid 1]
     if {$name ne "" && $name ni $disallowed} {
@@ -121,12 +138,35 @@ oo::define AddEditListForm method on_validate name {
     return 1
 }
 
+oo::define AddEditListForm method on_list_add_folder {} {
+    if {[set Folder [tk_chooseDirectory -parent . -mustexist 1 \
+            -title "Add Folder’s Tracks — [tk appname]" \
+            -initialdir [get_music_dir]]] ne ""} {
+        if {[set name [string trim [$ListNameEntry get]]] eq ""} {
+            if {[set name [lindex [file split $Folder] end]] ne ""} {
+                $ListNameEntry insert end [regsub -all {[-_]} $name " "]
+                focus $CategoryCombo
+            }
+        }
+    }
+}
+
 oo::define AddEditListForm method on_done ok {
     if {$ok} {
         set cid [$Pldb cid_for_name [$CategoryCombo get]]
         set name [string trim [$ListNameEntry get]]
         if {!$Lid} {
             set Lid [$Pldb list_insert $cid $name]
+            if {$Folder ne ""} {
+                set filenames [glob -directory $Folder *.{mp3,ogg}]
+                if {![llength $filenames]} {
+                    foreach dir [glob -types d -directory $Folder *] {
+                        lappend filenames {*}[glob -directory $dir \
+                                              *.{mp3,ogg}]
+                    }
+                }
+                $Pldb list_insert_tracks $Lid $filenames
+            }
         } else {
             $Pldb list_update $cid $Lid $name
         }

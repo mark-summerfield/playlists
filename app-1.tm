@@ -44,7 +44,7 @@ oo::define App method on_startup {} {
     if {[set sashpos [$config sashpos]]} { .mf.pw sashpos 0 $sashpos }
     lassign [$Pldb last_item] lid tid
     my populate_listtree $lid
-    after idle [list select_tree_item $TrackTree $lid:$tid]
+    if {$tid} { after idle [list select_tree_item $TrackTree $lid:$tid] }
 }
 
 oo::define App method get_current_lid {} {

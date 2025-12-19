@@ -25,7 +25,11 @@ oo::define App method on_list_edit {} {
 oo::define App method on_list_add_folder {} {
     lassign [my get_tlid_and_lid] tlid lid
     if {$tlid ne ""} {
-        puts on_list_add_folder ;# TODO
+        if {[set dir [tk_chooseDirectory -parent . -mustexist 1 \
+                -title "Add Folder’s Tracks — [tk appname]" \
+                -initialdir [get_music_dir]]] ne ""} {
+            my AddTracks $lid [glob -directory $dir *.{mp3,ogg}]
+        }
     }
 }
 
@@ -35,10 +39,14 @@ oo::define App method on_list_add_tracks {} {
         set filenames [tk_getOpenFile -title "Add Tracks — [tk appname]" \
             -multiple 1 -filetypes [Mplayer filetypes] \
             -initialdir [get_music_dir]]
-        if {[llength $filenames]} {
-            $Pldb list_insert_tracks $lid $filenames
-            my populate_listtree $lid
-        }
+        my AddTracks $lid $filenames
+    }
+}
+
+oo::define App method AddTracks {lid filenames} {
+    if {[llength $filenames]} {
+        $Pldb list_insert_tracks $lid $filenames
+        my populate_listtree $lid
     }
 }
 
