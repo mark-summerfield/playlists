@@ -13,10 +13,11 @@ oo::define Pld method tracks_for_lid lid {
               WHERE Tracks.tid IN (SELECT tid FROM List_x_Tracks
                                    WHERE lid = :lid)
                 AND Tracks.tid = List_x_Tracks.tid
-                AND List_x_Tracks.lid = :lid} {
+                AND List_x_Tracks.lid = :lid
+              ORDER BY LOWER(filename)} {
         lappend tracks [list $tid $filename $secs]
     }
-    lsort -dictionary -index 1 $tracks
+    return $tracks
 }
 
 oo::define Pld method track_for_tid tid {
