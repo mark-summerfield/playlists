@@ -144,7 +144,7 @@ oo::define AddEditListForm method on_list_add_folder {} {
             -initialdir [get_music_dir]]] ne ""} {
         if {[set name [string trim [$ListNameEntry get]]] eq ""} {
             if {[set name [lindex [file split $Folder] end]] ne ""} {
-                $ListNameEntry insert end [regsub -all {[-_]} $name " "]
+                $ListNameEntry insert end [regsub -all {[-_ ]+} $name " "]
                 focus $CategoryCombo
             }
         }

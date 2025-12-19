@@ -35,6 +35,13 @@ oo::define App method on_category_rename {} {
     }
 }
 
+oo::define App method on_category_expand_all {} {
+    foreach child [$ListTree children {}] {
+        $ListTree item $child -open 1
+    }
+    set ListTreeExpanded 1
+}
+
 oo::define App method on_category_delete {} {
     set tcid [my get_tcid]
     if {$tcid eq "C0"} {

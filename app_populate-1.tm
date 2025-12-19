@@ -50,6 +50,7 @@ oo::define App method populate_listtree {{sel_lid 0}} {
         if {!$sel_lid} { set sel_lid $lid }
         $ListTree insert C$cid end -id L$lid -text $name
     }
+    if {$ListTreeExpanded} { my on_category_expand_all }
     select_tree_item $ListTree L$sel_lid
 }
 

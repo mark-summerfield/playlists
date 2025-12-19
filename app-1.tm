@@ -7,6 +7,7 @@ package require ui
 oo::singleton create App {
     variable Player
     variable ListTree
+    variable ListTreeExpanded
     variable TrackTree
     variable Pldb
     variable GotSecs
@@ -24,6 +25,7 @@ oo::define App constructor {} {
     ui::wishinit
     tk appname Playlists
     Config new ;# we need tk scaling done early
+    set ListTreeExpanded 0
     set Pldb [Pld new [get_db_filename]]
     set Player ""
     set GotSecs 0

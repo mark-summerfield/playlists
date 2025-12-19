@@ -61,6 +61,9 @@ oo::define App method make_category_menu {} {
     .menu.category add command -command [callback on_category_rename] \
         -label Rename… -underline 0 -compound left \
         -image [ui::icon category-rename.svg $::MENU_ICON_SIZE]
+    .menu.category add command -command [callback on_category_expand_all] \
+        -label "Expand All" -underline 0 -compound left \
+        -image [ui::icon expand.svg $::MENU_ICON_SIZE]
     .menu.category add separator
     .menu.category add command -command [callback on_category_delete] \
         -label Delete… -underline 0 -compound left \
