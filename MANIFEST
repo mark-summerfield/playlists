@@ -6,7 +6,7 @@
 # TODO Track→&Rename… (would need new field 'name TEXT' to be displayed
 #	if non-empty; otherwise do as now)
 # TODO Track→Move &Up|&Down (would need new field
-#	'pos INTEGER DEFAULT 0 NOT NULL'); will need to change
+#	'pos INTEGER UNIQUE NOT NULL'); will need to change
 #	tracks_for_lid to ORDER BY pos, LOWER(filename)
 
 playlists.tk # VERSION
