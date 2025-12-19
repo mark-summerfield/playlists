@@ -1,8 +1,8 @@
-# TODO fix bug e.g., Queen / Platinum Collection
 # TODO At startup if no tracks then yes/no dialog
 #	"Auto-populate from music folder
 #	“....”?
 #	if yes, adds all lists to Uncategorized by scanning get_music_dir
+# TODO List→Delete Unlisted tracks yes/no dialog
 # TODO Track→&Rename… (would need new field 'name TEXT' to be displayed
 #	if non-empty; otherwise do as now)
 

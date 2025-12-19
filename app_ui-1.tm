@@ -153,14 +153,12 @@ oo::define App method make_widgets {} {
     .mf.pw add $left
     set right [scrollutil::scrollarea .mf.pw.right]
     set TrackTree [ttk::treeview .mf.pw.right.tv -selectmode browse \
-        -show tree -style List.Treeview -striped 1 -columns {n track secs}]
+        -style List.Treeview -striped 1 -columns {n track secs}]
     $right setwidget $TrackTree
     .mf.pw add $right
-    set width [font measure TkDefaultFont 999.]
-    $TrackTree column #0 -width $width -stretch 0 -anchor e
-    $TrackTree column 0 -stretch 1 -anchor w
-    set width [font measure TkDefaultFont 1h59m59sW]
-    $TrackTree column 1 -width $width -stretch 0 -anchor e
+    $TrackTree heading #0 -text №
+    $TrackTree heading 0 -text Title
+    $TrackTree heading 1 -text Time
     my make_playbar
 }
 

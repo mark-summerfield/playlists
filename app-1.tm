@@ -47,6 +47,9 @@ oo::define App method on_startup {} {
     lassign [$Pldb last_item] lid tid
     my populate_listtree $lid
     if {$tid} { after idle [list select_tree_item $TrackTree $lid:$tid] }
+    if {![$Pldb has_tracks]} {
+        after idle [callback maybe_add_tracks]
+    }
 }
 
 oo::define App method get_current_lid {} {

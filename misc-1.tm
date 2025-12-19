@@ -32,7 +32,12 @@ proc divmod {n div} {
 proc humanize_trackname filename {
     set name [file tail [file rootname $filename]]
     set name [string trim [string trimleft $name "0123456789"]]
-    string trim [regsub -all {[-_.]} $name " "]
+    string trim [regsub -all {[-_. ]+} $name " "]
+}
+
+proc humanize_dirname dirname {
+    set name [lindex [file split $dirname] end]
+    string trim [regsub -all {[-_. ]+} $name " "]
 }
 
 proc get_music_dir {{filename ""}} {

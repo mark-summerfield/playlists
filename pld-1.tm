@@ -44,6 +44,10 @@ oo::define Pld method last_item {} {
     return $item
 }
 
+oo::define Pld method has_tracks {} {
+    $Db eval {SELECT COUNT(*) FROM Tracks}
+}
+
 oo::define Pld method history {} {
     set history [list]
     $Db eval {SELECT lid, tid, filename FROM HistoryView} {

@@ -1,6 +1,7 @@
 # Copyright © 2025 Mark Summerfield. All rights reserved.
 
 package require abstract_form
+package require fileutil::traverse
 package require ref
 package require ui
 
@@ -143,10 +144,8 @@ oo::define AddEditListForm method on_list_add_folder {} {
             -title "Add Folder’s Tracks — [tk appname]" \
             -initialdir [get_music_dir]]] ne ""} {
         if {[set name [string trim [$ListNameEntry get]]] eq ""} {
-            if {[set name [lindex [file split $Folder] end]] ne ""} {
-                $ListNameEntry insert end [regsub -all {[-_ .]+} $name " "]
-                focus $CategoryCombo
-            }
+            $ListNameEntry insert end [humanize_dirname $Folder]
+            focus $CategoryCombo
         }
     }
 }
@@ -158,14 +157,11 @@ oo::define AddEditListForm method on_done ok {
         if {!$Lid} {
             set Lid [$Pldb list_insert $cid $name]
             if {$Folder ne ""} {
-                set filenames [glob -directory $Folder *.{mp3,ogg}]
-                if {![llength $filenames]} {
-                    foreach dir [glob -types d -directory $Folder *] {
-                        lappend filenames {*}[glob -directory $dir \
-                                              *.{mp3,ogg}]
-                    }
-                }
-                $Pldb list_insert_tracks $Lid $filenames
+                set trav [fileutil::traverse %AUTO% $Folder \
+                    -filter [lambda filename {
+                        regexp {^.*\.(?:ogg|mpe)$} $filename
+                    }]]
+                $Pldb list_insert_tracks $Lid [$trav files]
             }
         } else {
             $Pldb list_update $cid $Lid $name
