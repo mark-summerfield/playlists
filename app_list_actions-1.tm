@@ -4,6 +4,8 @@ package require add_edit_list_form
 package require delete_list_form
 package require merge_list_form
 package require message_form
+package require misc
+package require mplayer
 
 oo::define App method on_list_new {} {
     if {[set lid [AddEditListForm show $Pldb]]} {
@@ -30,7 +32,13 @@ oo::define App method on_list_add_folder {} {
 oo::define App method on_list_add_tracks {} {
     lassign [my get_tlid_and_lid] tlid lid
     if {$tlid ne ""} {
-        puts on_list_add_tracks ;# TODO
+        set filenames [tk_getOpenFile -title "Add Tracks — [tk appname]" \
+            -multiple 1 -filetypes [Mplayer filetypes] \
+            -initialdir [get_music_dir]]
+        if {[llength $filenames]} {
+            $Pldb list_insert_tracks $lid $filenames
+            my populate_listtree $lid
+        }
     }
 }
 
@@ -39,7 +47,7 @@ oo::define App method on_list_merge {} {
     if {$tlid ne ""} {
         set data [$Pldb list_merge_data $lid]
         if {![llength $data]} {
-            MessageForm show "Merge List — [tk appname]" \
+            MessageForm show "Merge — [tk appname]" \
                 "There are no nonempty lists to merge from." OK warning
             return
         }

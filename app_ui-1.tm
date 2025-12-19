@@ -77,13 +77,13 @@ oo::define App method make_list_menu {} {
         -label Edit… -underline 0 -compound left \
         -image [ui::icon list-rename.svg $::MENU_ICON_SIZE]
     .menu.list add command -command [callback on_list_add_folder] \
-        -label "Add Folder…" -underline 4 -compound left \
+        -label "Add Folder’s Tracks…" -underline 4 -compound left \
         -image [ui::icon list-add-folder.svg $::MENU_ICON_SIZE]
     .menu.list add command -command [callback on_list_add_tracks] \
         -label "Add Tracks…" -underline 4 -compound left \
         -image [ui::icon list-add-tracks.svg $::MENU_ICON_SIZE]
     .menu.list add command -command [callback on_list_merge] \
-        -label "Merge List…" -underline 0 -compound left \
+        -label Merge… -underline 0 -compound left \
         -image [ui::icon list-merge.svg $::MENU_ICON_SIZE]
     .menu.list add separator
     .menu.list add command -command [callback on_list_delete] \

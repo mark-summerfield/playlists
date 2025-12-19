@@ -41,7 +41,7 @@ oo::define MergeListForm method make_widgets {} {
     }
     tk::toplevel .merge_list_form
     wm resizable .merge_list_form 0 0
-    wm title .merge_list_form "Merge List — [tk appname]"
+    wm title .merge_list_form "Merge — [tk appname]"
     ttk::frame .merge_list_form.mf
     set name [$Pldb list_name $Lid]
     ttk::label .merge_list_form.mf.dataLabel \

@@ -35,7 +35,7 @@ proc humanize_trackname filename {
     string trim [regsub -all {[-_.]} $name " "]
 }
 
-proc get_music_dir filename {
+proc get_music_dir {{filename ""}} {
     if {$filename ne ""} {
         set dir [file dirname $filename]
     } else {

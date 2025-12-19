@@ -8,6 +8,16 @@ oo::singleton create Mplayer {
     variable Exe
 }
 
+oo::define Mplayer initialize {
+    variable FILETYPES
+    const FILETYPES {{{Audio Files} {.mp3 .ogg}}}
+}
+
+oo::define Mplayer classmethod filetypes {} {
+    variable FILETYPES
+    return $FILETYPES
+}
+
 oo::define Mplayer constructor {} {
     set Pipe ""
     set Playing 0
