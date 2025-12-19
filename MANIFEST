@@ -1,13 +1,9 @@
 # TODO At startup if no tracks then yes/no dialog
 #	"Auto-populate from music folder
 #	“....”?
-#	if yes, adds all lists to Uncategorized by scanning
-#	get_music_dir
+#	if yes, adds all lists to Uncategorized by scanning get_music_dir
 # TODO Track→&Rename… (would need new field 'name TEXT' to be displayed
 #	if non-empty; otherwise do as now)
-# TODO Track→Move &Up|&Down (would need new field
-#	'pos INTEGER UNIQUE NOT NULL'); will need to change
-#	tracks_for_lid to ORDER BY pos, LOWER(filename)
 
 playlists.tk # VERSION
 app-1.tm
