@@ -16,12 +16,7 @@ oo::define Pld method tracks_for_lid lid {
                 AND List_x_Tracks.lid = :lid} {
         lappend tracks [list $tid $filename $secs]
     }
-    set cmp [lambda {a b} {
-        set afilename [file tail [lindex $a 1]]
-        set bfilename [file tail [lindex $b 1]]
-        string compare $afilename $bfilename
-    }]
-    lsort -command $cmp $tracks
+    lsort -dictionary -index 1 $tracks
 }
 
 oo::define Pld method track_for_tid tid {
