@@ -245,7 +245,7 @@ oo::define App method on_pos data {
             $Pldb track_update_secs $tid $total
             lassign [$TrackTree item $ttid -values] name _
             $TrackTree item $ttid \
-                -values [list $name [humanize_secs $total]]
+                -values [list $name [humanize_secs $total 1]]
             after idle [callback populate_history_menu]
         }
     }

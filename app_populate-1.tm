@@ -46,7 +46,7 @@ oo::define App method populate_listtree {{sel_lid 0}} {
     foreach cid [$Pldb cids] {
         lassign [$Pldb category_info $cid] name n
         lassign [util::n_s $n] n s
-        $ListTree insert {} end -id C$cid -text "$name \[$n list$s\]"
+        $ListTree insert {} end -id C$cid -text "$name · $n list$s"
     }
     foreach row [$Pldb lists] {
         lassign $row cid lid name
@@ -55,7 +55,7 @@ oo::define App method populate_listtree {{sel_lid 0}} {
         lassign [util::n_s $n] n s
         if {!$sel_lid} { set sel_lid $lid }
         $ListTree insert C$cid end -id L$lid \
-            -text "$name \[$n track$s$secs\]"
+            -text "$name · $n track$s$secs"
     }
     if {$ListTreeExpanded} { my on_category_expand_all }
     select_tree_item $ListTree L$sel_lid
@@ -66,7 +66,7 @@ oo::define App method populate_tracktree {lid {sel_tid 0}} {
     set n 0
     foreach row [$Pldb tracks_for_lid $lid] {
         lassign $row tid filename secs
-        set secs [expr {$secs ? [humanize_secs $secs] : ""}]
+        set secs [expr {$secs ? [humanize_secs $secs 1] : ""}]
         $TrackTree insert {} end -id $lid:$tid -text [incr n]. \
             -values [list [humanize_trackname $filename] $secs]
         if {!$sel_tid} { set sel_tid $tid }

@@ -10,7 +10,7 @@ proc select_tree_item {tree id} {
     }
 }
 
-proc humanize_secs secs {
+proc humanize_secs {secs {pad 0}} {
     if {![set secs [expr {int(round($secs))}]]} {
         return "0s"
     }
@@ -19,7 +19,15 @@ proc humanize_secs secs {
     set parts [list]
     if {$hours} { lappend parts "${hours}h" }
     if {$mins} { lappend parts "${mins}m" }
-    if {$secs || ![llength $parts]} { lappend parts "${secs}s" }
+    if {$secs || ![llength $parts]} {
+        if {$pad && $secs < 10} {
+            lappend parts "${secs}s "
+        } else {
+            lappend parts "${secs}s"
+        }
+    } elseif {!$secs} {
+        lappend parts "    "
+    }
     join $parts ""
 }
 
