@@ -87,4 +87,15 @@ oo::define Pld method bookmarks_delete {lid {tid 0}} {
     }
 }
 
+oo::define Pld classmethod duration_in_secs filename {
+    if {![regexp {^.*.(?:ogg|oga)$} $filename]} { return 0 }
+    set data [string range [readFile $filename binary] 0 end-14]
+    set i [string first "vorbis" $data]
+    incr i 11
+    binary scan [string range $data $i $i+3] iu rate
+    set i [string last "OggS" $data]
+    binary scan [string range $data $i+6 $i+13] wu length
+    expr {int(round($length / double($rate)))}
+}
+
 oo::define Pld method to_string {} { return "Pld \"$Filename\"" }

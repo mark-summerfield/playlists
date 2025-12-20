@@ -73,9 +73,11 @@ oo::define Pld method list_merge {to_lid from_lid} {
 oo::define Pld method list_insert_tracks {lid tracks} {
     $Db transaction {
         foreach track $tracks {
+            set secs [my duration_in_secs $track]
             if {[set tid [$Db eval {SELECT tid FROM Tracks
                                     WHERE filename = :track}]] eq ""} {
-                $Db eval {INSERT INTO Tracks (filename) VALUES (:track)}
+                $Db eval {INSERT INTO Tracks (filename, secs)
+                          VALUES (:track, :secs)}
                 set tid [$Db last_insert_rowid]
             }
             $Db eval {INSERT OR IGNORE INTO List_x_Tracks (lid, tid)

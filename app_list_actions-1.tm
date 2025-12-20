@@ -45,7 +45,12 @@ oo::define App method on_list_add_tracks {} {
 
 oo::define App method AddTracks {lid filenames} {
     if {[llength $filenames]} {
-        $Pldb list_insert_tracks $lid $filenames
+        tk busy .
+        try {
+            $Pldb list_insert_tracks $lid $filenames
+        } finally {
+            tk busy forget .
+        }
         my populate_listtree $lid
     }
 }
