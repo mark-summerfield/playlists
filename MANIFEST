@@ -1,11 +1,7 @@
-# TODO (1)
-#   - File→Info MessageBox showing: n Categories m Lists t Tracks s Time
-#   - Category→Info MessageBox showing: Category c m Lists t Tracks s Time
-#   - List→Info MessageBox showing: Category c List l t Tracks s Time
+# TODO (1) File→Info MessageBox showing:
+#	    n Categories m Lists t Tracks s Time
 # TODO (2) List→Delete Unlisted tracks yes/no dialog
-# TODO (3) Track→&Rename… (would need new field 'name TEXT' to be displayed
-#	if non-empty; otherwise do as now)
-# TODO (4) Track actions
+# TODO (3) Track actions
 
 playlists.tk # VERSION
 app-1.tm

@@ -1,5 +1,11 @@
 # Copyright © 2025 Mark Summerfield. All rights reserved.
 
+oo::define Pld method cids {} {
+    set cids [list]
+    $Db eval {SELECT cid FROM CategoriesView} { lappend cids $cid }
+    return $cids
+}
+
 oo::define Pld method cid_for_name name {
     $Db eval {SELECT cid FROM Categories WHERE name = :name LIMIT 1}
 }

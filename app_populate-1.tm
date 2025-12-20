@@ -1,5 +1,7 @@
 # Copyright © 2025 Mark Summerfield. All rights reserved.
 
+package require util
+
 oo::define App method populate_history_menu {} {
     .menu.history delete 0 end
     .menu.history add command -command [callback on_history_remove] \
@@ -41,14 +43,18 @@ oo::define App method populate_bookmarks_menu {} {
 
 oo::define App method populate_listtree {{sel_lid 0}} {
     $ListTree delete [$ListTree children {}]
-    foreach row [$Pldb categories] {
-        lassign $row cid name
-        $ListTree insert {} end -id C$cid -text $name
+    foreach cid [$Pldb cids] {
+        lassign [$Pldb category_info $cid] name n
+        lassign [util::n_s $n] n s
+        $ListTree insert {} end -id C$cid -text "$name ($n list$s)"
     }
     foreach row [$Pldb lists] {
         lassign $row cid lid name
+        lassign [$Pldb list_tracks_info $lid] n secs
+        set secs [expr {$secs ? "; [humanize_secs $secs]" : ""}]
+        lassign [util::n_s $n] n s
         if {!$sel_lid} { set sel_lid $lid }
-        $ListTree insert C$cid end -id L$lid -text $name
+        $ListTree insert C$cid end -id L$lid -text "$name ($n track$s$secs)"
     }
     if {$ListTreeExpanded} { my on_category_expand_all }
     select_tree_item $ListTree L$sel_lid

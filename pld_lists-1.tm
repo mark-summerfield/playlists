@@ -17,6 +17,17 @@ oo::define Pld method list_name lid {
     $Db eval {SELECT name FROM Lists WHERE lid = :lid LIMIT 1}
 }
 
+oo::define Pld method list_tracks_info lid {
+    $Db eval {SELECT COUNT(*) AS n, SUM(secs) as secs
+              FROM List_x_Tracks, Tracks
+              WHERE List_x_Tracks.tid = Tracks.tid
+              AND List_x_Tracks.lid = :lid} {
+        if {!$n} { set secs 0 }
+        return [list $n $secs]
+    }
+    list 0 0
+}
+
 oo::define Pld method list_info lid {
     $Db eval {SELECT Lists.name AS name, Categories.cid AS cid,
                      Categories.name AS category,
