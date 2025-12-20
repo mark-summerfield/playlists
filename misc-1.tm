@@ -45,10 +45,16 @@ proc get_music_dir {{filename ""}} {
         set dir [file dirname $filename]
     } else {
         set home [file home]
+        catch { set dir [exec xdg-user-dir MUSIC] }
+        if {[info exists dir] && $dir ne "" \
+                && [string trimright $dir /] ne [string trimright $home /] \
+                && [file isdirectory $dir]} {
+            return $dir
+        }
         set dir $home/Music
-        if {![file exists $dir]} {
+        if {![file isdirectory $dir]} {
             set dir $home/music
-            if {![file exists $dir]} {
+            if {![file isdirectory $dir]} {
                 set dir $home
             }
         }

@@ -1,5 +1,7 @@
 # Copyright © 2025 Mark Summerfield. All rights reserved.
 
+package require misc
+
 oo::define App method on_list_select {} {
     set tlid [$ListTree selection]
     if {[string match C* $tlid]} {
@@ -9,20 +11,27 @@ oo::define App method on_list_select {} {
     }
 }
 
-# TODO busy indicator (+ progress indication?)
 oo::define App method maybe_add_tracks {} {
+    set dir [get_music_dir]
     if {[YesNoForm show "Discover Tracks — [tk appname]" \
-            "Add Lists of Tracks from the music folder?"] eq "yes"} {
+            "Add Lists of Tracks from the music folder:\n$dir"] eq "yes"} {
         $ListTree item C0 -open 1
         set music_dir [get_music_dir]
-        foreach dir [glob -directory $music_dir -types d *] {
-            set lid [$Pldb list_insert 0 [humanize_dirname $dir]]
-            set trav [fileutil::traverse %AUTO% $dir \
-                -filter [lambda filename {
-                    regexp {^.*\.(?:ogg|mpe)$} $filename
-                }]]
-            $Pldb list_insert_tracks $lid [$trav files]
+        tk busy .
+        try {
+            foreach dir [glob -directory $music_dir -types d *] {
+                set lid [$Pldb list_insert 0 [humanize_dirname $dir]]
+                set trav [fileutil::traverse %AUTO% $dir \
+                    -filter [lambda filename {
+                        regexp {^.*\.(?:ogg|mpe)$} $filename
+                    }]]
+                $Pldb list_insert_tracks $lid [$trav files]
+                my populate_listtree
+                update idletasks
+            }
+            my populate_listtree
+        } finally {
+            tk busy forget .
         }
-        my populate_listtree
     }
 }
