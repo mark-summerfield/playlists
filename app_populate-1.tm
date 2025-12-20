@@ -46,15 +46,16 @@ oo::define App method populate_listtree {{sel_lid 0}} {
     foreach cid [$Pldb cids] {
         lassign [$Pldb category_info $cid] name n
         lassign [util::n_s $n] n s
-        $ListTree insert {} end -id C$cid -text "$name ($n list$s)"
+        $ListTree insert {} end -id C$cid -text "$name \[$n list$s\]"
     }
     foreach row [$Pldb lists] {
         lassign $row cid lid name
         lassign [$Pldb list_tracks_info $lid] n secs
-        set secs [expr {$secs ? "; [humanize_secs $secs]" : ""}]
+        set secs [expr {$secs ? " · [humanize_secs $secs]" : ""}]
         lassign [util::n_s $n] n s
         if {!$sel_lid} { set sel_lid $lid }
-        $ListTree insert C$cid end -id L$lid -text "$name ($n track$s$secs)"
+        $ListTree insert C$cid end -id L$lid \
+            -text "$name \[$n track$s$secs\]"
     }
     if {$ListTreeExpanded} { my on_category_expand_all }
     select_tree_item $ListTree L$sel_lid
