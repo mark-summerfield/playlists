@@ -1,3 +1,6 @@
+# TODO (0) Convert ogglen.go to ogglen-1.tm (tesing with ogglen.tcl) &
+#	    use to add times when we insert new tracks in
+#	    pld_lists list_insert_tracks
 # TODO (1) File→Info MessageBox showing:
 #	    n Categories m Lists t Tracks s Time
 # TODO (2) List→Delete Unlisted tracks yes/no dialog
