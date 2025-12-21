@@ -1,5 +1,7 @@
 # Copyright © 2025 Mark Summerfield. All rights reserved.
 
+package require ogg
+
 oo::define Pld method lid_for_cid_and_name {cid name} {
     $Db eval {SELECT lid FROM Lists WHERE name = :name AND cid = :cid
               LIMIT 1}
@@ -73,7 +75,7 @@ oo::define Pld method list_merge {to_lid from_lid} {
 oo::define Pld method list_insert_tracks {lid tracks} {
     $Db transaction {
         foreach track $tracks {
-            set secs [my duration_in_secs $track]
+            set secs [ogg::duration_in_secs $track]
             if {[set tid [$Db eval {SELECT tid FROM Tracks
                                     WHERE filename = :track}]] eq ""} {
                 $Db eval {INSERT INTO Tracks (filename, secs)

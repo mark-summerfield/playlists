@@ -1,7 +1,13 @@
-# TODO (1) File→Info MessageBox showing:
-#	    n Categories m Lists t Tracks s Time
-# TODO (2) List→Delete Unlisted tracks yes/no dialog
-# TODO (3) Track actions
+# TODO Lists→Delete
+#	If Unlisted offer:
+#	    "Cannot delete Unlisted list itself but can delete
+#	    its N tracks. Delete the unlisted tracks?" Yes No
+# TODO File→About desc should also show:
+#	n Categories m Lists t Tracks s Time
+# TODO add_edit_list_form: add a statusLabel [Reading filename.ogg...]
+#	that is kept updated to show progress
+# TODO List→Delete Unlisted tracks yes/no dialog
+# TODO Track actions
 
 playlists.tk # VERSION
 app-1.tm
@@ -23,6 +29,7 @@ pld-1.tm
 pld_categories-1.tm
 pld_lists-1.tm
 pld_tracks-1.tm
+ogg-1.tm
 
 sql/prepare.sql
 sql/create.sql
@@ -40,6 +47,7 @@ yes_no_form-1.tm
 ui-1.tm
 
 db-1.tm
+test_ogg.tcl
 
 README.md
 

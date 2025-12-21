@@ -1,5 +1,6 @@
 # Copyright © 2025 Mark Summerfield. All rights reserved.
 
+package require lambda 1
 package require util
 
 proc select_tree_item {tree id} {
@@ -40,11 +41,19 @@ proc divmod {n div} {
 proc humanize_trackname filename {
     set name [file tail [file rootname $filename]]
     set name [string trim [string trimleft $name "0123456789"]]
-    string trim [regsub -all {[-_. ]+} $name " "]
+    humanize_name $name
 }
 
 proc humanize_dirname dirname {
-    set name [lindex [file split $dirname] end]
+    humanize_name [lindex [file split $dirname] end]
+}
+
+proc humanize_name name {
+    set name [regsub -all -command \
+        {\s(?:And|A[ns]|A|I[ns]|But|For|O[fn]|The|To)\s} $name \
+        [lambda s { string tolower $s }]]
+    set name [regsub -all {'\s} $name "’ "]
+    set name [regsub -all {\s'} $name " ‘"]
     string trim [regsub -all {[-_. ]+} $name " "]
 }
 
