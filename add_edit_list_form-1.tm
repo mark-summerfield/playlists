@@ -161,13 +161,7 @@ oo::define AddEditListForm method on_done ok {
                     -filter [lambda filename {
                         regexp {^.*\.(?:ogg|mpe)$} $filename
                     }]]
-                tk busy .add_edit_list_form
-                update
-                try {
-                    $Pldb list_insert_tracks $Lid [$trav files]
-                } finally {
-                    tk busy forget .add_edit_list_form
-                }
+                $Pldb list_insert_tracks $Lid [$trav files]
             }
         } else {
             $Pldb list_update $cid $Lid $name

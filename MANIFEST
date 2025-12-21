@@ -4,8 +4,6 @@
 #	    its N tracks. Delete the unlisted tracks?" Yes No
 # TODO File→About desc should also show:
 #	n Categories m Lists t Tracks s Time
-# TODO add_edit_list_form: add a statusLabel [Reading filename.ogg...]
-#	that is kept updated to show progress
 # TODO List→Delete Unlisted tracks yes/no dialog
 # TODO Track actions
 
