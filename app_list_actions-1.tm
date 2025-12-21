@@ -6,6 +6,7 @@ package require merge_list_form
 package require message_form
 package require misc
 package require mplayer
+package require yes_no_form
 
 oo::define App method on_list_new {} {
     if {[set lid [AddEditListForm show $Pldb]]} {
@@ -74,9 +75,12 @@ oo::define App method on_list_delete {} {
     lassign [my get_tlid_and_lid] tlid lid
     if {$tlid ne ""} {
         if {!$lid} {
-            MessageForm show "Delete List — [tk appname]" \
-                "Cannot delete the “Unlisted” list from the\
-                “Uncategorized” category." OK warning
+            if {[YesNoForm show "Delete List — [tk appname]" \
+                    "Cannot delete the “Unlisted” list from the\
+                    “Uncategorized” category.\nDelete all the\
+                    Unlisted tracks?"]} eq "yes" {
+                puts delete-unlisted ;# TODO
+            }
             return
         }
         lassign [$Pldb list_info $lid] name cid category n

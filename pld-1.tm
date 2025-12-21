@@ -48,6 +48,16 @@ oo::define Pld method has_tracks {} {
     $Db eval {SELECT COUNT(*) FROM Tracks}
 }
 
+oo::define Pld method info {} {
+    $Db transaction {
+        set categories [$Db eval {SELECT COUNT(*) FROM Categories}]
+        set lists [$Db eval {SELECT COUNT(*) FROM Lists}]
+        set tracks [$Db eval {SELECT COUNT(*) FROM Tracks}]
+        set secs [$Db eval {SELECT SUM(secs) FROM Tracks}]
+    }
+    list $categories $lists $tracks $secs
+}
+
 oo::define Pld method history {} {
     set history [list]
     $Db eval {SELECT lid, tid, filename FROM HistoryView} {

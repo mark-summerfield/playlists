@@ -1,21 +1,24 @@
 # TODO Lists→Delete
-#	If Unlisted offer:
+#	If Unlisted offer: (app_list_actions)
 #	    "Cannot delete Unlisted list itself but can delete
 #	    its N tracks. Delete the unlisted tracks?" Yes No
-# TODO File→About desc should also show:
-#	n Categories m Lists t Tracks s Time
 # TODO List→Delete Unlisted tracks yes/no dialog
 # TODO Track actions
+# TODO History actions
+# TODO Bookmarks actions
 
 playlists.tk # VERSION
 app-1.tm
 app_ui-1.tm
 app_populate-1.tm
 app_actions-1.tm
+app_file_actions-1.tm
 app_category_actions-1.tm
 app_list_actions-1.tm
 app_track_actions-1.tm
 app_play_actions-1.tm
+app_history_actions-1.tm
+app_bookmarks_actions-1.tm
 add_edit_list_form-1.tm
 merge_list_form-1.tm
 delete_list_form-1.tm

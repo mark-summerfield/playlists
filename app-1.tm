@@ -14,7 +14,10 @@ oo::singleton create App {
 }
 
 package require app_actions
+package require app_bookmarks_actions
 package require app_category_actions
+package require app_file_actions
+package require app_history_actions
 package require app_list_actions
 package require app_play_actions
 package require app_populate
