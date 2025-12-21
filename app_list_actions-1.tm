@@ -15,8 +15,7 @@ oo::define App method on_list_new {} {
 }
 
 oo::define App method on_list_edit {} {
-    lassign [my get_tlid_and_lid] tlid lid
-    if {$tlid ne ""} {
+    if {[set lid [my GetLid]] != -1} {
         if {[AddEditListForm show $Pldb $lid]} {
             my populate_listtree $lid
         }
@@ -24,8 +23,7 @@ oo::define App method on_list_edit {} {
 }
 
 oo::define App method on_list_add_folder {} {
-    lassign [my get_tlid_and_lid] tlid lid
-    if {$tlid ne ""} {
+    if {[set lid [my GetLid]] != -1} {
         if {[set dir [tk_chooseDirectory -parent . -mustexist 1 \
                 -title "Add Folder’s Tracks — [tk appname]" \
                 -initialdir [get_music_dir]]] ne ""} {
@@ -35,8 +33,7 @@ oo::define App method on_list_add_folder {} {
 }
 
 oo::define App method on_list_add_tracks {} {
-    lassign [my get_tlid_and_lid] tlid lid
-    if {$tlid ne ""} {
+    if {[set lid [my GetLid]] != -1} {
         set filenames [tk_getOpenFile -title "Add Tracks — [tk appname]" \
             -multiple 1 -filetypes [Mplayer filetypes] \
             -initialdir [get_music_dir]]
@@ -57,8 +54,7 @@ oo::define App method AddTracks {lid filenames} {
 }
 
 oo::define App method on_list_merge {} {
-    lassign [my get_tlid_and_lid] tlid lid
-    if {$tlid ne ""} {
+    if {[set lid [my GetLid]] != -1} {
         set data [$Pldb list_merge_data $lid]
         if {![llength $data]} {
             MessageForm show "Merge — [tk appname]" \
@@ -72,14 +68,14 @@ oo::define App method on_list_merge {} {
 }
 
 oo::define App method on_list_delete {} {
-    lassign [my get_tlid_and_lid] tlid lid
-    if {$tlid ne ""} {
+    if {[set lid [my GetLid]] != -1} {
         if {!$lid} {
             if {[YesNoForm show "Delete List — [tk appname]" \
                     "Cannot delete the “Unlisted” list from the\
                     “Uncategorized” category.\nDelete all the\
-                    Unlisted tracks?"]} eq "yes" {
-                puts delete-unlisted ;# TODO
+                    Unlisted list’s tracks?"] eq "yes"} {
+                $Pldb list_delete_unlisted_tracks
+                my ListChanged
             }
             return
         }
@@ -91,18 +87,20 @@ oo::define App method on_list_delete {} {
             }
             2 {
                 $Pldb list_delete $lid
-                my populate_listtree
-                my populate_history_menu
-                my populate_bookmarks_menu
+                my ListChanged
             }
         }
     }
 }
 
-# Returns {"" 0} if a category is selected rather than a list.
-oo::define App method get_tlid_and_lid {} {
-    if {[string match L* [set tlid [$ListTree selection]]]} {
-        return [list $tlid [string range $tlid 1 end]]
-    }
-    list "" 0
+oo::define App method ListChanged {} {
+    my populate_listtree
+    my populate_history_menu
+    my populate_bookmarks_menu
+}
+
+# Returns -1 if a category is selected rather than a list.
+oo::define App method GetLid {} {
+    if {![string match L* [set tlid [$ListTree selection]]]} { return 0 }
+    string range $tlid 1 end
 }

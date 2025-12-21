@@ -108,3 +108,14 @@ oo::define Pld method list_delete lid {
         $Db eval {DELETE FROM Bookmarks WHERE lid = :lid}
     }
 }
+
+oo::define Pld method list_delete_unlisted_tracks {} {
+    $Db transaction {
+        $Db eval {DELETE FROM LastItem WHERE lid = 0}
+        $Db eval {DELETE FROM History WHERE lid = 0}
+        $Db eval {DELETE FROM Bookmarks WHERE lid = 0}
+        $Db eval {DELETE FROM Tracks WHERE tid IN
+                  (SELECT tid FROM List_x_Tracks WHERE lid = 0)}
+        $Db eval {DELETE FROM List_x_Tracks WHERE lid = 0}
+    }
+}

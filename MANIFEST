@@ -1,8 +1,3 @@
-# TODO Lists→Delete
-#	If Unlisted offer: (app_list_actions)
-#	    "Cannot delete Unlisted list itself but can delete
-#	    its N tracks. Delete the unlisted tracks?" Yes No
-# TODO List→Delete Unlisted tracks yes/no dialog
 # TODO Track actions
 # TODO History actions
 # TODO Bookmarks actions

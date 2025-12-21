@@ -20,5 +20,7 @@ oo::define App method on_track_remove_from_list {} {
 oo::define App method on_track_delete {} {
     # TODO Offer Move to Uncategorized/Unlisted -or- Permanently Delete
     # unless in Uncategorized in which case Yes or No
-    puts on_track_delete ;# TODO
+    if {[set lid_tid [$TrackTree selection]] ne ""} {
+        puts "on_track_delete $lid_tid" ;# TODO
+    }
 }
