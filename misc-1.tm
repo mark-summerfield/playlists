@@ -79,4 +79,6 @@ proc get_music_dir {{filename ""}} {
     return $dir
 }
 
-proc get_db_filename {} { regsub {.ini$} [util::get_ini_filename] .pld }
+proc get_db_filename {} {
+    regsub {.ini$} [util::get_ini_filename] -[info hostname].pld
+}
