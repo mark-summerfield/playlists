@@ -101,6 +101,6 @@ oo::define App method ListChanged {} {
 
 # Returns -1 if a category is selected rather than a list.
 oo::define App method GetLid {} {
-    if {![string match L* [set tlid [$ListTree selection]]]} { return 0 }
+    if {![string match L* [set tlid [$ListTree selection]]]} { return -1 }
     string range $tlid 1 end
 }
