@@ -19,17 +19,30 @@ oo::define App method maybe_add_tracks {} {
         set music_dir [get_music_dir]
         tk busy .
         try {
-            foreach dir [glob -directory $music_dir -types d *] {
+            set secs [clock seconds]
+            set dirs [glob -directory $music_dir -types d *]
+            .mf.play.progress configure -value 0 -maximum [llength $dirs] \
+                -text "none read"
+            set i 0
+            foreach dir $dirs {
+                incr i
                 set lid [$Pldb list_insert 0 [humanize_dirname $dir]]
                 set trav [fileutil::traverse %AUTO% $dir \
                     -filter [lambda filename {
                         regexp {^.*\.(?:ogg|mpe)$} $filename
                     }]]
                 $Pldb list_insert_tracks $lid [$trav files]
+                lassign [util::n_s $i] j s
+                .mf.play.progress configure -value $i \
+                    -text "Read $j folder$s…"
                 my populate_listtree
                 update idletasks
             }
             my populate_listtree
+            set secs [expr {[clock seconds] - $secs}]
+            lassign [util::n_s $i] i s
+            .mf.play.progress configure -value 0 \
+                -text "Created $i list$s in [commas $secs]s"
         } finally {
             tk busy forget .
         }
