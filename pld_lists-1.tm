@@ -103,17 +103,18 @@ oo::define Pld method list_update_category {cid lid} {
 
 oo::define Pld method list_delete lid {
     $Db transaction {
-        $Db eval {DELETE FROM Lists WHERE lid = :lid}
-        $Db eval {DELETE FROM History WHERE lid = :lid}
         $Db eval {DELETE FROM Bookmarks WHERE lid = :lid}
+        $Db eval {DELETE FROM History WHERE lid = :lid}
+        $Db eval {DELETE FROM List_x_Tracks WHERE lid = :lid}
+        $Db eval {DELETE FROM Lists WHERE lid = :lid}
     }
 }
 
 oo::define Pld method list_delete_unlisted_tracks {} {
     $Db transaction {
         $Db eval {DELETE FROM LastItem WHERE lid = 0}
-        $Db eval {DELETE FROM History WHERE lid = 0}
         $Db eval {DELETE FROM Bookmarks WHERE lid = 0}
+        $Db eval {DELETE FROM History WHERE lid = 0}
         $Db eval {DELETE FROM Tracks WHERE tid IN
                   (SELECT tid FROM List_x_Tracks WHERE lid = 0)}
         $Db eval {DELETE FROM List_x_Tracks WHERE lid = 0}

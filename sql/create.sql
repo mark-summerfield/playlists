@@ -78,39 +78,18 @@ CREATE VIEW HistoryView AS
     SELECT lid, Tracks.tid, filename FROM History, Tracks
         WHERE Tracks.tid = History.tid ORDER BY hid DESC;
 
-CREATE TRIGGER DeleteCategoryTrigger1 BEFORE DELETE ON Categories
-    FOR EACH ROW
-        WHEN OLD.cid = 0
+CREATE TRIGGER DeleteCategoryTrigger BEFORE DELETE ON Categories
+    FOR EACH ROW WHEN OLD.cid = 0
     BEGIN
         SELECT RAISE(ABORT, 'cannot delete the Uncategorized category');
     END;
 
--- If a Category is deleted (excl. Uncategorized), move all its lists to the
--- Uncategorized category.
-CREATE TRIGGER DeleteCategoryTrigger2 BEFORE DELETE ON Categories
-    FOR EACH ROW
-        WHEN OLD.cid != 0
-    BEGIN
-        UPDATE Lists SET cid = 0 WHERE cid = OLD.cid;
-    END;
-
 -- If we delete a list then we must remove any of its tracks from
 -- List_x_Tracks; the Unlisted list may not be deleted.
-CREATE TRIGGER DeleteListTrigger1 BEFORE DELETE ON Lists
-    FOR EACH ROW
-        WHEN OLD.lid = 0
+CREATE TRIGGER DeleteListTrigger BEFORE DELETE ON Lists
+    FOR EACH ROW WHEN OLD.lid = 0
     BEGIN
         SELECT RAISE(ABORT, 'cannot delete the Unlisted list');
-    END;
-
-CREATE TRIGGER DeleteListTrigger2 BEFORE DELETE ON Lists
-    FOR EACH ROW
-        WHEN OLD.lid != 0
-    BEGIN
-        DELETE FROM LastItem WHERE lid = OLD.lid;
-        DELETE FROM Bookmarks WHERE lid = OLD.lid;
-        DELETE FROM History WHERE lid = OLD.lid;
-        DELETE FROM List_x_Tracks WHERE lid = OLD.lid;
     END;
 
 -- If we move a track from one list to another we must update its
@@ -125,26 +104,6 @@ CREATE TRIGGER UpdateListTracksTrigger AFTER UPDATE OF lid
             WHERE lid = OLD.lid AND tid = OLD.tid;
         UPDATE History SET lid = NEW.lid
             WHERE lid = OLD.lid AND tid = OLD.tid;
-    END;
-
--- If we delete a track from its last list it must be moved to the
--- Unlisted list (unless it is already there).
-CREATE TRIGGER DeleteListTracksTrigger AFTER DELETE ON List_x_Tracks
-    FOR EACH ROW
-        WHEN (SELECT COUNT(*) FROM List_x_Tracks WHERE tid = OLD.tid) = 0
-              AND OLD.lid != 0
-    BEGIN
-        INSERT INTO List_x_Tracks (lid, tid) VALUES (0, OLD.tid);
-    END;
-
--- Tracks may be freely deleted. Better to move to Unlisted.
-CREATE TRIGGER DeleteTrackTrigger BEFORE DELETE ON Tracks
-    FOR EACH ROW
-    BEGIN
-        DELETE FROM LastItem WHERE tid = OLD.tid;
-        DELETE FROM History WHERE tid = OLD.tid;
-        DELETE FROM Bookmarks WHERE tid = OLD.tid;
-        DELETE FROM List_x_Tracks WHERE tid = OLD.tid;
     END;
 
 -- Guarantees we have only zero or one last item record

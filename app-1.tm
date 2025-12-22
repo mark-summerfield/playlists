@@ -8,6 +8,7 @@ oo::singleton create App {
     variable Player
     variable ListTree
     variable ListTreeExpanded
+    variable ListTreeContextMenu
     variable TrackTree
     variable Pldb
     variable GotSecs

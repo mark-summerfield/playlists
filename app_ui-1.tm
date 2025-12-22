@@ -151,6 +151,7 @@ oo::define App method make_widgets {} {
         -show tree -striped 1]
     $left setwidget $ListTree
     .mf.pw add $left
+    set ListTreeContextMenu [menu $ListTree.contextMenu]
     set right [scrollutil::scrollarea .mf.pw.right]
     set TrackTree [ttk::treeview .mf.pw.right.tv -selectmode browse \
         -style List.Treeview -striped 1 -columns {n track secs}]
@@ -215,6 +216,7 @@ oo::define App method make_bindings {} {
     bind . <<MplayerStopped>> [callback on_done]
     bind . <<MplayerDebug>> [callback on_debug %d]
     bind $ListTree <<TreeviewSelect>> [callback on_list_select]
+    bind $ListTree <<ContextMenu>> [callback on_list_context_menu %x %y]
     bind $TrackTree <Return> [callback on_play]
     bind $TrackTree <Double-1> [callback on_play]
     bind . <F2> [callback on_play_prev]
@@ -228,7 +230,6 @@ oo::define App method make_bindings {} {
     bind . <Control-f> [callback on_track_find]
     bind . <Control-o> [callback on_file_open]
     bind . <Control-q> [callback on_quit]
-    bind . <Escape> [callback on_quit]
     wm protocol . WM_DELETE_WINDOW [callback on_quit]
 }
 

@@ -36,3 +36,13 @@ oo::define Pld method track_secs tid {
 oo::define Pld method track_update_secs {tid secs} {
     $Db eval {UPDATE Tracks SET secs = :secs WHERE tid = :tid}
 }
+
+oo::define Pld method track_delete tid {
+    $Db transaction {
+        $Db eval {DELETE FROM LastItem WHERE tid = :tid}
+        $Db eval {DELETE FROM Bookmarks WHERE tid = :tid}
+        $Db eval {DELETE FROM History WHERE tid = :tid}
+        $Db eval {DELETE FROM List_x_Tracks WHERE tid = :tid}
+        $Db eval {DELETE FROM Tracks WHERE tid = :tid}
+    }
+}

@@ -1,11 +1,11 @@
 # Copyright © 2025 Mark Summerfield. All rights reserved.
 
 package require add_edit_list_form
-package require delete_list_form
 package require merge_list_form
 package require message_form
 package require misc
 package require mplayer
+package require util
 package require yes_no_form
 
 oo::define App method on_list_new {} {
@@ -69,8 +69,8 @@ oo::define App method on_list_merge {} {
 
 oo::define App method on_list_delete {} {
     if {[set lid [my GetLid]] != -1} {
+        set title "Delete List — [tk appname]"
         if {!$lid} {
-            set title "Delete List — [tk appname]"
             set body "Cannot delete the “Unlisted” list from the\
                      “Uncategorized” category."
             lassign [$Pldb list_tracks_info $lid] n _
@@ -83,18 +83,47 @@ oo::define App method on_list_delete {} {
             } else {
                 MessageForm show $title $body OK warning
             }
-            return
-        }
-        lassign [$Pldb list_info $lid] name cid category n
-        switch [DeleteListForm show $name $cid $category $n] {
-            1 {
-                $Pldb list_update_category 0 $lid
-                my populate_listtree $lid
+        } else {
+            lassign [$Pldb list_info $lid] name cid category n
+            set body "Delete the “$category” category’s\n“$name” list"
+            if {$n} {
+                lassign [util::n_s $n] n s
+                set body "$body and its $n track$s?"
+            } else {
+                set body $body?
             }
-            2 {
+            if {[YesNoForm show $title $body] eq "yes"} {
                 $Pldb list_delete $lid
                 my ListChanged
             }
+        }
+    }
+}
+
+oo::define App method on_list_context_menu {x y} {
+    if {[set anid [$ListTree identify item $x $y]] ne ""} {
+        $ListTree selection set $anid
+        $ListTreeContextMenu delete 0 end
+        if {[string match L* $anid]} {
+            set lid [string range $anid 1 end]
+            lassign [$Pldb list_info $lid] name _ list_category n
+            set categories [$Pldb category_names]
+            $ListTreeContextMenu add command -label New… \
+                -command [callback on_list_new]
+            $ListTreeContextMenu add command -label Edit… \
+                -command [callback on_list_edit]
+            $ListTreeContextMenu add separator
+            foreach category $categories {
+                if {!$n} { break }
+                if {$category eq $list_category} { continue }
+                $ListTreeContextMenu add command \
+                    -label "Move to $category" \
+                    -command [callback ListMoveTo $lid $category]
+                incr i
+                incr n -1
+            }
+            tk_popup $ListTreeContextMenu \
+                    [expr {[winfo rootx $ListTree] + $x + 3}] $y
         }
     }
 }
@@ -103,6 +132,12 @@ oo::define App method ListChanged {} {
     my populate_listtree
     my populate_history_menu
     my populate_bookmarks_menu
+}
+
+oo::define App method ListMoveTo {lid category} {
+    set cid [$Pldb cid_for_name $category]
+    $Pldb list_update_category $cid $lid
+    my ListChanged
 }
 
 # Returns -1 if a category is selected rather than a list.
