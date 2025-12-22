@@ -78,6 +78,15 @@ CREATE VIEW HistoryView AS
     SELECT lid, Tracks.tid, filename FROM History, Tracks
         WHERE Tracks.tid = History.tid ORDER BY hid DESC;
 
+CREATE VIEW ListTracksView AS
+    SELECT Lists.lid, Tracks.tid, Tracks.filename
+        FROM Lists, Tracks, List_x_Tracks, Categories
+        WHERE Lists.lid = List_x_Tracks.lid
+            AND Tracks.tid = List_x_Tracks.tid
+            AND Lists.cid = Categories.cid
+        ORDER BY LOWER(Categories.name), LOWER(Lists.name),
+                 LOWER(Tracks.filename);
+
 CREATE TRIGGER DeleteCategoryTrigger BEFORE DELETE ON Categories
     FOR EACH ROW WHEN OLD.cid = 0
     BEGIN

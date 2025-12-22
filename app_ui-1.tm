@@ -100,6 +100,9 @@ oo::define App method make_track_menu {} {
     .menu.track add command -command [callback on_track_find] \
         -label Find… -underline 0 -accelerator Ctrl+F -compound left \
         -image [ui::icon track-find.svg $::MENU_ICON_SIZE]
+    .menu.track add command -command [callback on_track_find_next] \
+        -label "Find Next" -underline 5 -accelerator Ctrl+N -compound left \
+        -image [ui::icon track-find.svg $::MENU_ICON_SIZE]
     .menu.track add command -command [callback on_track_copy_to_list] \
         -label "Copy to List…" -underline 0 -compound left \
         -image [ui::icon track-copy-to-list.svg $::MENU_ICON_SIZE]
@@ -186,6 +189,7 @@ oo::define App method make_playbar {} {
         -takefocus 0
     $tip .mf.play.nextButton "Play Next • F6"
     ttk::progressbar .mf.play.progress -anchor center
+    ttk::label .mf.play.statusLabel -relief sunken
     ttk::button .mf.play.volumeDownButton -takefocus 0 \
         -command [callback on_volume_down] \
         -image [ui::icon audio-volume-low.svg $::MENU_ICON_SIZE]
@@ -205,6 +209,7 @@ oo::define App method make_layout {} {
     pack .mf.play.playButton -side left {*}$opts
     pack .mf.play.nextButton -side left {*}$opts
     pack .mf.play.progress -fill both -expand 1 -side left {*}$opts
+    pack .mf.play.statusLabel -fill both -side left {*}$opts
     pack .mf.play.volumeDownButton -side left {*}$opts
     pack .mf.play.volumeUpButton -side left {*}$opts
     pack .mf.pw -fill both -expand 1
@@ -228,6 +233,7 @@ oo::define App method make_bindings {} {
     bind . <F8> [callback on_volume_up]
     bind . <Control-a> [callback on_bookmarks_add]
     bind . <Control-f> [callback on_track_find]
+    bind . <Control-n> [callback on_track_find_next]
     bind . <Control-o> [callback on_file_open]
     bind . <Control-q> [callback on_quit]
     wm protocol . WM_DELETE_WINDOW [callback on_quit]

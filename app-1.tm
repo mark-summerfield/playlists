@@ -12,6 +12,8 @@ oo::singleton create App {
     variable TrackTree
     variable Pldb
     variable GotSecs
+    variable FindWhat
+    variable FindIndex
 }
 
 package require app_actions
@@ -30,6 +32,8 @@ oo::define App constructor {} {
     tk appname Playlists
     Config new ;# we need tk scaling done early
     set ListTreeExpanded 0
+    set FindWhat ""
+    set FindIndex 0
     set Pldb [Pld new [get_db_filename]]
     set Player ""
     set GotSecs 0
@@ -107,4 +111,9 @@ oo::define App method goto_track {lid tid filename} {
         }
     }
     after idle [list select_tree_item $TrackTree $lid:$tid]
+}
+
+oo::define App method update_status {message {color black}} {
+    .mf.play.statusLabel configure -text $message -foreground $color
+    after 7000 {.mf.play.statusLabel configure -text ""}
 }

@@ -1,5 +1,7 @@
 # Copyright © 2025 Mark Summerfield. All rights reserved.
 
+package require db
+
 oo::define Pld method cids {} {
     set cids [list]
     $Db eval {SELECT cid FROM CategoriesView} { lappend cids $cid }
@@ -37,7 +39,8 @@ oo::define Pld method category_info cid {
 }
 
 oo::define Pld method category_name cid {
-    $Db eval {SELECT name FROM Categories WHERE cid = :cid LIMIT 1}
+    db::first [$Db eval {SELECT name FROM Categories WHERE cid = :cid
+                         LIMIT 1}]
 }
 
 oo::define Pld method category_list_count cid {
@@ -45,15 +48,18 @@ oo::define Pld method category_list_count cid {
 }
 
 oo::define Pld method category_insert name {
+    set ListTracks [list]
     $Db eval {INSERT INTO Categories (name) VALUES (:name)}
     $Db last_insert_rowid
 }
 
 oo::define Pld method category_update {cid name} {
+    set ListTracks [list]
     $Db eval {UPDATE Categories SET name = :name WHERE cid = :cid}
 }
 
 oo::define Pld method category_delete cid {
+    set ListTracks [list]
     $Db eval {DELETE FROM Categories WHERE cid = :cid}
 }
 

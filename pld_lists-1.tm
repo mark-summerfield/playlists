@@ -1,5 +1,6 @@
 # Copyright © 2025 Mark Summerfield. All rights reserved.
 
+package require db
 package require ogg
 
 oo::define Pld method lid_for_cid_and_name {cid name} {
@@ -16,7 +17,7 @@ oo::define Pld method lists {} {
 }
 
 oo::define Pld method list_name lid {
-    $Db eval {SELECT name FROM Lists WHERE lid = :lid LIMIT 1}
+    db::first [$Db eval {SELECT name FROM Lists WHERE lid = :lid LIMIT 1}]
 }
 
 oo::define Pld method list_tracks_info lid {
@@ -41,6 +42,18 @@ oo::define Pld method list_info lid {
     list "" 0 "" 0
 }
 
+oo::define Pld method list_category_data ignore_lid {
+    set data [list]
+    $Db eval {SELECT Categories.name AS category_name,
+                     Lists.name AS list_name, Lists.lid AS lid
+              FROM Categories, Lists
+              WHERE Categories.cid = Lists.cid AND Lists.lid != :ignore_lid
+              ORDER BY LOWER(list_name), LOWER(category_name) } {
+        lappend data [list $category_name $list_name $lid]
+    }
+    return $data
+}
+
 oo::define Pld method list_merge_data ignore_lid {
     set data [list]
     $Db eval {SELECT Categories.name AS category_name,
@@ -57,6 +70,7 @@ oo::define Pld method list_merge_data ignore_lid {
 }
 
 oo::define Pld method list_merge {to_lid from_lid} {
+    set ListTracks [list]
     $Db transaction {
         set tids [list]
         $Db eval {SELECT tid FROM List_x_Tracks
@@ -73,6 +87,7 @@ oo::define Pld method list_merge {to_lid from_lid} {
 }
 
 oo::define Pld method list_insert_tracks {lid tracks} {
+    set ListTracks [list]
     $Db transaction {
         foreach track $tracks {
             set secs [ogg::duration_in_secs $track]
@@ -89,19 +104,23 @@ oo::define Pld method list_insert_tracks {lid tracks} {
 }
 
 oo::define Pld method list_insert {cid name} {
+    set ListTracks [list]
     $Db eval {INSERT INTO Lists (cid, name) VALUES (:cid, :name)}
     $Db last_insert_rowid
 }
 
 oo::define Pld method list_update {cid lid name} {
+    set ListTracks [list]
     $Db eval {UPDATE Lists SET cid = :cid, name = :name WHERE lid = :lid}
 }
 
 oo::define Pld method list_update_category {cid lid} {
+    set ListTracks [list]
     $Db eval {UPDATE Lists SET cid = :cid WHERE lid = :lid}
 }
 
 oo::define Pld method list_delete lid {
+    set ListTracks [list]
     $Db transaction {
         $Db eval {DELETE FROM Bookmarks WHERE lid = :lid}
         $Db eval {DELETE FROM History WHERE lid = :lid}
@@ -111,6 +130,7 @@ oo::define Pld method list_delete lid {
 }
 
 oo::define Pld method list_delete_unlisted_tracks {} {
+    set ListTracks [list]
     $Db transaction {
         $Db eval {DELETE FROM LastItem WHERE lid = 0}
         $Db eval {DELETE FROM Bookmarks WHERE lid = 0}

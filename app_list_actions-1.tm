@@ -1,7 +1,7 @@
 # Copyright © 2025 Mark Summerfield. All rights reserved.
 
 package require add_edit_list_form
-package require merge_list_form
+package require choose_list_form
 package require message_form
 package require misc
 package require mplayer
@@ -59,10 +59,13 @@ oo::define App method on_list_merge {} {
         if {![llength $data]} {
             MessageForm show "Merge — [tk appname]" \
                 "There are no nonempty lists to merge from." OK warning
-            return
-        }
-        if {[MergeListForm show $Pldb $lid $data]} {
-            my populate_listtree $lid
+        } else {
+            set name [$Pldb list_name $lid]
+            if {[set from_lid [ChooseListForm show Merge "Merge into list\
+                    “$name” from list" $Pldb $lid $data]] != -1} {
+                $Pldb list_merge $lid $from_lid
+                my populate_listtree $lid
+            }
         }
     }
 }

@@ -6,6 +6,7 @@ oo::class create Pld {
     variable Filename
     variable Db
     variable MaxHistory
+    variable ListTracks
 }
 
 package require pld_categories
@@ -18,6 +19,7 @@ oo::define Pld constructor {filename {max_history 26}} {
     classvariable N
     set Filename $filename
     set MaxHistory $max_history
+    set ListTracks [list]
     set Db Pldb#[incr N]
     set exists [file isfile $Filename]
     sqlite3 $Db $Filename
@@ -56,6 +58,16 @@ oo::define Pld method info {} {
         set secs [$Db eval {SELECT SUM(secs) FROM Tracks}]
     }
     list $categories $lists $tracks $secs
+}
+
+oo::define Pld method list_tracks {} {
+    if {![llength $ListTracks]} {
+        set ListTracks [list]
+        $Db eval {SELECT lid, tid, filename FROM ListTracksView} {
+            lappend ListTracks [list $lid $tid $filename]
+        }
+    }
+    return $ListTracks
 }
 
 oo::define Pld method history {} {
