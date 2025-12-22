@@ -70,12 +70,18 @@ oo::define App method on_list_merge {} {
 oo::define App method on_list_delete {} {
     if {[set lid [my GetLid]] != -1} {
         if {!$lid} {
-            if {[YesNoForm show "Delete List — [tk appname]" \
-                    "Cannot delete the “Unlisted” list from the\
-                    “Uncategorized” category.\nDelete all the\
-                    Unlisted list’s tracks?"] eq "yes"} {
-                $Pldb list_delete_unlisted_tracks
-                my ListChanged
+            set title "Delete List — [tk appname]"
+            set body "Cannot delete the “Unlisted” list from the\
+                     “Uncategorized” category."
+            lassign [$Pldb list_tracks_info $lid] n _
+            if {$n} {
+                set body "$body\nDelete all the Unlisted list’s tracks?"
+                if {[YesNoForm show $title $body] eq "yes"} {
+                    $Pldb list_delete_unlisted_tracks
+                    my ListChanged
+                }
+            } else {
+                MessageForm show $title $body OK warning
             }
             return
         }
