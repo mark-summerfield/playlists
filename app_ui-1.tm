@@ -79,6 +79,7 @@ oo::define App method make_list_menu {} {
     .menu.list add command -command [callback on_list_edit] \
         -label Edit… -underline 0 -compound left \
         -image [ui::icon list-rename.svg $::MENU_ICON_SIZE]
+    .menu.list add separator
     .menu.list add command -command [callback on_list_add_folder] \
         -label "Add Folder’s Tracks…" -underline 4 -compound left \
         -image [ui::icon list-add-folder.svg $::MENU_ICON_SIZE]
@@ -103,6 +104,7 @@ oo::define App method make_track_menu {} {
     .menu.track add command -command [callback on_track_find_next] \
         -label "Find Next" -underline 5 -accelerator Ctrl+N -compound left \
         -image [ui::icon track-find.svg $::MENU_ICON_SIZE]
+    .menu.track add separator
     .menu.track add command -command [callback on_track_copy_to_list] \
         -label "Copy to List…" -underline 0 -compound left \
         -image [ui::icon track-copy-to-list.svg $::MENU_ICON_SIZE]
@@ -163,6 +165,13 @@ oo::define App method make_widgets {} {
     $TrackTree heading #0 -text №
     $TrackTree heading 0 -text Title
     $TrackTree heading 1 -text Time
+    set TrackTreeContextMenu [menu $TrackTree.contextMenu]
+    $TrackTreeContextMenu add command -label "Copy to List…" -underline 0 \
+        -compound left -command [callback on_track_copy_to_list] \
+        -image [ui::icon track-copy-to-list.svg $::MENU_ICON_SIZE]
+    $TrackTreeContextMenu add command -label "Move to List…" -underline 0 \
+        -compound left -command [callback on_track_move_to_list] \
+        -image [ui::icon track-move-to-list.svg $::MENU_ICON_SIZE]
     my make_playbar
 }
 
@@ -222,6 +231,7 @@ oo::define App method make_bindings {} {
     bind . <<MplayerDebug>> [callback on_debug %d]
     bind $ListTree <<TreeviewSelect>> [callback on_list_select]
     bind $ListTree <<ContextMenu>> [callback on_list_context_menu %x %y]
+    bind $TrackTree <<ContextMenu>> [callback on_track_context_menu %x %y]
     bind $TrackTree <Return> [callback on_play]
     bind $TrackTree <Double-1> [callback on_play]
     bind . <F2> [callback on_play_prev]

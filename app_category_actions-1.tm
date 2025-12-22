@@ -52,13 +52,13 @@ oo::define App method on_category_delete {} {
     if {[string match C* $tcid]} {
         set cid [string range $tcid 1 end]
         lassign [$Pldb category_info $cid] name n
-        set body "Delete category “$name”"
+        set body "Delete category\n“$name”"
         if {$n} {
             lassign [util::n_s $n] size s
             set body "$body\nand move its $size list$s to Uncategorized"
         }
         set body $body?
-        if {[YesNoForm show "Delete Category — [tk appname]" $body] \
+        if {[YesNoForm show "Delete Category — [tk appname]" $body no] \
                 eq "yes"} {
             $Pldb category_delete $cid
             my populate_listtree

@@ -21,8 +21,7 @@ oo::define App method maybe_add_tracks {} {
         try {
             set secs [clock seconds]
             set dirs [glob -directory $music_dir -types d *]
-            .mf.play.progress configure -value 0 -maximum [llength $dirs] \
-                -text "none read"
+            my update_status "Reading folders…"
             set i 0
             foreach dir $dirs {
                 incr i
@@ -33,16 +32,14 @@ oo::define App method maybe_add_tracks {} {
                     }]]
                 $Pldb list_insert_tracks $lid [$trav files]
                 lassign [util::n_s $i] j s
-                .mf.play.progress configure -value $i \
-                    -text "Read $j folder$s…"
+                my update_status "Read $j folder$s…"
                 my populate_listtree
                 update idletasks
             }
             my populate_listtree
             set secs [expr {[clock seconds] - $secs}]
             lassign [util::n_s $i] i s
-            .mf.play.progress configure -value 0 \
-                -text "Created $i list$s in [commas $secs]s"
+            my update_status "Created $i list$s in [commas $secs]s"
         } finally {
             tk busy forget .
         }

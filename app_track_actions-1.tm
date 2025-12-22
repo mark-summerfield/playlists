@@ -104,3 +104,11 @@ oo::define App method GetListAndTrack {lid tid} {
     set list_name [$Pldb list_name $lid]
     list $list_name $track
 }
+
+oo::define App method on_track_context_menu {x y} {
+    if {[set tlid [$TrackTree identify item $x $y]] ne ""} {
+        $TrackTree selection set $tlid
+        tk_popup $TrackTreeContextMenu \
+                [expr {[winfo rootx $TrackTree] + $x + 3}] $y
+    }
+}

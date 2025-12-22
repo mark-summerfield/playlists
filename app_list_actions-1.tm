@@ -61,8 +61,9 @@ oo::define App method on_list_merge {} {
                 "There are no nonempty lists to merge from." OK warning
         } else {
             set name [$Pldb list_name $lid]
-            if {[set from_lid [ChooseListForm show Merge "Merge into list\
-                    “$name” from list" $Pldb $lid $data]] != -1} {
+            if {[set from_lid [ChooseListForm show Merge \
+                    "Merge into list\n“$name”\nfrom list:" $Pldb $lid \
+                    $data]] != -1} {
                 $Pldb list_merge $lid $from_lid
                 my populate_listtree $lid
             }
@@ -74,12 +75,12 @@ oo::define App method on_list_delete {} {
     if {[set lid [my GetLid]] != -1} {
         set title "Delete List — [tk appname]"
         if {!$lid} {
-            set body "Cannot delete the “Unlisted” list from the\
-                     “Uncategorized” category."
+            set body "Cannot delete the “Unlisted” list from\
+                     the\n“Uncategorized” category."
             lassign [$Pldb list_tracks_info $lid] n _
             if {$n} {
                 set body "$body\nDelete all the Unlisted list’s tracks?"
-                if {[YesNoForm show $title $body] eq "yes"} {
+                if {[YesNoForm show $title $body no] eq "yes"} {
                     $Pldb list_delete_unlisted_tracks
                     my ListChanged
                 }
@@ -88,14 +89,14 @@ oo::define App method on_list_delete {} {
             }
         } else {
             lassign [$Pldb list_info $lid] name cid category n
-            set body "Delete the “$category” category’s\n“$name” list"
+            set body "Delete category\n“$category”’s\n“$name”\nlist"
             if {$n} {
                 lassign [util::n_s $n] n s
                 set body "$body and its $n track$s?"
             } else {
                 set body $body?
             }
-            if {[YesNoForm show $title $body] eq "yes"} {
+            if {[YesNoForm show $title $body no] eq "yes"} {
                 $Pldb list_delete $lid
                 my ListChanged
             }

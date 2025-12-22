@@ -10,6 +10,7 @@ oo::singleton create App {
     variable ListTreeExpanded
     variable ListTreeContextMenu
     variable TrackTree
+    variable TrackTreeContextMenu
     variable Pldb
     variable GotSecs
     variable FindWhat

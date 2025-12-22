@@ -23,7 +23,7 @@ oo::define App method on_about {} {
     lassign [util::n_s $lists 1] nlists slists
     lassign [util::n_s $tracks 1] ntracks stracks
     set secs [humanize_secs $secs]
-    set desc "Play and manage playlists.\n$ncategories\
+    set desc "Play tracks and manage playlists.\n$ncategories\
         categor$scategories · $nlists list$slists · $ntracks\
         track$stracks · $secs"
     AboutForm new $desc https://github.com/mark-summerfield/playlists
