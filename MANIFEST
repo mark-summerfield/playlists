@@ -1,4 +1,5 @@
 # TODO
+# - Categories→&Collapse All
 # - Track→&Rename… (+ on context menu)
 # - Use Track.name rather than [humanize_trackname $filename] iff nonempty
 # TODO History actions
