@@ -66,11 +66,5 @@ oo::define Pld method track_remove {tid lid} {
 
 oo::define Pld method track_delete tid {
     set ListTracks [list]
-    $Db transaction {
-        $Db eval {DELETE FROM LastItem WHERE tid = :tid}
-        $Db eval {DELETE FROM Bookmarks WHERE tid = :tid}
-        $Db eval {DELETE FROM History WHERE tid = :tid}
-        $Db eval {DELETE FROM List_x_Tracks WHERE tid = :tid}
-        $Db eval {DELETE FROM Tracks WHERE tid = :tid}
-    }
+    $Db eval {DELETE FROM Tracks WHERE tid = :tid}
 }

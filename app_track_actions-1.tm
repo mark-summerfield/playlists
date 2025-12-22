@@ -85,7 +85,7 @@ oo::define App method on_track_delete {} {
         if {[YesNoForm show "Delete Track — [tk appname]" \
                 "Delete track “[humanize_trackname $track]” from all\
                 lists?\nOr click No and move it to another list\nor to\
-                the Uncategorized category’s Unlisted list."] eq "yes"} {
+                the Uncategorized category’s Unlisted list." no] eq "yes"} {
             $Pldb track_delete $tid
             my populate_tracktree $lid
         }

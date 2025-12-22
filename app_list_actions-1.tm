@@ -92,7 +92,7 @@ oo::define App method on_list_delete {} {
             set body "Delete category\n“$category”’s\n“$name”\nlist"
             if {$n} {
                 lassign [util::n_s $n] n s
-                set body "$body and its $n track$s?"
+                set body "$body and remove all its $n track$s?"
             } else {
                 set body $body?
             }

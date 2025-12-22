@@ -1,11 +1,4 @@
-# TODO restore all deletion triggers (categories lists tracks) & retest
-#	- get the order right!
-# TODO Tracks table: 
-#	    name TEXT, -- nullable; use for display if nonempty
-#	    pos INTEGER DEFAULT 10000 NOT NULL, 
-#		-- change sort: ORDER BY pos, ...as before...
 # TODO Track→&Rename… (+ on context menu)
-# TODO Track→&Move {&Up,Down}… (+ on context menu)
 # TODO History actions
 # TODO Bookmarks actions
 
