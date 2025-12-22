@@ -1,4 +1,6 @@
-# TODO Track→&Rename… (+ on context menu)
+# TODO
+# - Track→&Rename… (+ on context menu)
+# - Use Track.name rather than [humanize_trackname $filename] iff nonempty
 # TODO History actions
 # TODO Bookmarks actions
 
