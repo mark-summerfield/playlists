@@ -37,3 +37,12 @@ proc ogg::duration_in_secs filename {
     if {!$rate || !$length} { return 0 }
     expr {int(round($length / double($rate)))}
 }
+
+if {[string match *.tm $::argv0]} {
+    foreach filename $::argv {
+        if {[file isfile $filename]} {
+            set secs [ogg::duration_in_secs $filename]
+            puts "[file tail $filename] $secs secs"
+        }
+    }
+}
