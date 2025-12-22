@@ -115,7 +115,7 @@ CREATE TRIGGER DeleteListTrigger2 BEFORE DELETE ON Lists
     FOR EACH ROW
         WHEN OLD.lid != 0
     BEGIN
-        DELETE FROM List_x_Tracks WHERE lid = OLD.lid;
+        UPDATE List_x_Tracks SET lid = 0 WHERE lid = OLD.lid;
         DELETE FROM LastItem WHERE lid = OLD.lid;
         DELETE FROM Bookmarks WHERE lid = OLD.lid;
         DELETE FROM History WHERE lid = OLD.lid;

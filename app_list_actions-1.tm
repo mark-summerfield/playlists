@@ -62,7 +62,7 @@ oo::define App method on_list_merge {} {
         } else {
             set name [$Pldb list_name $lid]
             if {[set from_lid [ChooseListForm show Merge \
-                    "Merge into list\n“$name”\nfrom list:" $Pldb $lid \
+                    "Merge into the\n“$name” list\nfrom list:" $Pldb $lid \
                     $data]] != -1} {
                 $Pldb list_merge $lid $from_lid
                 my populate_listtree $lid
@@ -75,8 +75,8 @@ oo::define App method on_list_delete {} {
     if {[set lid [my GetLid]] != -1} {
         set title "Delete List — [tk appname]"
         if {!$lid} {
-            set body "Cannot delete the “Unlisted” list from\
-                     the\n“Uncategorized” category."
+            set body "Cannot delete the Unlisted list from\
+                     the\nUncategorized category."
             lassign [$Pldb list_tracks_info $lid] n _
             if {$n} {
                 set body "$body\nDelete all the Unlisted list’s tracks?"
@@ -89,10 +89,11 @@ oo::define App method on_list_delete {} {
             }
         } else {
             lassign [$Pldb list_info $lid] name cid category n
-            set body "Delete category\n“$category”’s\n“$name”\nlist"
+            set body "Delete the\n“$category” category's\n“$name” list"
             if {$n} {
                 lassign [util::n_s $n] n s
-                set body "$body and remove all its $n track$s?"
+                set body "$body\nand move its $n track$s to\
+                    the\nUncategorized category’s Unlisted list?"
             } else {
                 set body $body?
             }
@@ -110,13 +111,14 @@ oo::define App method on_list_context_menu {x y} {
         $ListTreeContextMenu delete 0 end
         if {[string match L* $anid]} {
             set lid [string range $anid 1 end]
-            lassign [$Pldb list_info $lid] name _ list_category n
-            set categories [$Pldb category_names]
+            lassign [$Pldb list_info $lid] name _ list_category _
             $ListTreeContextMenu add command -label New… \
                 -command [callback on_list_new]
             $ListTreeContextMenu add command -label Edit… \
                 -command [callback on_list_edit]
             $ListTreeContextMenu add separator
+            set categories [$Pldb category_names]
+            set n [expr {min(20, [llength $categories])}]
             foreach category $categories {
                 if {!$n} { break }
                 if {$category eq $list_category} { continue }

@@ -19,7 +19,7 @@ oo::define App method on_category_rename {} {
     set tcid [my get_tcid]
     if {$tcid eq "C0"} {
         MessageForm show "Rename Category — [tk appname]" \
-            "Cannot rename the “Uncategorized” category." OK warning
+            "Cannot rename the Uncategorized category." OK warning
         return
     }
     if {[string match C* $tcid]} {
@@ -46,7 +46,7 @@ oo::define App method on_category_delete {} {
     set tcid [my get_tcid]
     if {$tcid eq "C0"} {
         MessageForm show "Delete Category — [tk appname]" \
-            "Cannot delete the “Uncategorized” category." OK warning
+            "Cannot delete the Uncategorized category." OK warning
         return
     }
     if {[string match C* $tcid]} {

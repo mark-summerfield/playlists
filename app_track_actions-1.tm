@@ -55,7 +55,7 @@ oo::define App method on_track_move_to_list {} {
         set name [$Pldb list_name $lid]
         lassign [$Pldb track_for_tid $tid] track _
         if {[set to_lid [ChooseListForm show "Move Track" "Move track\
-                “[humanize_trackname $track]” from\nlist “$name” to:" \
+                “[humanize_trackname $track]”\nfrom the “$name” list to:" \
                 $Pldb $lid $data]] != -1} {
             $Pldb track_move $tid $to_lid $lid
             my populate_listtree $lid
@@ -70,8 +70,8 @@ oo::define App method on_track_remove_from_list {} {
     if {$tid} {
         lassign [my GetListAndTrack $lid $tid] list_name track
         if {[YesNoForm show "Remove Track — [tk appname]" \
-                "Remove track “[humanize_trackname $track]” from\nlist\
-                “$list_name”?"] eq "yes"} {
+                "Remove track “[humanize_trackname $track]”\n from the\
+                “$list_name” list?"] eq "yes"} {
             $Pldb track_remove $tid $lid
             my populate_tracktree $lid
         }
