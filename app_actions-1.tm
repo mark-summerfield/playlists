@@ -14,7 +14,8 @@ oo::define App method on_list_select {} {
 oo::define App method maybe_add_tracks {} {
     set dir [get_music_dir]
     if {[YesNoForm show "Discover Tracks — [tk appname]" \
-            "Add Lists of Tracks from the music folder:\n$dir"] eq "yes"} {
+            "Add Lists of Tracks from the music folder:\n“$dir”"] \
+            eq "yes"} {
         $ListTree item C0 -open 1
         set music_dir [get_music_dir]
         tk busy .
