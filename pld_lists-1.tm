@@ -99,7 +99,6 @@ oo::define Pld method list_insert_tracks {lid tracks} {
                                     WHERE filename = :track}]] eq ""} {
                 $Db eval {INSERT INTO Tracks (filename, secs, name)
                           VALUES (:track, :secs, :title)}
-                puts "$track | $title | $secs" ;# TODO
                 set tid [$Db last_insert_rowid]
             }
             $Db eval {INSERT OR IGNORE INTO List_x_Tracks (lid, tid)

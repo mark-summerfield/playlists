@@ -12,9 +12,13 @@ proc ogg::duration_in_secs_and_title filename {
     set fh [open $filename rb]
     try {
         while {1} {
-            set data [chan read $fh 4080]
+            set data [chan read $fh 4280]
             if {$title eq ""} {
-                regexp -nocase {TITLE=([^\x00-\x1F]+)} $data _ title
+                regexp -nocase {TITLE=([^$\x00-\x1F]+)} $data _ title
+                set title [encoding convertfrom utf-8 $title]
+                set title [string trim [string trim $title "\"$&"]]
+                set title [regsub -all {\s'} $title ‘]
+                set title [regsub -all ' $title ’]
             }
             set size [string length $data]
             set i [string first "vorbis" $data]
@@ -22,8 +26,8 @@ proc ogg::duration_in_secs_and_title filename {
                 binary scan [string range $data $i+11 $i+14] iu rate
                 break
             }
-            if {$size < 4080} { break }
-            seek $fh -20 current
+            if {$size < 4280} { break }
+            seek $fh -200 current
         }
         seek $fh -4020 end
         while {1} {
@@ -40,6 +44,7 @@ proc ogg::duration_in_secs_and_title filename {
     } finally {
         close $fh
     }
+    if {[string match -nocase "Track *" $title]} { set title "" }
     if {!$rate || !$length} { return [list 0 $title] }
     list [expr {int(round($length / double($rate)))}] $title
 }
