@@ -112,6 +112,9 @@ oo::define App method make_track_menu {} {
         -label "Move Down" -underline 0 -compound left \
         -image [ui::icon go-down.svg $::MENU_ICON_SIZE]
     .menu.track add separator
+    .menu.track add command -command [callback on_track_goto_current] \
+        -label "Goto Current" -underline 0 -compound left \
+        -image [ui::icon track-find.svg $::MENU_ICON_SIZE]
     .menu.track add command -command [callback on_track_find] \
         -label Find… -underline 0 -accelerator Ctrl+F -compound left \
         -image [ui::icon track-find.svg $::MENU_ICON_SIZE]

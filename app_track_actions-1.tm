@@ -35,6 +35,13 @@ oo::define App method on_track_move_down {} {
     }
 }
 
+oo::define App method on_track_goto_current {} {
+    lassign [$Pldb most_recent] lid tid filename
+    if {$tid} {
+        my goto_track $lid $tid $filename
+    }
+}
+
 oo::define App method on_track_find_next {} {
     if {$FindWhat eq ""} {
         my on_track_find

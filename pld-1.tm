@@ -70,6 +70,10 @@ oo::define Pld method list_tracks {} {
     return $ListTracks
 }
 
+oo::define Pld method most_recent {} {
+    $Db eval {SELECT lid, tid, filename FROM HistoryView LIMIT 1}
+}
+
 oo::define Pld method history {} {
     set history [list]
     $Db eval {SELECT lid, tid, filename, name FROM HistoryView} {
