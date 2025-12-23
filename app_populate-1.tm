@@ -46,7 +46,12 @@ oo::define App method populate_listtree {{sel_lid 0}} {
     foreach cid [$Pldb cids] {
         lassign [$Pldb category_info $cid] name n
         lassign [util::n_s $n] n s
-        $ListTree insert {} end -id C$cid -text "$name · $n list$s"
+        if {[set secs [$Pldb category_secs $cid]]} {
+            set secs " · [humanize_secs $secs]"
+        } else {
+            set secs ""
+        }
+        $ListTree insert {} end -id C$cid -text "$name · $n list$s$secs"
     }
     foreach row [$Pldb lists] {
         lassign $row cid lid name

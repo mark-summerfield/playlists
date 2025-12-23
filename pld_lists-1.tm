@@ -20,6 +20,10 @@ oo::define Pld method list_name lid {
     db::first [$Db eval {SELECT name FROM Lists WHERE lid = :lid LIMIT 1}]
 }
 
+oo::define Pld method list_first_for_cid cid {
+    $Db eval {SELECT lid FROM ListsView WHERE cid = :cid LIMIT 1}
+}
+
 oo::define Pld method list_tracks_info lid {
     $Db eval {SELECT COUNT(*) AS n, SUM(secs) as secs
               FROM List_x_Tracks, Tracks
@@ -76,7 +80,7 @@ oo::define Pld method list_merge {to_lid from_lid} {
         $Db eval {SELECT tid FROM List_x_Tracks
                   WHERE lid = :from_lid
                   AND tid NOT IN (SELECT tid FROM List_x_Tracks
-                                  WHERE lid = :to_lid)} {
+                                  WHERE lid = :to_lid) ORDER BY pos} {
             lappend tids $tid
         }
         foreach tid $tids {
@@ -89,7 +93,7 @@ oo::define Pld method list_merge {to_lid from_lid} {
 oo::define Pld method list_insert_tracks {lid tracks} {
     set ListTracks [list]
     $Db transaction {
-        foreach track $tracks {
+        foreach track [lsort -dictionary $tracks] {
             set secs [ogg::duration_in_secs $track]
             if {[set tid [$Db eval {SELECT tid FROM Tracks
                                     WHERE filename = :track}]] eq ""} {

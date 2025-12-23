@@ -8,8 +8,17 @@ oo::define Pld method cids {} {
     return $cids
 }
 
+oo::define Pld method cid_for_lid lid {
+    $Db eval {SELECT cid FROM Lists WHERE lid = :lid LIMIT 1}
+}
+
 oo::define Pld method cid_for_name name {
     $Db eval {SELECT cid FROM Categories WHERE name = :name LIMIT 1}
+}
+
+oo::define Pld method category_name cid {
+    db::first [$Db eval {SELECT name FROM Categories WHERE cid = :cid
+                         LIMIT 1}]
 }
 
 oo::define Pld method category_names {{casefold 0}} {
@@ -38,9 +47,10 @@ oo::define Pld method category_info cid {
     list "" 0
 }
 
-oo::define Pld method category_name cid {
-    db::first [$Db eval {SELECT name FROM Categories WHERE cid = :cid
-                         LIMIT 1}]
+oo::define Pld method category_secs cid {
+    $Db eval {SELECT COALESCE(SUM(secs), 0) AS secs FROM Tracks WHERE tid IN
+              (SELECT tid FROM List_x_Tracks WHERE lid IN
+               (SELECT lid FROM Lists WHERE cid = :cid))}
 }
 
 oo::define Pld method category_list_count cid {

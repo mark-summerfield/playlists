@@ -14,7 +14,7 @@ oo::define Pld method tracks_for_lid lid {
                                    WHERE lid = :lid)
                 AND Tracks.tid = List_x_Tracks.tid
                 AND List_x_Tracks.lid = :lid
-              ORDER BY LOWER(filename)} {
+              ORDER BY pos} {
         lappend tracks [list $tid $filename $secs]
     }
     return $tracks

@@ -134,16 +134,20 @@ oo::define App method on_list_context_menu {x y} {
     }
 }
 
-oo::define App method ListChanged {} {
-    my populate_listtree
+oo::define App method ListChanged {{lid 0}} {
+    my populate_listtree $lid
     my populate_history_menu
     my populate_bookmarks_menu
 }
 
 oo::define App method ListMoveTo {lid category} {
-    set cid [$Pldb cid_for_name $category]
-    $Pldb list_update_category $cid $lid
-    my ListChanged
+    set cid_old [$Pldb cid_for_lid $lid]
+    set cid_new [$Pldb cid_for_name $category]
+    $Pldb list_update_category $cid_new $lid
+    if {[set first [$Pldb list_first_for_cid $cid_old]] ne ""} {
+        set lid $first
+    }
+    my ListChanged $lid
 }
 
 # Returns -1 if a category is selected rather than a list.

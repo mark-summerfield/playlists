@@ -27,6 +27,7 @@ CREATE TABLE Tracks (
 CREATE TABLE List_x_Tracks (
     lid INTEGER NOT NULL, -- lid → cid
     tid INTEGER NOT NULL,
+    pos INTEGER DEFAULT 0 NOT NULL,
 
     PRIMARY KEY (lid, tid),
     FOREIGN KEY(lid) REFERENCES Lists(lid),
@@ -119,6 +120,13 @@ CREATE TRIGGER DeleteListTrigger2 BEFORE DELETE ON Lists
         DELETE FROM LastItem WHERE lid = OLD.lid;
         DELETE FROM Bookmarks WHERE lid = OLD.lid;
         DELETE FROM History WHERE lid = OLD.lid;
+    END;
+
+CREATE TRIGGER InsertListTracksTrigger AFTER INSERT ON List_x_Tracks
+    FOR EACH ROW WHEN NEW.pos = 0
+    BEGIN
+        UPDATE List_x_Tracks SET pos = (NEW.lid * 1000) + NEW.tid
+            WhERE lid = NEW.lid AND tid = NEW.tid;
     END;
 
 -- If we move a track from one list to another we must update its
