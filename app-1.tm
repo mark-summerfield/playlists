@@ -104,6 +104,7 @@ oo::define App method goto_track {lid tid filename} {
         foreach tcid [$ListTree children {}] {
             foreach tlid [$ListTree children $tcid] {
                 if {$tlid eq "L$lid"} {
+                    $ListTree item $tcid -open 1
                     $ListTree selection set L$lid
                     set done 1
                     break

@@ -1,3 +1,10 @@
+# TODO
+# - File→&Export… # export all playlists
+# - List→E&xport… # export current playlist
+# - List→&Import… # import playlist into existing playlist
+# - ogg-1.tm # extend to extract the title & use that as the Track.name
+# - mp3-1.tm # duration_secs & name just like ogg-1.tm
+
 playlists.tk # VERSION
 app-1.tm
 app_ui-1.tm
