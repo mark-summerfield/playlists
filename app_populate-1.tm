@@ -80,7 +80,6 @@ oo::define App method populate_tracktree {lid {sel_tid 0}} {
     }
     if {$n} {
         select_tree_item $TrackTree $lid:$sel_tid
-        focus $TrackTree
     } else {
         focus $ListTree
     }

@@ -94,11 +94,12 @@ oo::define Pld method list_insert_tracks {lid tracks} {
     set ListTracks [list]
     $Db transaction {
         foreach track [lsort -dictionary $tracks] {
-            set secs [ogg::duration_in_secs $track]
+            lassign [ogg::duration_in_secs_and_title $track] secs title
             if {[set tid [$Db eval {SELECT tid FROM Tracks
                                     WHERE filename = :track}]] eq ""} {
-                $Db eval {INSERT INTO Tracks (filename, secs)
-                          VALUES (:track, :secs)}
+                $Db eval {INSERT INTO Tracks (filename, secs, name)
+                          VALUES (:track, :secs, :title)}
+                puts "$track | $title | $secs" ;# TODO
                 set tid [$Db last_insert_rowid]
             }
             $Db eval {INSERT OR IGNORE INTO List_x_Tracks (lid, tid)
