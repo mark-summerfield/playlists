@@ -109,4 +109,11 @@ oo::define Pld method bookmarks_delete {lid {tid 0}} {
     }
 }
 
+oo::define Pld method bookmarks_insert {lid tid} {
+    $Db transaction {
+        $Db eval {DELETE FROM Bookmarks WHERE lid = :lid AND tid = :tid}
+        $Db eval {INSERT INTO Bookmarks (lid, tid) VALUES (:lid, :tid)}
+    }
+}
+
 oo::define Pld method to_string {} { return "Pld \"$Filename\"" }

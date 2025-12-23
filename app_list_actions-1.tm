@@ -118,7 +118,7 @@ oo::define App method on_list_context_menu {x y} {
                 -command [callback on_list_edit]
             $ListTreeContextMenu add separator
             set categories [$Pldb category_names]
-            set n [expr {min(20, [llength $categories])}]
+            set n [expr {min(26, [llength $categories])}]
             foreach category $categories {
                 if {!$n} { break }
                 if {$category eq $list_category} { continue }
