@@ -9,15 +9,20 @@ oo::define Pld method track_exists {lid tid} {
 
 oo::define Pld method tracks_for_lid lid {
     set tracks [list]
-    $Db eval {SELECT Tracks.tid, filename, secs FROM Tracks, List_x_Tracks
+    $Db eval {SELECT Tracks.tid, filename, name, secs
+              FROM Tracks, List_x_Tracks
               WHERE Tracks.tid IN (SELECT tid FROM List_x_Tracks
                                    WHERE lid = :lid)
                 AND Tracks.tid = List_x_Tracks.tid
                 AND List_x_Tracks.lid = :lid
               ORDER BY pos} {
-        lappend tracks [list $tid $filename $secs]
+        lappend tracks [list $tid $filename $name $secs]
     }
     return $tracks
+}
+
+oo::define Pld method track_names tid {
+    $Db eval {SELECT filename, name FROM Tracks WHERE tid = :tid LIMIT 1}
 }
 
 oo::define Pld method track_for_tid tid {
@@ -36,6 +41,11 @@ oo::define Pld method track_secs tid {
 oo::define Pld method track_update_secs {tid secs} {
     set ListTracks [list]
     $Db eval {UPDATE Tracks SET secs = :secs WHERE tid = :tid}
+}
+
+oo::define Pld method track_update_name {tid name} {
+    set ListTracks [list]
+    $Db eval {UPDATE Tracks SET name = :name WHERE tid = :tid}
 }
 
 oo::define Pld method track_copy {tid lid} {

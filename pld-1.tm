@@ -63,8 +63,8 @@ oo::define Pld method info {} {
 oo::define Pld method list_tracks {} {
     if {![llength $ListTracks]} {
         set ListTracks [list]
-        $Db eval {SELECT lid, tid, filename FROM ListTracksView} {
-            lappend ListTracks [list $lid $tid $filename]
+        $Db eval {SELECT lid, tid, filename, name FROM ListTracksView} {
+            lappend ListTracks [list $lid $tid $filename $name]
         }
     }
     return $ListTracks
@@ -72,8 +72,8 @@ oo::define Pld method list_tracks {} {
 
 oo::define Pld method history {} {
     set history [list]
-    $Db eval {SELECT lid, tid, filename FROM HistoryView} {
-        lappend history [list $lid $tid $filename]
+    $Db eval {SELECT lid, tid, filename, name FROM HistoryView} {
+        lappend history [list $lid $tid $filename $name]
     }
     return $history
 }
@@ -95,8 +95,8 @@ oo::define Pld method history_delete {lid {tid 0}} {
 
 oo::define Pld method bookmarks {} {
     set bookmarks [list]
-    $Db eval {SELECT lid, tid, filename FROM BookmarksView} {
-        lappend bookmarks [list $lid $tid $filename]
+    $Db eval {SELECT lid, tid, filename, name FROM BookmarksView} {
+        lappend bookmarks [list $lid $tid $filename $name]
     }
     return $bookmarks
 }

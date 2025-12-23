@@ -64,6 +64,10 @@ oo::define App method make_category_menu {} {
     .menu.category add command -command [callback on_category_expand_all] \
         -label "Expand All" -underline 0 -compound left \
         -image [ui::icon expand.svg $::MENU_ICON_SIZE]
+    .menu.category add command \
+        -command [callback on_category_collapse_all] \
+        -label "Collapse All" -underline 0 -compound left \
+        -image [ui::icon collapse.svg $::MENU_ICON_SIZE]
     .menu.category add separator
     .menu.category add command -command [callback on_category_delete] \
         -label Delete… -underline 0 -compound left \
@@ -98,6 +102,10 @@ oo::define App method make_list_menu {} {
 oo::define App method make_track_menu {} {
     menu .menu.track
     .menu add cascade -menu .menu.track -label Track -underline 0
+    .menu.track add command -command [callback on_track_rename] \
+        -label Rename… -underline 0 -compound left \
+        -image [ui::icon track-rename.svg $::MENU_ICON_SIZE]
+    .menu.track add separator
     .menu.track add command -command [callback on_track_find] \
         -label Find… -underline 0 -accelerator Ctrl+F -compound left \
         -image [ui::icon track-find.svg $::MENU_ICON_SIZE]
@@ -109,10 +117,10 @@ oo::define App method make_track_menu {} {
         -label "Copy to List…" -underline 0 -compound left \
         -image [ui::icon track-copy-to-list.svg $::MENU_ICON_SIZE]
     .menu.track add command -command [callback on_track_move_to_list] \
-        -label "Move to List…" -underline 0 -compound left \
+        -label "Move to List…" -underline 8 -compound left \
         -image [ui::icon track-move-to-list.svg $::MENU_ICON_SIZE]
     .menu.track add command -command [callback on_track_remove_from_list] \
-        -label "Remove from List…" -underline 0 -compound left \
+        -label "Remove from List…" -underline 4 -compound left \
         -image [ui::icon track-remove-from-list.svg $::MENU_ICON_SIZE]
     .menu.track add separator
     .menu.track add command -command [callback on_track_delete] \

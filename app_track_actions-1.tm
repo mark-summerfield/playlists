@@ -4,6 +4,19 @@ package require choose_list_form
 package require entry_form
 package require yes_no_form
 
+oo::define App method on_track_rename {} {
+    lassign [my GetLidAndTid] lid tid
+    if {$tid} {
+        lassign [$Pldb track_names $tid] filename name
+        set name [humanize_trackname $filename $name]
+        if {[set name [EntryForm show "Rename Track — [tk appname]" \
+                "Name" {} $name]] ne ""} {
+            $Pldb track_update_name $tid $name
+            my populate_tracktree $lid
+        }
+    }
+}
+
 oo::define App method on_track_find_next {} {
     if {$FindWhat eq ""} {
         my on_track_find
@@ -36,14 +49,15 @@ oo::define App method on_track_copy_to_list {} {
     lassign [my GetLidAndTid] lid tid
     if {$tid} {
         set data [$Pldb list_category_data $lid]
-        set name [$Pldb list_name $lid]
-        lassign [$Pldb track_for_tid $tid] track _
+        set list_name [$Pldb list_name $lid]
+        lassign [$Pldb track_names $tid] filename name
+        set name [humanize_trackname $filename $name]
         if {[set to_lid [ChooseListForm show "Copy Track" "Copy track\
-                “[humanize_trackname $track]” from\nlist “$name” to:" \
-                $Pldb $lid $data]] != -1} {
+                “$name” from\nlist “$list_name” to:" $Pldb $lid $data]] \
+                != -1} {
             $Pldb track_copy $tid $to_lid
             my populate_listtree $lid
-            my update_status "Copied track “[humanize_trackname $track]”"
+            my update_status "Copied track “$name”"
         }
     }
 }
@@ -52,15 +66,16 @@ oo::define App method on_track_move_to_list {} {
     lassign [my GetLidAndTid] lid tid
     if {$tid} {
         set data [$Pldb list_category_data $lid]
-        set name [$Pldb list_name $lid]
-        lassign [$Pldb track_for_tid $tid] track _
+        set list_name [$Pldb list_name $lid]
+        lassign [$Pldb track_names $tid] filename name
+        set name [humanize_trackname $filename $name]
         if {[set to_lid [ChooseListForm show "Move Track" "Move track\
-                “[humanize_trackname $track]”\nfrom the “$name” list to:" \
-                $Pldb $lid $data]] != -1} {
+                “$name”\nfrom the “$list_name” list to:" $Pldb $lid \
+                $data]] != -1} {
             $Pldb track_move $tid $to_lid $lid
             my populate_listtree $lid
             my populate_tracktree $lid
-            my update_status "Moved track “[humanize_trackname $track]”"
+            my update_status "Moved track “$name”"
         }
     }
 }
@@ -70,7 +85,7 @@ oo::define App method on_track_remove_from_list {} {
     if {$tid} {
         lassign [my GetListAndTrack $lid $tid] list_name track
         if {[YesNoForm show "Remove Track — [tk appname]" \
-                "Remove track “[humanize_trackname $track]”\n from the\
+                "Remove track “$track”\n from the\
                 “$list_name” list?"] eq "yes"} {
             $Pldb track_remove $tid $lid
             my populate_tracktree $lid
@@ -83,7 +98,7 @@ oo::define App method on_track_delete {} {
     if {$tid} {
         lassign [my GetListAndTrack $lid $tid] list_name track
         if {[YesNoForm show "Delete Track — [tk appname]" \
-                "Delete track “[humanize_trackname $track]” from all\
+                "Delete track “$track” from all\
                 lists?\nOr click No and move it to another list\nor to\
                 the Uncategorized category’s Unlisted list." no] eq "yes"} {
             $Pldb track_delete $tid
@@ -100,9 +115,9 @@ oo::define App method GetLidAndTid {} {
 }
 
 oo::define App method GetListAndTrack {lid tid} {
-    lassign [$Pldb track_for_tid $tid] track _
+    lassign [$Pldb track_names $tid] filename name
     set list_name [$Pldb list_name $lid]
-    list $list_name $track
+    list $list_name [humanize_trackname $filename $name]
 }
 
 oo::define App method on_track_context_menu {x y} {

@@ -79,7 +79,8 @@ oo::define App method play_db_track {lid tid filename {goto 0}} {
         if {$goto} { my goto_track $lid $tid $filename }
         set GotSecs 0
         $Pldb history_insert $lid $tid
-        wm title . "[humanize_trackname $filename] — [tk appname]"
+        lassign [$Pldb track_names $tid] _ name
+        wm title . "[humanize_trackname $filename $name] — [tk appname]"
         $Player play $filename
     }
 }

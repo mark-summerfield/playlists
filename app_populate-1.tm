@@ -11,8 +11,8 @@ oo::define App method populate_history_menu {} {
     set MAX [expr {1 + [scan Z %c]}]
     set i [scan A %c]
     foreach tuple [$Pldb history] {
-        lassign $tuple lid tid filename
-        set label [format "%c. %s" $i [humanize_trackname $filename]]
+        lassign $tuple lid tid filename name
+        set label [format "%c. %s" $i [humanize_trackname $filename $name]]
         .menu.history add command -label $label -underline 0 \
             -command [callback play_saved_track $lid $tid $filename 1 1]
         incr i
@@ -32,8 +32,8 @@ oo::define App method populate_bookmarks_menu {} {
     set MAX [expr {1 + [scan Z %c]}]
     set i [scan A %c]
     foreach tuple [$Pldb bookmarks] {
-        lassign $tuple lid tid filename
-        set label [format "%c. %s" $i [humanize_trackname $filename]]
+        lassign $tuple lid tid filename name
+        set label [format "%c. %s" $i [humanize_trackname $filename $name]]
         .menu.bookmarks add command -label $label -underline 0 \
             -command [callback play_saved_track $lid $tid $filename 1 0]
         incr i
@@ -70,10 +70,10 @@ oo::define App method populate_tracktree {lid {sel_tid 0}} {
     $TrackTree delete [$TrackTree children {}]
     set n 0
     foreach row [$Pldb tracks_for_lid $lid] {
-        lassign $row tid filename secs
+        lassign $row tid filename name secs
         set secs [expr {$secs ? [humanize_secs $secs 1] : ""}]
         $TrackTree insert {} end -id $lid:$tid -text [incr n]. \
-            -values [list [humanize_trackname $filename] $secs]
+            -values [list [humanize_trackname $filename $name] $secs]
         if {!$sel_tid} { set sel_tid $tid }
     }
     if {$n} {

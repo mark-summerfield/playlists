@@ -1,8 +1,5 @@
 # TODO
-# - Categories→&Collapse All
-# - Track→&Rename… (+ on context menu)
 # - Track→Move &Up|&Move Down & &Move to List→Move to &List
-# - Use Track.name rather than [humanize_trackname $filename] iff nonempty
 # TODO History actions
 # TODO Bookmarks actions
 

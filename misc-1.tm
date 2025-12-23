@@ -40,7 +40,8 @@ proc divmod {n div} {
     list $d $m
 }
 
-proc humanize_trackname filename {
+proc humanize_trackname {filename {name ""}} {
+    if {$name ne ""} { return $name }
     set name [file tail [file rootname $filename]]
     set name [string trim [string trimleft $name "0123456789"]]
     humanize_name $name
