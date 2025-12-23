@@ -173,12 +173,9 @@ oo::define App method make_widgets {} {
     set ListTreeContextMenu [menu $ListTree.contextMenu]
     set right [scrollutil::scrollarea .mf.pw.right]
     set TrackTree [ttk::treeview .mf.pw.right.tv -selectmode browse \
-        -style List.Treeview -striped 1 -columns {n track secs}]
+        -show tree -style List.Treeview -striped 1]
     $right setwidget $TrackTree
     .mf.pw add $right
-    $TrackTree heading #0 -text №
-    $TrackTree heading 0 -text Title
-    $TrackTree heading 1 -text Time
     set TrackTreeContextMenu [menu $TrackTree.contextMenu]
     $TrackTreeContextMenu add command -label "Copy to List…" -underline 0 \
         -compound left -command [callback on_track_copy_to_list] \
@@ -280,13 +277,11 @@ oo::define App method on_pos data {
     if {$GotSecs < 2} {
         incr GotSecs ;# Need to double-check in case of fast track change
         set ttid [$TrackTree selection]
-        lassign [split $ttid :] _ tid
+        lassign [split $ttid :] lid tid
         set secs [$Pldb track_secs $tid]
         if {$secs != $total} {
             $Pldb track_update_secs $tid $total
-            lassign [$TrackTree item $ttid -values] name _
-            $TrackTree item $ttid \
-                -values [list $name [humanize_secs $total 1]]
+            my populate_tracktree $lid $tid
             after idle [callback populate_history_menu]
         }
     }

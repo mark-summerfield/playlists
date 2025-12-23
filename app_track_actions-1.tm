@@ -42,9 +42,10 @@ oo::define App method on_track_find_next {} {
         set found 0
         foreach tuple [lrange [$Pldb list_tracks] $FindIndex end] {
             incr FindIndex
-            lassign $tuple lid tid filename
-            set name [file tail $filename]
-            if {[string match -nocase *$FindWhat* $name]} {
+            lassign $tuple lid tid filename name
+            set basename [file tail $filename]
+            if {[string match -nocase *$FindWhat* $basename] ||
+                    [string match -nocase *$FindWhat* $name]} {
                 my on_category_expand_all
                 my goto_track $lid $tid $filename
                 set found 1

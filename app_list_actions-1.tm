@@ -118,14 +118,13 @@ oo::define App method on_list_context_menu {x y} {
                 -command [callback on_list_edit]
             $ListTreeContextMenu add separator
             set categories [$Pldb category_names]
-            set n [expr {min(26, [llength $categories])}]
+            set n [expr {min(24, [llength $categories])}]
             foreach category $categories {
                 if {!$n} { break }
                 if {$category eq $list_category} { continue }
                 $ListTreeContextMenu add command \
                     -label "Move to $category" \
                     -command [callback ListMoveTo $lid $category]
-                incr i
                 incr n -1
             }
             tk_popup $ListTreeContextMenu \

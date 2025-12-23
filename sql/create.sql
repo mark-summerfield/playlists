@@ -86,7 +86,8 @@ CREATE VIEW ListTracksView AS
         WHERE Lists.lid = List_x_Tracks.lid
             AND Tracks.tid = List_x_Tracks.tid
             AND Lists.cid = Categories.cid
-        ORDER BY LOWER(Categories.name), LOWER(Lists.name), Tracks.pos;
+        ORDER BY LOWER(Categories.name), LOWER(Lists.name),
+                 List_x_Tracks.pos;
 
 CREATE TRIGGER DeleteCategoryTrigger1 BEFORE DELETE ON Categories
     FOR EACH ROW WHEN OLD.cid = 0

@@ -71,25 +71,17 @@ oo::define App method populate_tracktree {lid {sel_tid 0}} {
     set n 0
     foreach row [$Pldb tracks_for_lid $lid] {
         lassign $row tid filename name secs
-        set secs [expr {$secs ? [humanize_secs $secs 1] : ""}]
-        $TrackTree insert {} end -id $lid:$tid -text [incr n]. \
-            -values [list [humanize_trackname $filename $name] $secs]
+        set secs [expr {$secs ? [humanize_secs $secs] : ""}]
+        incr n
+        set i [expr {$n < 10 ? "\u2004\u2004${n}" : $n}]
+        $TrackTree insert {} end -id $lid:$tid \
+            -text "$i. [humanize_trackname $filename $name] · $secs"
         if {!$sel_tid} { set sel_tid $tid }
     }
     if {$n} {
-        my resize_tracktree
         select_tree_item $TrackTree $lid:$sel_tid
         focus $TrackTree
     } else {
         focus $ListTree
     }
-}
-
-oo::define App method resize_tracktree {} {
-    set width0 [font measure TkDefaultFont 999.]
-    set width2 [font measure TkDefaultFont 1h59m59sW]
-    set width1 [expr {[winfo width $TrackTree] - ($width0 + $width2)}]
-    $TrackTree column #0 -width $width0 -stretch 0 -anchor e
-    $TrackTree column 0 -width $width1 -stretch 1 -anchor w
-    $TrackTree column 1 -width $width2 -stretch 0 -anchor e
 }
