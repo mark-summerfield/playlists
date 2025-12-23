@@ -105,6 +105,12 @@ oo::define App method make_track_menu {} {
     .menu.track add command -command [callback on_track_rename] \
         -label Rename… -underline 0 -compound left \
         -image [ui::icon track-rename.svg $::MENU_ICON_SIZE]
+    .menu.track add command -command [callback on_track_move_up] \
+        -label "Move Up" -underline 5 -compound left \
+        -image [ui::icon go-up.svg $::MENU_ICON_SIZE]
+    .menu.track add command -command [callback on_track_move_down] \
+        -label "Move Down" -underline 0 -compound left \
+        -image [ui::icon go-down.svg $::MENU_ICON_SIZE]
     .menu.track add separator
     .menu.track add command -command [callback on_track_find] \
         -label Find… -underline 0 -accelerator Ctrl+F -compound left \
@@ -207,6 +213,14 @@ oo::define App method make_playbar {} {
     $tip .mf.play.nextButton "Play Next • F6"
     ttk::progressbar .mf.play.progress -anchor center
     ttk::label .mf.play.statusLabel -relief sunken
+    ttk::button .mf.play.moveUpButton -takefocus 0 \
+        -command [callback on_track_move_up] \
+        -image [ui::icon go-up.svg $::MENU_ICON_SIZE]
+    $tip .mf.play.moveUpButton "Move Track Up"
+    ttk::button .mf.play.moveDownButton -takefocus 0 \
+        -command [callback on_track_move_down] \
+        -image [ui::icon go-down.svg $::MENU_ICON_SIZE]
+    $tip .mf.play.moveDownButton "Move Track Down"
     ttk::button .mf.play.volumeDownButton -takefocus 0 \
         -command [callback on_volume_down] \
         -image [ui::icon audio-volume-low.svg $::MENU_ICON_SIZE]
@@ -227,6 +241,8 @@ oo::define App method make_layout {} {
     pack .mf.play.nextButton -side left {*}$opts
     pack .mf.play.progress -fill both -expand 1 -side left {*}$opts
     pack .mf.play.statusLabel -fill both -side left {*}$opts
+    pack .mf.play.moveUpButton -side left {*}$opts
+    pack .mf.play.moveDownButton -side left {*}$opts
     pack .mf.play.volumeDownButton -side left {*}$opts
     pack .mf.play.volumeUpButton -side left {*}$opts
     pack .mf.pw -fill both -expand 1

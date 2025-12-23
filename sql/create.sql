@@ -27,7 +27,7 @@ CREATE TABLE Tracks (
 CREATE TABLE List_x_Tracks (
     lid INTEGER NOT NULL, -- lid → cid
     tid INTEGER NOT NULL,
-    pos INTEGER DEFAULT 0 NOT NULL,
+    pos INTEGER UNIQUE DEFAULT 0 NOT NULL,
 
     PRIMARY KEY (lid, tid),
     FOREIGN KEY(lid) REFERENCES Lists(lid),

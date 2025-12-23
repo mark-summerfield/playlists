@@ -1,5 +1,3 @@
-# TODO
-# - Track→Move &Up|&Move Down & &Move to List→Move to &List
 # TODO History actions
 # TODO Bookmarks actions
 
@@ -24,7 +22,7 @@ config_form-1.tm
 pld-1.tm
 pld_categories-1.tm
 pld_lists-1.tm
-pld_tracks-1.tm
+pld_tracks-1.tm # TODO move up|down
 ogg-1.tm
 
 sql/prepare.sql

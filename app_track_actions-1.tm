@@ -12,8 +12,26 @@ oo::define App method on_track_rename {} {
         if {[set name [EntryForm show "Rename Track — [tk appname]" \
                 "Name" {} $name]] ne ""} {
             $Pldb track_update_name $tid $name
-            my populate_tracktree $lid
+            my populate_tracktree $lid $tid
+            my populate_history_menu
+            my populate_bookmarks_menu
         }
+    }
+}
+
+oo::define App method on_track_move_up {} {
+    lassign [my GetLidAndTid] lid tid
+    if {$tid} {
+        $Pldb track_move_up $lid $tid
+        my populate_tracktree $lid $tid
+    }
+}
+
+oo::define App method on_track_move_down {} {
+    lassign [my GetLidAndTid] lid tid
+    if {$tid} {
+        $Pldb track_move_down $lid $tid
+        my populate_tracktree $lid $tid
     }
 }
 
@@ -75,6 +93,8 @@ oo::define App method on_track_move_to_list {} {
             $Pldb track_move $tid $to_lid $lid
             my populate_listtree $lid
             my populate_tracktree $lid
+            my populate_history_menu
+            my populate_bookmarks_menu
             my update_status "Moved track “$name”"
         }
     }
@@ -89,6 +109,8 @@ oo::define App method on_track_remove_from_list {} {
                 “$list_name” list?"] eq "yes"} {
             $Pldb track_remove $tid $lid
             my populate_tracktree $lid
+            my populate_history_menu
+            my populate_bookmarks_menu
         }
     }
 }
@@ -103,6 +125,8 @@ oo::define App method on_track_delete {} {
                 the Uncategorized category’s Unlisted list." no] eq "yes"} {
             $Pldb track_delete $tid
             my populate_tracktree $lid
+            my populate_history_menu
+            my populate_bookmarks_menu
         }
     }
 }

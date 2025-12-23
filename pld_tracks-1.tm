@@ -48,6 +48,40 @@ oo::define Pld method track_update_name {tid name} {
     $Db eval {UPDATE Tracks SET name = :name WHERE tid = :tid}
 }
 
+oo::define Pld method track_move_up {lid tid} {
+    set ListTracks [list]
+    $Db transaction {
+        set pos [$Db eval {SELECT pos FROM List_x_Tracks
+                           WHERE lid = :lid AND tid = :tid LIMIT 1}]
+        $Db eval {SELECT MAX(pos) AS prev_pos FROM List_x_Tracks
+                  WHERE lid = :lid AND pos < :pos} {
+        }
+        if {$prev_pos eq ""} { return } ;# already first
+        # TODO
+        #$Db eval {UPDATE List_x_Tracks SET pos = :prev_pos
+        #          WHERE lid = :lid AND tid = :tid}
+        #$Db eval {UPDATE List_x_Tracks SET pos = pos + 1
+        #          WHERE lid = :lid AND tid != :tid AND pos >= :prev_pos}
+    }
+}
+
+oo::define Pld method track_move_down {lid tid} {
+    set ListTracks [list]
+    $Db transaction {
+        set pos [$Db eval {SELECT pos FROM List_x_Tracks
+                           WHERE lid = :lid AND tid = :tid LIMIT 1}]
+        $Db eval {SELECT tid AS next_tid, MIN(pos) AS next_pos
+                  FROM List_x_Tracks WHERE lid = :lid AND pos > :pos} {
+        }
+        if {$next_pos eq ""} { return } ;# already last
+        # TODO
+        #$Db eval {UPDATE List_x_Tracks SET pos = :next_pos
+        #          WHERE lid = :lid AND tid = :tid}
+        #$Db eval {UPDATE List_x_Tracks SET pos = :pos
+        #          WHERE lid = :lid AND tid = :next_tid}
+    }
+}
+
 oo::define Pld method track_copy {tid lid} {
     set ListTracks [list]
     $Db eval {INSERT OR IGNORE INTO List_x_Tracks (lid, tid)
