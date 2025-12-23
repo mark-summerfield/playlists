@@ -22,7 +22,7 @@ config_form-1.tm
 pld-1.tm
 pld_categories-1.tm
 pld_lists-1.tm
-pld_tracks-1.tm # TODO move up|down
+pld_tracks-1.tm
 ogg-1.tm
 
 sql/prepare.sql

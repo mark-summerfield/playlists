@@ -53,15 +53,16 @@ oo::define Pld method track_move_up {lid tid} {
     $Db transaction {
         set pos [$Db eval {SELECT pos FROM List_x_Tracks
                            WHERE lid = :lid AND tid = :tid LIMIT 1}]
-        $Db eval {SELECT MAX(pos) AS prev_pos FROM List_x_Tracks
-                  WHERE lid = :lid AND pos < :pos} {
+        $Db eval {SELECT tid AS prev_tid, MAX(pos) AS prev_pos
+                  FROM List_x_Tracks WHERE lid = :lid AND pos < :pos} {
         }
         if {$prev_pos eq ""} { return } ;# already first
-        # TODO
-        #$Db eval {UPDATE List_x_Tracks SET pos = :prev_pos
-        #          WHERE lid = :lid AND tid = :tid}
-        #$Db eval {UPDATE List_x_Tracks SET pos = pos + 1
-        #          WHERE lid = :lid AND tid != :tid AND pos >= :prev_pos}
+        $Db eval {UPDATE List_x_Tracks SET pos = -1
+                  WHERE lid = :lid AND tid = :prev_tid}
+        $Db eval {UPDATE List_x_Tracks SET pos = :prev_pos
+                  WHERE lid = :lid AND tid = :tid}
+        $Db eval {UPDATE List_x_Tracks SET pos = :pos
+                  WHERE lid = :lid AND tid = :prev_tid}
     }
 }
 
@@ -74,11 +75,12 @@ oo::define Pld method track_move_down {lid tid} {
                   FROM List_x_Tracks WHERE lid = :lid AND pos > :pos} {
         }
         if {$next_pos eq ""} { return } ;# already last
-        # TODO
-        #$Db eval {UPDATE List_x_Tracks SET pos = :next_pos
-        #          WHERE lid = :lid AND tid = :tid}
-        #$Db eval {UPDATE List_x_Tracks SET pos = :pos
-        #          WHERE lid = :lid AND tid = :next_tid}
+        $Db eval {UPDATE List_x_Tracks SET pos = -1
+                  WHERE lid = :lid AND tid = :next_tid}
+        $Db eval {UPDATE List_x_Tracks SET pos = :next_pos
+                  WHERE lid = :lid AND tid = :tid}
+        $Db eval {UPDATE List_x_Tracks SET pos = :pos
+                  WHERE lid = :lid AND tid = :next_tid}
     }
 }
 
