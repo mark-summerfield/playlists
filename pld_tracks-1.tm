@@ -107,6 +107,8 @@ oo::define Pld method track_remove {tid lid} {
         $Db eval {DELETE FROM Bookmarks WHERE tid = :tid AND lid = :lid}
         $Db eval {DELETE FROM History WHERE tid = :tid AND lid = :lid}
         $Db eval {DELETE FROM List_x_Tracks WHERE tid = :tid AND lid = :lid}
+        $Db eval {DELETE FROM Tracks
+                  WHERE tid IN (SELECT tid FROM OrphansView)}
     }
 }
 

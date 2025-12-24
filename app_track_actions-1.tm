@@ -127,6 +127,7 @@ oo::define App method on_track_remove_from_list {} {
                 "Remove track “$track”\n from the\
                 “$list_name” list?"] eq "yes"} {
             $Pldb track_remove $tid $lid
+            my populate_listtree $lid
             my populate_tracktree $lid
             my populate_history_menu
             my populate_bookmarks_menu
