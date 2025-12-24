@@ -117,6 +117,7 @@ oo::define App method make_track_menu {} {
     .menu.track add separator
     .menu.track add command -command [callback on_track_goto_current] \
         -label "Goto Current" -underline 0 -compound left \
+        -accelerator Ctrl+G \
         -image [ui::icon track-find.svg $::MENU_ICON_SIZE]
     .menu.track add command -command [callback on_track_find] \
         -label Find… -underline 0 -accelerator Ctrl+F -compound left \
@@ -273,6 +274,7 @@ oo::define App method make_bindings {} {
     bind . <F8> [callback on_volume_up]
     bind . <Control-a> [callback on_bookmarks_add]
     bind . <Control-f> [callback on_track_find]
+    bind . <Control-g> [callback on_track_goto_current]
     bind . <Control-n> [callback on_track_find_next]
     bind . <Control-o> [callback on_file_open]
     bind . <Control-q> [callback on_quit]
