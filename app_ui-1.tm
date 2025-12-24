@@ -105,6 +105,9 @@ oo::define App method make_track_menu {} {
     .menu.track add command -command [callback on_track_rename] \
         -label Rename… -underline 0 -compound left \
         -image [ui::icon track-rename.svg $::MENU_ICON_SIZE]
+    .menu.track add command -label "Copy Name to Clipboard" \
+        -underline 1 -compound left -command [callback on_track_copy_name] \
+        -image [ui::icon edit-copy.svg $::MENU_ICON_SIZE]
     .menu.track add command -command [callback on_track_move_up] \
         -label "Move Up" -underline 5 -compound left \
         -image [ui::icon go-up.svg $::MENU_ICON_SIZE]
@@ -186,6 +189,9 @@ oo::define App method make_widgets {} {
     $TrackTreeContextMenu add command -label "Move to List…" -underline 0 \
         -compound left -command [callback on_track_move_to_list] \
         -image [ui::icon track-move-to-list.svg $::MENU_ICON_SIZE]
+    $TrackTreeContextMenu add command -label "Copy Name to Clipboard" \
+        -underline 1 -compound left -command [callback on_track_copy_name] \
+        -image [ui::icon edit-copy.svg $::MENU_ICON_SIZE]
     my make_playbar
 }
 

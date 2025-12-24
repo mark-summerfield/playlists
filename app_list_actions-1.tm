@@ -92,8 +92,7 @@ oo::define App method on_list_delete {} {
             set body "Delete the\n“$category” category's\n“$name” list"
             if {$n} {
                 lassign [util::n_s $n] n s
-                set body "$body\nand move its $n track$s to\
-                    the\nUncategorized category’s Unlisted list?"
+                set body "$body\nand remove its $n track$s?"
             } else {
                 set body $body?
             }
@@ -112,19 +111,23 @@ oo::define App method on_list_context_menu {x y} {
         if {[string match L* $anid]} {
             set lid [string range $anid 1 end]
             lassign [$Pldb list_info $lid] name _ list_category _
-            $ListTreeContextMenu add command -label New… \
-                -command [callback on_list_new]
-            $ListTreeContextMenu add command -label Edit… \
-                -command [callback on_list_edit]
+            $ListTreeContextMenu add command -label New… -compound left \
+                -command [callback on_list_new] \
+                -image [ui::icon list-new.svg $::MENU_ICON_SIZE]
+            $ListTreeContextMenu add command -label Edit… -compound left \
+                -command [callback on_list_edit] \
+                -image [ui::icon list-rename.svg $::MENU_ICON_SIZE]
             $ListTreeContextMenu add separator
             set categories [$Pldb category_names]
             set n [expr {min(24, [llength $categories])}]
             foreach category $categories {
                 if {!$n} { break }
                 if {$category eq $list_category} { continue }
-                $ListTreeContextMenu add command \
+                $ListTreeContextMenu add command -compound left \
                     -label "Move to $category" \
-                    -command [callback ListMoveTo $lid $category]
+                    -command [callback ListMoveTo $lid $category] \
+                    -image [ui::icon list-move-to-category.svg \
+                    $::MENU_ICON_SIZE]
                 incr n -1
             }
             tk_popup $ListTreeContextMenu \

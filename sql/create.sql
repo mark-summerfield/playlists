@@ -89,6 +89,10 @@ CREATE VIEW ListTracksView AS
         ORDER BY LOWER(Categories.name), LOWER(Lists.name),
                  List_x_Tracks.pos;
 
+-- Should always be empty.
+CREATE VIEW OrphansView AS
+    SELECT tid FROM Tracks WHERE tid NOT IN (SELECT tid FROM List_x_Tracks);
+
 CREATE TRIGGER DeleteCategoryTrigger1 BEFORE DELETE ON Categories
     FOR EACH ROW WHEN OLD.cid = 0
     BEGIN
@@ -104,8 +108,6 @@ CREATE TRIGGER DeleteCategoryTrigger2 BEFORE DELETE ON Categories
         UPDATE Lists SET cid = 0 WHERE cid = OLD.cid;
     END;
 
--- If we delete a list then we must remove any of its tracks from
--- List_x_Tracks; the Unlisted list may not be deleted.
 CREATE TRIGGER DeleteListTrigger1 BEFORE DELETE ON Lists
     FOR EACH ROW WHEN OLD.lid = 0
     BEGIN
@@ -116,10 +118,11 @@ CREATE TRIGGER DeleteListTrigger2 BEFORE DELETE ON Lists
     FOR EACH ROW
         WHEN OLD.lid != 0
     BEGIN
-        UPDATE List_x_Tracks SET lid = 0 WHERE lid = OLD.lid;
+        DELETE FROM List_x_Tracks WHERE lid = OLD.lid;
         DELETE FROM LastItem WHERE lid = OLD.lid;
         DELETE FROM Bookmarks WHERE lid = OLD.lid;
         DELETE FROM History WHERE lid = OLD.lid;
+        DELETE FROM Tracks WHERE tid IN (SELECT tid FROM OrphansView);
     END;
 
 CREATE TRIGGER InsertListTracksTrigger AFTER INSERT ON List_x_Tracks

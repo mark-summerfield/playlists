@@ -19,6 +19,17 @@ oo::define App method on_track_rename {} {
     }
 }
 
+oo::define App method on_track_copy_name {} {
+    lassign [my GetLidAndTid] lid tid
+    if {$tid} {
+        lassign [$Pldb track_names $tid] filename name
+        set name [humanize_trackname $filename $name]
+        clipboard clear
+        clipboard append $name
+        my update_status "Copied “$name” to the clipboard"
+    }
+}
+
 oo::define App method on_track_move_up {} {
     lassign [my GetLidAndTid] lid tid
     if {$tid} {
