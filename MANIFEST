@@ -1,3 +1,5 @@
+# TODO create treeview tags: excellent good okay poor & set properties e.g.
+# fg & icon (& if icon successful drop $S)
 # TODO
 # replace Track→Rename… with Track→Edit…
 # with EditTrackForm dialog
