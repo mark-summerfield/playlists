@@ -1,3 +1,11 @@
+# TODO
+# replace Track→Rename… with Track→Edit…
+# with EditTrackForm dialog
+# &Name [                       ]
+# Stars ( ) &Excellent (*) &Good ( ) O&kay ( ) &Poor
+#   [ &OK ] [ &Cancel]
+# NOTE also try fg color: blue navy black grey
+
 playlists.tk # VERSION
 app-1.tm
 app_ui-1.tm
@@ -24,6 +32,7 @@ ogg-1.tm
 
 sql/prepare.sql
 sql/create.sql
+sql/pld1to2.sql
 
 ref-1.tm
 util-1.tm

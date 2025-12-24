@@ -25,7 +25,13 @@ oo::define Pld constructor {filename {max_history 26}} {
     sqlite3 $Db $Filename
     $Db eval [readFile $::APPPATH/sql/prepare.sql] 
     $Db transaction {
-        if {!$exists} { $Db eval [readFile $::APPPATH/sql/create.sql] }
+        if {$exists} {
+            if {[my version] == 1} {
+                $Db eval [readFile $::APPPATH/sql/pld1to2.sql] 
+            }
+        } else {
+            $Db eval [readFile $::APPPATH/sql/create.sql]
+        }
     }
 }
 

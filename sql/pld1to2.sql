@@ -1,71 +1,24 @@
 -- Copyright © 2025 Mark Summerfield. All Rights Reserved.
 
-PRAGMA USER_VERSION = 1;
-
-CREATE TABLE Categories (
-    cid INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-    name TEXT UNIQUE NOT NULL
-);
-
-CREATE TABLE Lists (
-    cid INTEGER DEFAULT 0 NOT NULL,
-    lid INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-    name TEXT NOT NULL,
-
-    FOREIGN KEY(cid) REFERENCES Categories(cid)
-);
-
-CREATE TABLE Tracks (
-    tid INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-    filename TEXT NOT NULL,
-    secs INTEGER DEFAULT 0 NOT NULL,
-    name TEXT,
-    artist TEXT,
-    stars INTEGER DEFAULT 1 NOT NULL,
-
-    CHECK(secs >= 0),
-    CHECK(stars IN (0, 1, 2, 3)) -- bad okay good excellent
-);
-
-CREATE TABLE List_x_Tracks (
-    lid INTEGER NOT NULL, -- lid → cid
-    tid INTEGER NOT NULL,
-    pos INTEGER UNIQUE DEFAULT 0 NOT NULL,
-
-    PRIMARY KEY (lid, tid),
-    FOREIGN KEY(lid) REFERENCES Lists(lid),
-    FOREIGN KEY(tid) REFERENCES Tracks(tid)
-);
-
--- Only ever has zero or one record: auto updated when history inserted.
-CREATE TABLE LastItem (
-    lid INTEGER NOT NULL, -- lid → cid
-    tid INTEGER NOT NULL,
-
-    PRIMARY KEY(lid, tid),
-    FOREIGN KEY(lid) REFERENCES Lists(lid),
-    FOREIGN KEY(tid) REFERENCES Tracks(tid)
-);
-
-CREATE TABLE Bookmarks (
-    bid INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-    lid INTEGER NOT NULL, -- lid → cid
-    tid INTEGER NOT NULL,
-
-    UNIQUE(lid, tid),
-    FOREIGN KEY(lid) REFERENCES Lists(lid),
-    FOREIGN KEY(tid) REFERENCES Tracks(tid)
-);
-
-CREATE TABLE History (
-    hid INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-    lid INTEGER NOT NULL, -- lid → cid
-    tid INTEGER NOT NULL,
-
-    UNIQUE(lid, tid),
-    FOREIGN KEY(lid) REFERENCES Lists(lid),
-    FOREIGN KEY(tid) REFERENCES Tracks(tid)
-);
+DROP VIEW IF EXISTS CategoriesTrimView;
+DROP VIEW IF EXISTS ListsTrimView;
+DROP VIEW IF EXISTS CategoriesView;
+DROP VIEW IF EXISTS CategoryListsDataView;
+DROP VIEW IF EXISTS CategoryListsMergeView;
+DROP VIEW IF EXISTS ListsView;
+DROP VIEW IF EXISTS BookmarksView;
+DROP VIEW IF EXISTS HistoryView;
+DROP VIEW IF EXISTS ListTracksView;
+DROP VIEW IF EXISTS OrphansView;
+DROP TRIGGER IF EXISTS DeleteCategoryTrigger1;
+DROP TRIGGER IF EXISTS DeleteCategoryTrigger2;
+DROP TRIGGER IF EXISTS DeleteListTrigger1;
+DROP TRIGGER IF EXISTS DeleteListTrigger2;
+DROP TRIGGER IF EXISTS InsertListTracksTrigger;
+DROP TRIGGER IF EXISTS UpdateListTracksTrigger;
+DROP TRIGGER IF EXISTS DeleteTrackTrigger;
+DROP TRIGGER IF EXISTS InsertLastItemTrigger;
+DROP TRIGGER IF EXISTS InsertHistoryTrigger;
 
 CREATE VIEW CategoriesTrimView AS
     SELECT cid, name,
@@ -210,7 +163,7 @@ CREATE TRIGGER InsertHistoryTrigger AFTER INSERT ON History
         INSERT INTO LastItem (lid, tid) VALUES (NEW.lid, NEW.tid);
     END;
 
-INSERT INTO Categories (cid, name) VALUES (0, 'Uncategorized');
-INSERT INTO Lists (cid, lid, name) VALUES (0, 0, 'Unlisted');
-INSERT INTO Categories (cid, name) VALUES (1, 'Classical');
-INSERT INTO Categories (cid, name) VALUES (2, 'Pop');
+ALTER TABLE Tracks ADD COLUMN stars INTEGER DEFAULT 1 NOT NULL
+    CHECK(stars IN (0, 1, 2, 3)); -- bad okay good excellent
+
+PRAGMA USER_VERSION = 2;
