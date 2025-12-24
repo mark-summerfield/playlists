@@ -64,13 +64,30 @@ CREATE TABLE History (
     FOREIGN KEY(tid) REFERENCES Tracks(tid)
 );
 
+CREATE VIEW CategoriesTrimView AS
+    SELECT cid, name,
+        CASE 
+            WHEN name LIKE 'The %' THEN SUBSTR(name, LENGTH('The ') + 1)
+            ELSE name
+        END AS tname FROM Categories;
+
+CREATE VIEW ListsTrimView AS
+    SELECT cid, lid, name,
+        CASE 
+            WHEN name LIKE 'The %' THEN SUBSTR(name, LENGTH('The ') + 1)
+            ELSE name
+        END AS tname FROM Lists;
+
 CREATE VIEW CategoriesView AS
-    SELECT cid, name FROM Categories ORDER BY LOWER(name);
+    SELECT cid, name FROM CategoriesTrimView ORDER BY LOWER(tname);
 
 CREATE VIEW ListsView AS
-    SELECT Lists.cid, Lists.lid, Lists.name FROM Lists, Categories
-        WHERE Lists.cid = Categories.cid
-        ORDER BY LOWER(Categories.name), LOWER(Lists.name);
+    SELECT lcid AS cid, lid, lname AS name FROM
+        (SELECT cid, name AS cname, tname AS tcname
+            FROM CategoriesTrimView),
+        (SELECT cid AS lcid, lid, name AS lname, tname AS tlname
+            FROM ListsTrimView)
+        WHERE cid = lcid ORDER BY LOWER(tcname), LOWER(tlname);
 
 CREATE VIEW BookmarksView AS
     SELECT lid, Tracks.tid, filename, name FROM Bookmarks, Tracks
@@ -81,13 +98,13 @@ CREATE VIEW HistoryView AS
         WHERE Tracks.tid = History.tid ORDER BY hid DESC;
 
 CREATE VIEW ListTracksView AS
-    SELECT Lists.lid, Tracks.tid, Tracks.filename, Tracks.name
-        FROM Lists, Tracks, List_x_Tracks, Categories
-        WHERE Lists.lid = List_x_Tracks.lid
+    SELECT ListsTrimView.lid, Tracks.tid, Tracks.filename, Tracks.name
+        FROM ListsTrimView, Tracks, List_x_Tracks, CategoriesTrimView
+        WHERE ListsTrimView.lid = List_x_Tracks.lid
             AND Tracks.tid = List_x_Tracks.tid
-            AND Lists.cid = Categories.cid
-        ORDER BY LOWER(Categories.name), LOWER(Lists.name),
-                 List_x_Tracks.pos;
+            AND ListsTrimView.cid = CategoriesTrimView.cid
+        ORDER BY LOWER(CategoriesTrimView.tname),
+                 LOWER(ListsTrimView.tname), List_x_Tracks.pos;
 
 -- Should always be empty.
 CREATE VIEW OrphansView AS
