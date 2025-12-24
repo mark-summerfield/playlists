@@ -43,11 +43,6 @@ README.md
 
 st.sh
 
-# NOTE ideas
-# - File→&Export… # export all lists
-# - List→E&xport… # export current list {.m3u8,.pls}
-# - List→&Import… # import {.m3u8,.pls} playlist into existing list
-
 # See https://mplayerhq.hu
 
 # vim: syn=yaml

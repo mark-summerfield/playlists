@@ -49,7 +49,7 @@ oo::define ChooseListForm method make_widgets {action body} {
     set items [list]
     foreach datum $Data {
         lassign $datum category_name list_name _
-        lappend items "$list_name \[$category_name\]"
+        lappend items "$category_name · $list_name"
     }
     set DataCombo [ttk::combobox .choose_list_form.mf.dataCombo \
         -values $items]
@@ -89,9 +89,9 @@ oo::define ChooseListForm method make_bindings {} {
 oo::define ChooseListForm method on_done ok {
     if {$ok} {
         set txt [$DataCombo get]
-        set i [string last "\[" $txt]
-        set list_name [string trim [string range $txt 0 $i-1]]
-        set category_name [string trim [string range $txt $i+1 end-1]]
+        set i [string first · $txt]
+        set list_name [string trim [string range $txt $i+1 end]]
+        set category_name [string trim [string range $txt 0 $i-1]]
         set cid [$Pldb cid_for_name $category_name]
         $Reply set [$Pldb lid_for_cid_and_name $cid $list_name]
     }

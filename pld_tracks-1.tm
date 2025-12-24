@@ -9,14 +9,14 @@ oo::define Pld method track_exists {lid tid} {
 
 oo::define Pld method tracks_for_lid lid {
     set tracks [list]
-    $Db eval {SELECT Tracks.tid, filename, name, secs
+    $Db eval {SELECT Tracks.tid, filename, name, artist, secs
               FROM Tracks, List_x_Tracks
               WHERE Tracks.tid IN (SELECT tid FROM List_x_Tracks
                                    WHERE lid = :lid)
                 AND Tracks.tid = List_x_Tracks.tid
                 AND List_x_Tracks.lid = :lid
               ORDER BY pos} {
-        lappend tracks [list $tid $filename $name $secs]
+        lappend tracks [list $tid $filename $name $artist $secs]
     }
     return $tracks
 }

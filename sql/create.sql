@@ -20,6 +20,7 @@ CREATE TABLE Tracks (
     filename TEXT NOT NULL,
     secs INTEGER DEFAULT 0 NOT NULL,
     name TEXT,
+    artist TEXT,
 
     CHECK(secs >= 0)
 );
@@ -80,6 +81,25 @@ CREATE VIEW ListsTrimView AS
 
 CREATE VIEW CategoriesView AS
     SELECT cid, name FROM CategoriesTrimView ORDER BY LOWER(tname);
+
+CREATE VIEW CategoryListsDataView AS
+    SELECT cname AS category_name, lname AS list_name, lid FROM
+        (SELECT cid, name AS cname, tname AS tcname
+            FROM CategoriesTrimView),
+        (SELECT cid AS lcid, lid, name AS lname, tname AS tlname
+            FROM ListsTrimView)
+        WHERE cid = lcid ORDER BY LOWER(tcname), LOWER(tlname);
+
+CREATE VIEW CategoryListsMergeView AS
+    SELECT cname AS category_name, lname AS list_name, lid FROM
+        (SELECT cid, name AS cname, tname AS tcname
+            FROM CategoriesTrimView),
+        (SELECT cid AS lcid, lid, name AS lname, tname AS tlname
+            FROM ListsTrimView)
+        WHERE cid = lcid
+            AND (SELECT COUNT(*) FROM List_x_Tracks
+                 WHERE List_x_Tracks.lid = lid) > 0
+        ORDER BY LOWER(tcname), LOWER(tlname);
 
 CREATE VIEW ListsView AS
     SELECT lcid AS cid, lid, lname AS name FROM

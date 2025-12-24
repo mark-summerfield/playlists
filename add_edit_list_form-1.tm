@@ -104,13 +104,13 @@ oo::define AddEditListForm method make_layout {} {
 oo::define AddEditListForm method make_bindings {} {
     bind $CategoryCombo <<ComboboxSelected>> \
         [callback on_validate [.add_edit_list_form.mf.listNameEntry get]]
-    bind .add_edit_list_form <a> {
+    bind .add_edit_list_form <Alt-a> {
         focus .add_edit_list_form.mf.categoryCombo}
     if {!$Lid} {
-        bind .add_edit_list_form <f> {
+        bind .add_edit_list_form <Alt-f> {
             .add_edit_list_form.mf.folderButton invoke}
     }
-    bind .add_edit_list_form <l> {
+    bind .add_edit_list_form <Alt-l> {
         focus .add_edit_list_form.mf.listNameEntry}
     bind .add_edit_list_form <Escape> {
         .add_edit_list_form.mf.bf.cancel_button invoke}

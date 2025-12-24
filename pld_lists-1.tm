@@ -48,11 +48,8 @@ oo::define Pld method list_info lid {
 
 oo::define Pld method list_category_data ignore_lid {
     set data [list]
-    $Db eval {SELECT Categories.name AS category_name,
-                     Lists.name AS list_name, Lists.lid AS lid
-              FROM Categories, Lists
-              WHERE Categories.cid = Lists.cid AND Lists.lid != :ignore_lid
-              ORDER BY LOWER(list_name), LOWER(category_name) } {
+    $Db eval {SELECT category_name, list_name, lid
+              FROM CategoryListsDataView WHERE lid != :ignore_lid} {
         lappend data [list $category_name $list_name $lid]
     }
     return $data
@@ -60,14 +57,8 @@ oo::define Pld method list_category_data ignore_lid {
 
 oo::define Pld method list_merge_data ignore_lid {
     set data [list]
-    $Db eval {SELECT Categories.name AS category_name,
-                     Lists.name AS list_name, Lists.lid AS lid
-              FROM Categories, Lists
-              WHERE Categories.cid = Lists.cid
-              AND (SELECT COUNT(*) FROM List_x_Tracks
-                   WHERE List_x_Tracks.lid = Lists.lid) > 0
-              AND Lists.lid != :ignore_lid
-              ORDER BY LOWER(list_name), LOWER(category_name) } {
+    $Db eval {SELECT category_name, list_name, lid
+              FROM CategoryListsMergeView WHERE lid != :ignore_lid} {
         lappend data [list $category_name $list_name $lid]
     }
     return $data
@@ -77,14 +68,12 @@ oo::define Pld method list_merge {to_lid from_lid} {
     set ListTracks [list]
     $Db transaction {
         set tids [list]
-        $Db eval {SELECT tid FROM List_x_Tracks
-                  WHERE lid = :from_lid
-                  AND tid NOT IN (SELECT tid FROM List_x_Tracks
-                                  WHERE lid = :to_lid) ORDER BY pos} {
+        $Db eval {SELECT tid FROM List_x_Tracks WHERE lid = :from_lid
+                  ORDER BY pos} {
             lappend tids $tid
         }
         foreach tid $tids {
-            $Db eval {INSERT INTO List_x_Tracks (lid, tid)
+            $Db eval {INSERT OR IGNORE INTO List_x_Tracks (lid, tid)
                       VALUES (:to_lid, :tid)}
         }
     }
@@ -94,11 +83,11 @@ oo::define Pld method list_insert_tracks {lid tracks} {
     set ListTracks [list]
     $Db transaction {
         foreach track [lsort -dictionary $tracks] {
-            lassign [ogg::duration_in_secs_and_title $track] secs title
+            lassign [ogg::metadata $track] secs title artist
             if {[set tid [$Db eval {SELECT tid FROM Tracks
                                     WHERE filename = :track}]] eq ""} {
-                $Db eval {INSERT INTO Tracks (filename, secs, name)
-                          VALUES (:track, :secs, :title)}
+                $Db eval {INSERT INTO Tracks (filename, secs, name, artist)
+                          VALUES (:track, :secs, :title, :artist)}
                 set tid [$Db last_insert_rowid]
             }
             $Db eval {INSERT OR IGNORE INTO List_x_Tracks (lid, tid)
@@ -132,10 +121,7 @@ oo::define Pld method list_delete_unlisted_tracks {} {
     set ListTracks [list]
     $Db transaction {
         $Db eval {DELETE FROM List_x_Tracks WHERE lid = 0}
-        $Db eval {DELETE FROM LastItem WHERE lid = 0}
-        $Db eval {DELETE FROM Bookmarks WHERE lid = 0}
-        $Db eval {DELETE FROM History WHERE lid = 0}
-        $Db eval {DELETE FROM Tracks WHERE tid IN
-                  (SELECT tid FROM List_x_Tracks WHERE lid = 0)}
+        $Db eval {DELETE FROM Tracks
+                  WHERE tid IN (SELECT tid FROM OrphansView)}
     }
 }
