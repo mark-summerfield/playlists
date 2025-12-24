@@ -125,8 +125,9 @@ CREATE TRIGGER DeleteListTrigger2 BEFORE DELETE ON Lists
 CREATE TRIGGER InsertListTracksTrigger AFTER INSERT ON List_x_Tracks
     FOR EACH ROW WHEN NEW.pos = 0
     BEGIN
-        UPDATE List_x_Tracks SET pos = (NEW.lid * 1000) + NEW.tid
-            WhERE lid = NEW.lid AND tid = NEW.tid;
+        UPDATE List_x_Tracks
+            SET pos = (SELECT COALESCE(MAX(pos), 0) + 1 FROM List_x_Tracks)
+            WHERE lid = NEW.lid AND tid = NEW.tid;
     END;
 
 -- If we move a track from one list to another we must update its
