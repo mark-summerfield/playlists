@@ -94,6 +94,7 @@ oo::define App method on_track_copy_to_list {} {
                 != -1} {
             $Pldb track_copy $tid $to_lid
             my populate_listtree $lid
+            my goto_track $lid $tid $filename
             my update_status "Copied track “$name”"
         }
     }
