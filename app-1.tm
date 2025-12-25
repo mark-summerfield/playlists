@@ -43,6 +43,7 @@ oo::define App constructor {} {
 
 oo::define App method show {} {
     wm deiconify .
+    wm minsize . 800 600
     set config [Config new]
     wm geometry . [$config geometry]
     raise .
