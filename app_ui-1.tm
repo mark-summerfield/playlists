@@ -205,7 +205,7 @@ oo::define App method make_widgets {} {
         -label "1 Okay" -underline 0 -compound left \
         -foreground $::STARS1 -image [ui::icon star1.svg $::MENU_ICON_SIZE]
     $TrackTreeContextMenu add command -command [callback on_track_stars 0] \
-        -label "0 Bad" -underline 0 -compound left \
+        -label "0 Poor" -underline 0 -compound left \
         -foreground $::STARS0 -image [ui::icon star0.svg $::MENU_ICON_SIZE]
     $TrackTreeContextMenu add separator
     $TrackTreeContextMenu add command -label "Copy to List…" -underline 0 \
