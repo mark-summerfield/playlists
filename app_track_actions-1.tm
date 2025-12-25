@@ -38,6 +38,14 @@ oo::define App method on_track_copy_name {} {
     }
 }
 
+oo::define App method on_track_move_top {} {
+    lassign [my GetLidAndTid] lid tid
+    if {$tid} {
+        $Pldb track_move_top $lid $tid
+        my populate_tracktree $lid $tid
+    }
+}
+
 oo::define App method on_track_move_up {} {
     lassign [my GetLidAndTid] lid tid
     if {$tid} {
@@ -50,6 +58,14 @@ oo::define App method on_track_move_down {} {
     lassign [my GetLidAndTid] lid tid
     if {$tid} {
         $Pldb track_move_down $lid $tid
+        my populate_tracktree $lid $tid
+    }
+}
+
+oo::define App method on_track_move_bottom {} {
+    lassign [my GetLidAndTid] lid tid
+    if {$tid} {
+        $Pldb track_move_bottom $lid $tid
         my populate_tracktree $lid $tid
     }
 }

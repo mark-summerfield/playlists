@@ -118,12 +118,18 @@ oo::define App method make_track_menu {} {
         -label "0 Poor" -underline 0 -compound left \
         -foreground $::STARS0 -image [ui::icon star0.svg $::MENU_ICON_SIZE]
     .menu.track add separator
+    .menu.track add command -command [callback on_track_move_top] \
+        -label "Move to Top" -underline 8 -compound left \
+        -image [ui::icon go-top.svg $::MENU_ICON_SIZE]
     .menu.track add command -command [callback on_track_move_up] \
         -label "Move Up" -underline 5 -compound left \
         -image [ui::icon go-up.svg $::MENU_ICON_SIZE]
     .menu.track add command -command [callback on_track_move_down] \
         -label "Move Down" -underline 0 -compound left \
         -image [ui::icon go-down.svg $::MENU_ICON_SIZE]
+    .menu.track add command -command [callback on_track_move_bottom] \
+        -label "Move to Bottom" -underline 8 -compound left \
+        -image [ui::icon go-bottom.svg $::MENU_ICON_SIZE]
     .menu.track add separator
     .menu.track add command -command [callback on_track_goto_current] \
         -label "Goto Current" -underline 0 -compound left \
@@ -257,6 +263,10 @@ oo::define App method make_playbar {} {
     $tip .mf.play.nextButton "Play Next • F6"
     ttk::progressbar .mf.play.progress -anchor center
     ttk::label .mf.play.statusLabel -relief sunken
+    ttk::button .mf.play.moveTopButton -takefocus 0 \
+        -command [callback on_track_move_top] \
+        -image [ui::icon go-top.svg $::MENU_ICON_SIZE]
+    $tip .mf.play.moveTopButton "Move Track to the Top"
     ttk::button .mf.play.moveUpButton -takefocus 0 \
         -command [callback on_track_move_up] \
         -image [ui::icon go-up.svg $::MENU_ICON_SIZE]
@@ -265,6 +275,10 @@ oo::define App method make_playbar {} {
         -command [callback on_track_move_down] \
         -image [ui::icon go-down.svg $::MENU_ICON_SIZE]
     $tip .mf.play.moveDownButton "Move Track Down"
+    ttk::button .mf.play.moveBottomButton -takefocus 0 \
+        -command [callback on_track_move_bottom] \
+        -image [ui::icon go-bottom.svg $::MENU_ICON_SIZE]
+    $tip .mf.play.moveTopButton "Move Track to the Bottom"
     ttk::button .mf.play.volumeDownButton -takefocus 0 \
         -command [callback on_volume_down] \
         -image [ui::icon audio-volume-low.svg $::MENU_ICON_SIZE]
@@ -285,8 +299,10 @@ oo::define App method make_layout {} {
     pack .mf.play.nextButton -side left {*}$opts
     pack .mf.play.progress -fill both -expand 1 -side left {*}$opts
     pack .mf.play.statusLabel -fill both -side left {*}$opts
+    pack .mf.play.moveTopButton -side left {*}$opts
     pack .mf.play.moveUpButton -side left {*}$opts
     pack .mf.play.moveDownButton -side left {*}$opts
+    pack .mf.play.moveBottomButton -side left {*}$opts
     pack .mf.play.volumeDownButton -side left {*}$opts
     pack .mf.play.volumeUpButton -side left {*}$opts
     pack .mf.pw -fill both -expand 1
