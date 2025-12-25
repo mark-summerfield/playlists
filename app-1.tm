@@ -80,6 +80,7 @@ oo::define App method play_db_track {lid tid filename {goto 0}} {
         if {$goto} { my goto_track $lid $tid $filename }
         set GotSecs [$Pldb track_secs $tid]
         $Pldb history_insert $lid $tid
+        my populate_history_menu
         lassign [$Pldb track_names $tid] _ name
         wm title . "[humanize_trackname $filename $name] — [tk appname]"
         $Player play $filename
