@@ -105,9 +105,19 @@ oo::define App method make_track_menu {} {
     .menu.track add command -command [callback on_track_rename] \
         -label Rename… -underline 0 -compound left \
         -image [ui::icon track-rename.svg $::MENU_ICON_SIZE]
-    .menu.track add command -label "Copy Name to Clipboard" \
-        -underline 1 -compound left -command [callback on_track_copy_name] \
-        -image [ui::icon edit-copy.svg $::MENU_ICON_SIZE]
+    .menu.track add command -command [callback on_track_stars 3] \
+        -label "3 Excellent" -underline 0 -compound left \
+        -foreground $::STARS3 -image [ui::icon star3.svg $::MENU_ICON_SIZE]
+    .menu.track add command -command [callback on_track_stars 2] \
+        -label "2 Good" -underline 0 -compound left \
+        -foreground $::STARS2 -image [ui::icon star2.svg $::MENU_ICON_SIZE]
+    .menu.track add command -command [callback on_track_stars 1] \
+        -label "1 Okay" -underline 0 -compound left \
+        -foreground $::STARS1 -image [ui::icon star1.svg $::MENU_ICON_SIZE]
+    .menu.track add command -command [callback on_track_stars 0] \
+        -label "0 Poor" -underline 0 -compound left \
+        -foreground $::STARS0 -image [ui::icon star0.svg $::MENU_ICON_SIZE]
+    .menu.track add separator
     .menu.track add command -command [callback on_track_move_up] \
         -label "Move Up" -underline 5 -compound left \
         -image [ui::icon go-up.svg $::MENU_ICON_SIZE]
@@ -135,6 +145,9 @@ oo::define App method make_track_menu {} {
     .menu.track add command -command [callback on_track_remove_from_list] \
         -label "Remove from List…" -underline 4 -compound left \
         -image [ui::icon track-remove-from-list.svg $::MENU_ICON_SIZE]
+    .menu.track add command -label "Copy Name to Clipboard" \
+        -underline 1 -compound left -command [callback on_track_copy_name] \
+        -image [ui::icon edit-copy.svg $::MENU_ICON_SIZE]
     .menu.track add separator
     .menu.track add command -command [callback on_track_delete] \
         -label Delete… -underline 0 -compound left \
