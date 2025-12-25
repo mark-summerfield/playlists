@@ -19,6 +19,14 @@ oo::define App method on_track_rename {} {
     }
 }
 
+oo::define App method on_track_stars stars {
+    lassign [my GetLidAndTid] lid tid
+    if {$tid} {
+        $Pldb track_update_stars $tid $stars
+        my populate_tracktree $lid $tid
+    }
+}
+
 oo::define App method on_track_copy_name {} {
     lassign [my GetLidAndTid] lid tid
     if {$tid} {

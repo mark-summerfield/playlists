@@ -71,18 +71,12 @@ oo::define App method populate_tracktree {lid {sel_tid 0}} {
     set n 0
     foreach row [$Pldb tracks_for_lid $lid] {
         lassign $row tid filename name artist stars secs
-        switch $stars {
-            0 {set S "\u266A"}
-            1 {set S "\u266B"}
-            2 {set S "\u266C"}
-            3 {set S "\U0001F3B6"}
-        }
         set secs [expr {$secs ? [humanize_secs $secs] : ""}]
         incr n
         set i [expr {$n < 10 ? "\u2004\u2004${n}" : $n}]
         if {$artist ne ""} { set artist " · $artist" }
-        set txt "$i. $S [humanize_trackname $filename $name]$artist · $secs"
-        $TrackTree insert {} end -id $lid:$tid -text $txt
+        set txt "$i. [humanize_trackname $filename $name]$artist · $secs"
+        $TrackTree insert {} end -id $lid:$tid -text $txt -tags $stars
         if {!$sel_tid} { set sel_tid $tid }
     }
     if {$n} {

@@ -183,7 +183,31 @@ oo::define App method make_widgets {} {
         -show tree -style List.Treeview -striped 1]
     $right setwidget $TrackTree
     .mf.pw add $right
+    $TrackTree tag configure 3 -foreground $::STARS3 \
+        -image [ui::icon star3.svg $::MENU_ICON_SIZE]
+    $TrackTree tag configure 2 -foreground $::STARS2 \
+        -image [ui::icon star2.svg $::MENU_ICON_SIZE]
+    $TrackTree tag configure 1 -foreground $::STARS1 \
+        -image [ui::icon star1.svg $::MENU_ICON_SIZE]
+    $TrackTree tag configure 0 -foreground $::STARS0 \
+        -image [ui::icon star0.svg $::MENU_ICON_SIZE]
     set TrackTreeContextMenu [menu $TrackTree.contextMenu]
+    $TrackTreeContextMenu add command -command [callback on_track_rename] \
+        -label Rename… -underline 0 -compound left \
+        -image [ui::icon track-rename.svg $::MENU_ICON_SIZE]
+    $TrackTreeContextMenu add command -command [callback on_track_stars 3] \
+        -label "3 Excellent" -underline 0 -compound left \
+        -foreground $::STARS3 -image [ui::icon star3.svg $::MENU_ICON_SIZE]
+    $TrackTreeContextMenu add command -command [callback on_track_stars 2] \
+        -label "2 Good" -underline 0 -compound left \
+        -foreground $::STARS2 -image [ui::icon star2.svg $::MENU_ICON_SIZE]
+    $TrackTreeContextMenu add command -command [callback on_track_stars 1] \
+        -label "1 Okay" -underline 0 -compound left \
+        -foreground $::STARS1 -image [ui::icon star1.svg $::MENU_ICON_SIZE]
+    $TrackTreeContextMenu add command -command [callback on_track_stars 0] \
+        -label "0 Bad" -underline 0 -compound left \
+        -foreground $::STARS0 -image [ui::icon star0.svg $::MENU_ICON_SIZE]
+    $TrackTreeContextMenu add separator
     $TrackTreeContextMenu add command -label "Copy to List…" -underline 0 \
         -compound left -command [callback on_track_copy_to_list] \
         -image [ui::icon track-copy-to-list.svg $::MENU_ICON_SIZE]
