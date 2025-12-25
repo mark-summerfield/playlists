@@ -24,7 +24,7 @@ CREATE TABLE Tracks (
     stars INTEGER DEFAULT 1 NOT NULL,
 
     CHECK(secs >= 0),
-    CHECK(stars IN (0, 1, 2, 3)) -- bad okay good excellent
+    CHECK(stars IN (0, 1, 2, 3)) -- poor okay good excellent
 );
 
 CREATE TABLE List_x_Tracks (
