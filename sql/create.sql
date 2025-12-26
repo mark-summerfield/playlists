@@ -1,6 +1,6 @@
 -- Copyright © 2025 Mark Summerfield. All Rights Reserved.
 
-PRAGMA USER_VERSION = 4;
+PRAGMA USER_VERSION = 5;
 
 CREATE TABLE Categories (
     cid INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
@@ -201,6 +201,12 @@ CREATE TRIGGER InsertLastItemTrigger BEFORE INSERT ON LastItem
     FOR EACH ROW
     BEGIN
         DELETE FROM LastItem;
+    END;
+
+CREATE TRIGGER InsertHistoryTrigger2 BEFORE INSERT ON History
+    FOR EACH ROW
+    BEGIN
+        DELETE FROM History WHERE lid = NEW.lid AND tid = NEW.tid;
     END;
 
 -- Ensures that we keep at most one track per list in the history.

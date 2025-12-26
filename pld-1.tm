@@ -30,6 +30,8 @@ oo::define Pld constructor {filename {max_history 26}} {
                 $Db eval [readFile $::APPPATH/sql/pld1to2.sql] 
             } elseif {[my version] == 2 || [my version] == 3} {
                 $Db eval [readFile $::APPPATH/sql/pld2to4.sql] 
+            } elseif {[my version] == 4} {
+                $Db eval [readFile $::APPPATH/sql/pld4to5.sql] 
             }
         } else {
             $Db eval [readFile $::APPPATH/sql/create.sql]
