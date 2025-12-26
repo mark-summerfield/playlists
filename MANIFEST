@@ -1,3 +1,8 @@
+# TODO FindTrack dialog: need FindInArtist
+# &Find [                       ]
+# [ ] &Also search artists’ names
+#	[ &OK ] [ &Cancel ]
+
 playlists.tk # VERSION
 app-1.tm
 app_ui-1.tm
