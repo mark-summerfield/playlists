@@ -91,7 +91,7 @@ oo::define App method make_list_menu {} {
         -label "Add Tracks…" -underline 4 -compound left \
         -image [ui::icon list-add-tracks.svg $::MENU_ICON_SIZE]
     .menu.list add command -command [callback on_list_merge] \
-        -label Merge… -underline 0 -compound left \
+        -label "Merge Other List…" -underline 0 -compound left \
         -image [ui::icon list-merge.svg $::MENU_ICON_SIZE]
     .menu.list add separator
     .menu.list add command -command [callback on_list_delete] \
