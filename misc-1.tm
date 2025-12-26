@@ -6,7 +6,7 @@ package require util
 const STARS3 "#0000FF" ;# blue
 const STARS2 "#911EB4" ;# purple
 const STARS1 "#9A6324" ;# brown
-const STARS0 "#555555" ;# gray
+const STARS0 "#707070" ;# gray
 
 proc select_tree_item {tree id} {
     if {[llength [$tree children {}]]} {
