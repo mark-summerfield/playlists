@@ -278,7 +278,7 @@ oo::define App method make_playbar {} {
     ttk::button .mf.play.moveBottomButton -takefocus 0 \
         -command [callback on_track_move_bottom] \
         -image [ui::icon go-bottom.svg $::MENU_ICON_SIZE]
-    $tip .mf.play.moveTopButton "Move Track to the Bottom"
+    $tip .mf.play.moveBottomButton "Move Track to the Bottom"
     ttk::button .mf.play.volumeDownButton -takefocus 0 \
         -command [callback on_volume_down] \
         -image [ui::icon audio-volume-low.svg $::MENU_ICON_SIZE]
