@@ -1,6 +1,6 @@
 -- Copyright © 2025 Mark Summerfield. All Rights Reserved.
 
-PRAGMA USER_VERSION = 1;
+PRAGMA USER_VERSION = 4;
 
 CREATE TABLE Categories (
     cid INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
@@ -196,18 +196,20 @@ CREATE TRIGGER DeleteTrackTrigger BEFORE DELETE ON Tracks
         DELETE FROM History WHERE tid = OLD.tid;
     END;
 
--- Guarantees we have only zero or one last item record
+-- Guarantees we have only zero or one last item record.
 CREATE TRIGGER InsertLastItemTrigger BEFORE INSERT ON LastItem
     FOR EACH ROW
     BEGIN
         DELETE FROM LastItem;
     END;
 
+-- Ensures that we keep at most one track per list in the history.
 CREATE TRIGGER InsertHistoryTrigger AFTER INSERT ON History
     FOR EACH ROW
     BEGIN
         DELETE FROM LastItem;
         INSERT INTO LastItem (lid, tid) VALUES (NEW.lid, NEW.tid);
+        DELETE FROM History WHERE lid = NEW.lid AND tid != NEW.tid;
     END;
 
 INSERT INTO Categories (cid, name) VALUES (0, 'Uncategorized');

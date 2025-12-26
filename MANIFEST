@@ -31,6 +31,7 @@ ogg-1.tm
 sql/prepare.sql
 sql/create.sql
 sql/pld1to2.sql
+sql/pld2to4.sql
 
 ref-1.tm
 util-1.tm
