@@ -4,7 +4,7 @@ package require lambda 1
 package require util
 
 const STARS3 "#0000FF" ;# blue
-const STARS2 "#911EB4" ;# purple
+const STARS2 "#009A00" ;# green
 const STARS1 "#9A6324" ;# brown
 const STARS0 "#707070" ;# gray
 
