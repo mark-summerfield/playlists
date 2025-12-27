@@ -1,8 +1,10 @@
 # TODO Config dialog: also show Playlists file (like I show .ini file)
 # TODO FindTrack dialog: need FindInArtist
-# &Find [                       ]
-# [ ] &Also search artists’ names
-#	[ &OK ] [ &Cancel ]
+#	 &Find [                       ]
+#	 [ ] &Also search artists’ names
+#		[ &OK ] [ &Cancel ]
+# TODO Find: ' → ['‘’] -or- ?
+# TODO List→Export… *.{m3u8,pls,tsv}
 
 playlists.tk # VERSION
 app-1.tm
