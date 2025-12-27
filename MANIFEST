@@ -3,7 +3,7 @@
 #	 &Find [                       ]
 #	 [ ] &Also search artists’ names
 #		[ &OK ] [ &Cancel ]
-# TODO Find: ' → ['‘’] -or- ?
+# TODO Find: ' → ['‘’] -or- ? # add tooltip re * and ?
 # TODO List→Export… *.{m3u8,pls,tsv}
 
 playlists.tk # VERSION
