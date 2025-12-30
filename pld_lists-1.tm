@@ -125,3 +125,15 @@ oo::define Pld method list_delete_unlisted_tracks {} {
                   WHERE tid IN (SELECT tid FROM OrphansView)}
     }
 }
+
+oo::define Pld method list_export_m3u8 {lid filename} {
+    puts "list_export_m3u8 lid=$lid filename=$filename"
+}
+
+oo::define Pld method list_export_pls {lid filename} {
+    puts "list_export_pls lid=$lid filename=$filename"
+}
+
+oo::define Pld method list_export_tsv {lid filename} {
+    puts "list_export_tsv lid=$lid filename=$filename"
+}

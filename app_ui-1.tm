@@ -94,6 +94,10 @@ oo::define App method make_list_menu {} {
         -label "Merge Other List…" -underline 0 -compound left \
         -image [ui::icon list-merge.svg $::MENU_ICON_SIZE]
     .menu.list add separator
+    .menu.list add command -command [callback on_list_export] \
+        -label Export… -underline 1 -compound left \
+        -image [ui::icon export.svg $::MENU_ICON_SIZE]
+    .menu.list add separator
     .menu.list add command -command [callback on_list_delete] \
         -label Delete… -underline 0 -compound left \
         -image [ui::icon list-delete.svg $::MENU_ICON_SIZE]

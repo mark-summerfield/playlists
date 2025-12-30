@@ -71,6 +71,26 @@ oo::define App method on_list_merge {} {
     }
 }
 
+oo::define App method on_list_export {} {
+    if {[set lid [my GetLid]] != -1} {
+        if {[set filename [tk_getSaveFile -parent . \
+                -title "Export List — [tk appname]" \
+                -filetypes {{{Playlist Files} {.m3u8 .m3u .pls}}
+                    {{Data Files} {.tsv}}}]] ne ""} {
+            switch -exact -nocase [file extension $filename] {
+                .m3u8 - .m3u { $Pldb list_export_m3u8 $lid $filename }
+                .pls { $Pldb list_export_pls $lid $filename }
+                .tsv { $Pldb list_export_tsv $lid $filename }
+                default {
+                    MessageForm show "Bad Export Format — [tk appname]" \
+                        "Can only export .m3u8 .m3u .pls .tsv formats." \
+                        OK warning
+                }
+            }
+        }
+    }
+}
+
 oo::define App method on_list_delete {} {
     if {[set lid [my GetLid]] != -1} {
         set title "Delete List — [tk appname]"

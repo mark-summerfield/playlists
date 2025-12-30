@@ -1,5 +1,3 @@
-# TODO List→Export… *.{m3u8,pls,tsv}
-
 playlists.tk # VERSION
 app-1.tm
 app_ui-1.tm
@@ -21,7 +19,7 @@ config-1.tm
 config_form-1.tm
 pld-1.tm
 pld_categories-1.tm
-pld_lists-1.tm
+pld_lists-1.tm # TODO *export*
 pld_tracks-1.tm
 ogg-1.tm
 
