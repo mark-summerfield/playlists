@@ -1,9 +1,3 @@
-# TODO Config dialog: also show Playlists file (like I show .ini file)
-# TODO FindTrack dialog: need FindInArtist
-#	 &Find [                       ]
-#	 [ ] &Also search artists’ names
-#		[ &OK ] [ &Cancel ]
-# TODO Find: ' → ['‘’] -or- ? # add tooltip re * and ?
 # TODO List→Export… *.{m3u8,pls,tsv}
 
 playlists.tk # VERSION
@@ -20,6 +14,7 @@ app_history_actions-1.tm
 app_bookmarks_actions-1.tm
 add_edit_list_form-1.tm
 choose_list_form-1.tm
+find_form-1.tm
 misc-1.tm
 mplayer-1.tm
 config-1.tm
@@ -35,6 +30,7 @@ sql/create.sql
 sql/pld1to2.sql
 sql/pld2to4.sql
 sql/pld4to5.sql
+sql/pld5to6.sql
 
 ref-1.tm
 util-1.tm

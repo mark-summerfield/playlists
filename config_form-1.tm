@@ -8,14 +8,16 @@ oo::class create ConfigForm {
     superclass AbstractForm
 
     variable Ok
+    variable Pldb
     variable DebugRef
     variable Debug
     variable Blinking
     variable AutoPlayNext
 }
 
-oo::define ConfigForm constructor {ok debug} {
+oo::define ConfigForm constructor {ok pldb debug} {
     set Ok $ok
+    set Pldb $pldb
     set DebugRef $debug
     set Debug [$DebugRef get]
     set config [Config new]
@@ -62,6 +64,10 @@ oo::define ConfigForm method make_widgets {} {
     $tip .configForm.mf.debugCheckbutton \
         "Whether to print debug info to stdout."
     set opts "-compound left -width 15"
+    ttk::label .configForm.mf.playlistsFileLabel -foreground gray25 \
+        -text "Playlists file (v[$Pldb version])"
+    ttk::label .configForm.mf.playlistsFilenameLabel -foreground gray25 \
+        -text [$Pldb filename] -relief sunken
     ttk::label .configForm.mf.configFileLabel -foreground gray25 \
         -text "Config file"
     ttk::label .configForm.mf.configFilenameLabel -foreground gray25 \
@@ -83,6 +89,10 @@ oo::define ConfigForm method make_layout {} {
     grid .configForm.mf.blinkCheckbutton -row 2 -column 1 -sticky we
     grid .configForm.mf.autoPlayCheckbutton -row 3 -column 1 -sticky we
     grid .configForm.mf.debugCheckbutton -row 4 -column 1 -sticky we
+    grid .configForm.mf.playlistsFileLabel -row 7 -column 0 -sticky we \
+        {*}$opts
+    grid .configForm.mf.playlistsFilenameLabel -row 7 -column 1 \
+        -columnspan 2 -sticky we {*}$opts
     grid .configForm.mf.configFileLabel -row 8 -column 0 -sticky we \
         {*}$opts
     grid .configForm.mf.configFilenameLabel -row 8 -column 1 \

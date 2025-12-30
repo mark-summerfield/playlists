@@ -2,6 +2,7 @@
 
 package require choose_list_form
 package require entry_form
+package require find_form
 package require yes_no_form
 
 oo::define App method on_track_rename {} {
@@ -84,10 +85,12 @@ oo::define App method on_track_find_next {} {
         set found 0
         foreach tuple [lrange [$Pldb list_tracks] $FindIndex end] {
             incr FindIndex
-            lassign $tuple lid tid filename name
+            lassign $tuple lid tid filename name artist
             set basename [file tail $filename]
             if {[string match -nocase *$FindWhat* $basename] ||
-                    [string match -nocase *$FindWhat* $name]} {
+                    [string match -nocase *$FindWhat* $name] ||
+                    ($FindArtists &&
+                        [string match -nocase *$FindWhat* $artist])} {
                 my on_category_expand_all
                 my goto_track $lid $tid $filename
                 set found 1
@@ -99,8 +102,8 @@ oo::define App method on_track_find_next {} {
 }
 
 oo::define App method on_track_find {} {
-    if {[set FindWhat [EntryForm show "Find Track — [tk appname]" \
-            "Find Track" {} $FindWhat]] ne ""} {
+    lassign [FindForm show $FindWhat $FindArtists] FindWhat FindArtists
+    if {$FindWhat ne ""} {
         set FindIndex 0
         my on_track_find_next
     }

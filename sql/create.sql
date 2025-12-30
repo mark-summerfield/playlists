@@ -1,6 +1,6 @@
 -- Copyright © 2025 Mark Summerfield. All Rights Reserved.
 
-PRAGMA USER_VERSION = 5;
+PRAGMA USER_VERSION = 6;
 
 CREATE TABLE Categories (
     cid INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
@@ -120,7 +120,8 @@ CREATE VIEW HistoryView AS
         WHERE Tracks.tid = History.tid ORDER BY hid DESC;
 
 CREATE VIEW ListTracksView AS
-    SELECT ListsTrimView.lid, Tracks.tid, Tracks.filename, Tracks.name
+    SELECT ListsTrimView.lid, Tracks.tid, Tracks.filename, Tracks.name,
+           Tracks.artist
         FROM ListsTrimView, Tracks, List_x_Tracks, CategoriesTrimView
         WHERE ListsTrimView.lid = List_x_Tracks.lid
             AND Tracks.tid = List_x_Tracks.tid

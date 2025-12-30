@@ -9,7 +9,7 @@ oo::define App method on_config {} {
     set config [Config new]
     set ok [Ref new 0]
     set debug [Ref new [$Player debug]]
-    set form [ConfigForm new $ok $debug]
+    set form [ConfigForm new $ok $Pldb $debug]
     tkwait window [$form form]
     if {[$ok get]} {
         $Player set_debug [$debug get]

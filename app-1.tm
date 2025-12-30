@@ -14,6 +14,7 @@ oo::singleton create App {
     variable Pldb
     variable GotSecs
     variable FindWhat
+    variable FindArtists
     variable FindIndex
 }
 
@@ -34,6 +35,7 @@ oo::define App constructor {} {
     Config new ;# we need tk scaling done early
     set ListTreeExpanded 0
     set FindWhat ""
+    set FindArtists 0
     set FindIndex 0
     set Pldb [Pld new [get_db_filename]]
     set Player ""

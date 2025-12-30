@@ -32,6 +32,8 @@ oo::define Pld constructor {filename {max_history 26}} {
                 $Db eval [readFile $::APPPATH/sql/pld2to4.sql] 
             } elseif {[my version] == 4} {
                 $Db eval [readFile $::APPPATH/sql/pld4to5.sql] 
+            } elseif {[my version] == 5} {
+                $Db eval [readFile $::APPPATH/sql/pld5to6.sql] 
             }
         } else {
             $Db eval [readFile $::APPPATH/sql/create.sql]
@@ -73,8 +75,9 @@ oo::define Pld method info {} {
 oo::define Pld method list_tracks {} {
     if {![llength $ListTracks]} {
         set ListTracks [list]
-        $Db eval {SELECT lid, tid, filename, name FROM ListTracksView} {
-            lappend ListTracks [list $lid $tid $filename $name]
+        $Db eval {SELECT lid, tid, filename, name, artist
+                  FROM ListTracksView} {
+            lappend ListTracks [list $lid $tid $filename $name $artist]
         }
     }
     return $ListTracks
