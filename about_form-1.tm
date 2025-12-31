@@ -1,6 +1,7 @@
 # Copyright © 2025 Mark Summerfield. All rights reserved.
 
 package require abstract_form
+package require sqlite3 3
 package require ui
 package require util
 
@@ -18,7 +19,7 @@ oo::define AboutForm constructor {desc {url ""} {license GPLv3}} {
     set Desc $desc
     set Url $url
     set License $license
-    set Height [expr {11 + [regexp -all \n $desc]}]
+    set Height [expr {13 + [regexp -all \n $desc]}]
     my make_widgets
     my make_layout
     my make_bindings
@@ -57,8 +58,8 @@ oo::define AboutForm method make_bindings {} {
 
 oo::define AboutForm method on_click_url index {
     set indexes [.aboutForm.frame.text tag prevrange url $index]
-    set url [string trim [.aboutForm.frame.text get {*}$indexes]]
-    if {$url ne ""} {
+    if {[set url [string trim [.aboutForm.frame.text get {*}$indexes]]] \
+            ne ""} {
         if {![string match -nocase http*://* $url]} {
             set url [string cat http:// $url]
         }
@@ -78,8 +79,7 @@ oo::define AboutForm method Populate {} {
     set add [list $txt insert end]
     {*}$add "\n[tk appname] $::VERSION\n" {center title}
     {*}$add "$Desc.\n\n" {center navy}
-    set year [clock format [clock seconds] -format %Y]
-    if {$year > 2025} {
+    if {[set year [clock format [clock seconds] -format %Y]] > 2025} {
         set year "2025-[string range $year end-1 end]"
     }
     set bits [expr {8 * $::tcl_platform(wordSize)}]
@@ -98,6 +98,11 @@ oo::define AboutForm method Populate {} {
     {*}$add "License: $License.\n" {center green}
     {*}$add "[string repeat " " 60]\n" {center hr}
     {*}$add "Tcl/Tk $::tcl_patchLevel (${bits}-bit)\n" center
+    set db DB#[string range [clock clicks] end-8 end]
+    sqlite3 $db :memory:
+    set sql_version [$db version]
+    $db close
+    {*}$add "SQLite $sql_version\n" center
     if {[info exists distro] && $distro != ""} {
         {*}$add "$distro\n" center
         incr Height
@@ -111,8 +116,7 @@ oo::define AboutForm method AddTextTags txt {
     $txt configure -font TkTextFont
     set cmd [list $txt tag configure]
     {*}$cmd spaceabove -spacing1 6
-    {*}$cmd margins -lmargin1 $margin -lmargin2 $margin \
-        -rmargin $margin
+    {*}$cmd margins -lmargin1 $margin -lmargin2 $margin -rmargin $margin
     {*}$cmd center -justify center
     {*}$cmd title -foreground navy -font H1
     {*}$cmd gray -foreground gray
