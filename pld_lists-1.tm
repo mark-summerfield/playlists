@@ -127,13 +127,60 @@ oo::define Pld method list_delete_unlisted_tracks {} {
 }
 
 oo::define Pld method list_export_m3u8 {lid filename} {
-    puts "list_export_m3u8 lid=$lid filename=$filename"
+    set out [open $filename w]
+    try {
+        puts $out "#EXTM3U"
+        foreach track [my list_export_data $lid] {
+            lassign $track fname title artist secs stars
+            puts $out "#EXTINF:$secs,$artist - $title\n$fname"
+        }
+    } finally {
+        close $out
+    }
 }
 
 oo::define Pld method list_export_pls {lid filename} {
-    puts "list_export_pls lid=$lid filename=$filename"
+    set out [open $filename w]
+    set n 0
+    try {
+        puts $out "\[playlist\]\n"
+        foreach track [my list_export_data $lid] {
+            incr n
+            lassign $track fname title artist secs stars
+            set length [expr {$secs ? $secs : -1}]
+            puts $out "File$n=$fname\nTitle$n=$title\nLength$n=$length\n"
+        }
+        puts $out "NumberOfEntries=$n\nVersion=2"
+    } finally {
+        close $out
+    }
 }
 
 oo::define Pld method list_export_tsv {lid filename} {
-    puts "list_export_tsv lid=$lid filename=$filename"
+    set out [open $filename w]
+    try {
+        puts $out "Filename\tTitle\tArtist\tSecs\tStars"
+        foreach track [my list_export_data $lid] {
+            lassign $track fname title artist secs stars
+            puts $out "$fname\t$title\t$artist\t$secs\t$stars"
+        }
+    } finally {
+        close $out
+    }
+}
+
+oo::define Pld method list_export_data lid {
+    set data [list]
+    $Db eval {
+        SELECT Tracks.filename AS filename, Tracks.name AS title,
+               Tracks.artist AS artist, Tracks.secs AS secs,
+               Tracks.stars AS stars
+            FROM ListsTrimView, Tracks, List_x_Tracks
+            WHERE ListsTrimView.lid = List_x_Tracks.lid
+              AND ListsTrimView.lid = :lid
+              AND Tracks.tid = List_x_Tracks.tid
+            ORDER BY LOWER(ListsTrimView.tname), List_x_Tracks.pos} {
+        lappend data [list $filename $title $artist $secs $stars]
+    }
+    return $data
 }

@@ -85,8 +85,10 @@ oo::define App method on_list_export {} {
                     MessageForm show "Bad Export Format — [tk appname]" \
                         "Can only export .m3u8 .m3u .pls .tsv formats." \
                         OK warning
+                    return
                 }
             }
+            my update_status "Saved $filename"
         }
     }
 }
