@@ -1,3 +1,5 @@
+# TODO export
+
 playlists.tk # VERSION
 app-1.tm
 app_ui-1.tm
@@ -48,6 +50,8 @@ README.md
 
 st.sh
 
-# See https://mplayerhq.hu
+# NOTE idea: "circled" stars
+
+# See https://mplayerhq.hu and esp. https://mplayerhq.hu/DOCS/tech/slave.txt
 
 # vim: syn=yaml

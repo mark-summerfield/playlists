@@ -58,6 +58,14 @@ oo::define ConfigForm method make_widgets {} {
     $tip .configForm.mf.autoPlayCheckbutton \
         "Whether to automatically play the next track after the current\
         one finishes."
+    ttk::label .configForm.mf.skipLabel -text "Skip by (seconds)" \
+        -underline 1
+    ttk::spinbox .configForm.mf.skipSpinbox -format %.0f -from 1.0 \
+        -to 10.0 -increment 1.0
+    ui::apply_edit_bindings .configForm.mf.skipSpinbox
+    $tip .configForm.mf.skipSpinbox "How many seconds to skip backwards\
+        or forwards by."
+    .configForm.mf.skipSpinbox set [$config skip_by]
     ttk::checkbutton .configForm.mf.debugCheckbutton \
         -text Debug -underline 0 -variable [my varname Debug]
     if {$Debug} { .configForm.mf.debugCheckbutton state selected }
@@ -88,7 +96,10 @@ oo::define ConfigForm method make_layout {} {
         -sticky we {*}$opts
     grid .configForm.mf.blinkCheckbutton -row 2 -column 1 -sticky we
     grid .configForm.mf.autoPlayCheckbutton -row 3 -column 1 -sticky we
-    grid .configForm.mf.debugCheckbutton -row 4 -column 1 -sticky we
+    grid .configForm.mf.skipLabel -row 4 -column 0 -sticky w {*}$opts
+    grid .configForm.mf.skipSpinbox -row 4 -column 1 -columnspan 2 \
+        -sticky we {*}$opts
+    grid .configForm.mf.debugCheckbutton -row 5 -column 1 -sticky we
     grid .configForm.mf.playlistsFileLabel -row 7 -column 0 -sticky we \
         {*}$opts
     grid .configForm.mf.playlistsFilenameLabel -row 7 -column 1 \
@@ -113,6 +124,7 @@ oo::define ConfigForm method make_bindings {} {
     bind .configForm <Alt-a> {.configForm.mf.autoPlayCheckbutton invoke}
     bind .configForm <Alt-b> {.configForm.mf.blinkCheckbutton invoke}
     bind .configForm <Alt-d> {.configForm.mf.debugCheckbutton invoke}
+    bind .configForm <Alt-k> {focus .configForm.mf.skipSpinbox}
     bind .configForm <Alt-o> [callback on_ok]
     bind .configForm <Alt-s> {focus .configForm.mf.scaleSpinbox}
 }
@@ -122,6 +134,7 @@ oo::define ConfigForm method on_ok {} {
     tk scaling [.configForm.mf.scaleSpinbox get]
     $config set_blinking $Blinking
     $config set_auto_play_next $AutoPlayNext
+    $config set_skip_by [.configForm.mf.skipSpinbox get]
     $DebugRef set $Debug
     $Ok set 1
     my delete

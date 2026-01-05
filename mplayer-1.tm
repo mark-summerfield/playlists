@@ -56,6 +56,10 @@ oo::define Mplayer method play filename {
     set Playing 1
 }
 
+oo::define Mplayer method skip_back by { my Do "seek -$by" }
+
+oo::define Mplayer method skip_forward by { my Do "seek +$by" }
+
 oo::define Mplayer method replay {} { my Do "set_property time_pos 0" }
 
 oo::define Mplayer method pause {} { my Do pause }

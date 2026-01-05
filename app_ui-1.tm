@@ -170,6 +170,10 @@ oo::define App method make_play_menu {} {
     .menu.play add command -command [callback on_play_prev] \
         -label "Play Previous" -underline 8 -compound left -accelerator F2 \
         -image [ui::icon media-skip-backward.svg $::MENU_ICON_SIZE]
+    .menu.play add command -command [callback on_play_skip_back] \
+        -label "Skip Back" -underline 0 -compound left \
+        -accelerator Shift+F2 \
+        -image [ui::icon media-seek-backward-symbolic.svg $::MENU_ICON_SIZE]
     .menu.play add command -command [callback on_play_replay] \
         -label Replay -underline 0 -compound left -accelerator F3 \
         -image [ui::icon edit-redo.svg $::MENU_ICON_SIZE]
@@ -179,6 +183,10 @@ oo::define App method make_play_menu {} {
     .menu.play add command -command [callback on_play] \
         -label Play -underline 0 -compound left -accelerator F5 \
         -image [ui::icon media-playback-start.svg $::MENU_ICON_SIZE]
+    .menu.play add command -command [callback on_play_skip_forward] \
+        -label "Skip Forward" -underline 0 -compound left \
+        -accelerator Shift+F6 \
+        -image [ui::icon media-seek-backward-symbolic.svg $::MENU_ICON_SIZE]
     .menu.play add command -command [callback on_play_next] \
         -label "Play Next" -underline 5 -compound left -accelerator F6 \
         -image [ui::icon media-skip-forward.svg $::MENU_ICON_SIZE]
@@ -250,6 +258,10 @@ oo::define App method make_playbar {} {
         -image [ui::icon media-skip-backward.svg $::MENU_ICON_SIZE] \
         -takefocus 0
     $tip .mf.play.prevButton "Play Previous • F2"
+    ttk::button .mf.play.skipBackButton -takefocus 0 \
+        -command [callback on_play_skip_back] \
+        -image [ui::icon media-seek-backward-symbolic.svg $::MENU_ICON_SIZE]
+    $tip .mf.play.skipBackButton "Skip Back • Shift+F2"
     ttk::button .mf.play.replayButton -command [callback on_play_replay] \
         -image [ui::icon edit-redo.svg $::MENU_ICON_SIZE] -takefocus 0
     $tip .mf.play.replayButton "Replay • F3"
@@ -261,6 +273,10 @@ oo::define App method make_playbar {} {
         -command [callback on_play] \
         -image [ui::icon media-playback-start.svg $::MENU_ICON_SIZE]
     $tip .mf.play.playButton "Play • F5"
+    ttk::button .mf.play.skipForwardButton -takefocus 0 \
+        -command [callback on_play_skip_forward] \
+        -image [ui::icon media-seek-forward-symbolic.svg $::MENU_ICON_SIZE]
+    $tip .mf.play.skipForwardButton "Skip Forward • Shift+F6"
     ttk::button .mf.play.nextButton -command [callback on_play_next] \
         -image [ui::icon media-skip-forward.svg $::MENU_ICON_SIZE] \
         -takefocus 0
@@ -297,9 +313,11 @@ oo::define App method make_layout {} {
     const opts "-pady 3 -padx 3"
     pack .mf.play -fill x -side bottom {*}$opts
     pack .mf.play.prevButton -side left {*}$opts
+    pack .mf.play.skipBackButton -side left {*}$opts
     pack .mf.play.replayButton -side left {*}$opts
     pack .mf.play.pauseButton -side left {*}$opts
     pack .mf.play.playButton -side left {*}$opts
+    pack .mf.play.skipForwardButton -side left {*}$opts
     pack .mf.play.nextButton -side left {*}$opts
     pack .mf.play.progress -fill both -expand 1 -side left {*}$opts
     pack .mf.play.statusLabel -fill both -side left {*}$opts
@@ -323,9 +341,11 @@ oo::define App method make_bindings {} {
     bind $TrackTree <Return> [callback on_play]
     bind $TrackTree <Double-1> [callback on_play]
     bind . <F2> [callback on_play_prev]
+    bind . <Shift-F2> [callback on_play_skip_back]
     bind . <F3> [callback on_play_replay]
     bind . <F4> [callback on_play_pause_resume]
     bind . <F5> [callback on_play]
+    bind . <Shift-F6> [callback on_play_skip_forward]
     bind . <F6> [callback on_play_next]
     bind . <F7> [callback on_volume_down]
     bind . <F8> [callback on_volume_up]

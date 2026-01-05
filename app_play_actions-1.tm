@@ -13,6 +13,11 @@ oo::define App method on_play_prev {} {
     }
 }
 
+oo::define App method on_play_skip_back {} {
+    set config [Config new]
+    $Player skip_back [$config skip_by]
+}
+
 oo::define App method on_play_replay {} { $Player replay }
 
 oo::define App method on_play_pause_resume {} { $Player pause }
@@ -21,6 +26,11 @@ oo::define App method on_play {} {
     if {[set selection [$TrackTree selection]] ne ""} {
         my play_track $selection
     }
+}
+
+oo::define App method on_play_skip_forward {} {
+    set config [Config new]
+    $Player skip_forward [$config skip_by]
 }
 
 oo::define App method on_play_next {} {
