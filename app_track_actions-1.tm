@@ -28,6 +28,14 @@ oo::define App method on_track_stars stars {
     }
 }
 
+oo::define App method on_track_toggle_circled {} {
+    lassign [my GetLidAndTid] lid tid
+    if {$tid} {
+        $Pldb circle_toggle $lid $tid
+        my populate_tracktree $lid $tid
+    }
+}
+
 oo::define App method on_track_copy_name {} {
     lassign [my GetLidAndTid] lid tid
     if {$tid} {

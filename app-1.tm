@@ -24,6 +24,7 @@ package require app_category_actions
 package require app_file_actions
 package require app_history_actions
 package require app_list_actions
+package require app_menus
 package require app_play_actions
 package require app_populate
 package require app_track_actions

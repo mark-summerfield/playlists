@@ -1,6 +1,6 @@
 -- Copyright © 2025 Mark Summerfield. All Rights Reserved.
 
-PRAGMA USER_VERSION = 6;
+PRAGMA USER_VERSION = 8;
 
 CREATE TABLE Categories (
     cid INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
@@ -49,6 +49,16 @@ CREATE TABLE LastItem (
 
 CREATE TABLE Bookmarks (
     bid INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    lid INTEGER NOT NULL, -- lid → cid
+    tid INTEGER NOT NULL,
+
+    UNIQUE(lid, tid),
+    FOREIGN KEY(lid) REFERENCES Lists(lid),
+    FOREIGN KEY(tid) REFERENCES Tracks(tid)
+);
+
+CREATE TABLE Circled (
+    cid INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
     lid INTEGER NOT NULL, -- lid → cid
     tid INTEGER NOT NULL,
 
@@ -160,6 +170,7 @@ CREATE TRIGGER DeleteListTrigger2 BEFORE DELETE ON Lists
     BEGIN
         DELETE FROM List_x_Tracks WHERE lid = OLD.lid;
         DELETE FROM LastItem WHERE lid = OLD.lid;
+        DELETE FROM Circled WHERE lid = OLD.lid;
         DELETE FROM Bookmarks WHERE lid = OLD.lid;
         DELETE FROM History WHERE lid = OLD.lid;
         DELETE FROM Tracks WHERE tid IN (SELECT tid FROM OrphansView);
@@ -181,6 +192,8 @@ CREATE TRIGGER UpdateListTracksTrigger AFTER UPDATE OF lid
     BEGIN
         UPDATE LastItem SET lid = NEW.lid
             WHERE lid = OLD.lid AND tid = OLD.tid;
+        UPDATE Circled SET lid = NEW.lid
+            WHERE lid = OLD.lid AND tid = OLD.tid;
         UPDATE Bookmarks SET lid = NEW.lid
             WHERE lid = OLD.lid AND tid = OLD.tid;
         UPDATE History SET lid = NEW.lid
@@ -193,6 +206,7 @@ CREATE TRIGGER DeleteTrackTrigger BEFORE DELETE ON Tracks
     BEGIN
         DELETE FROM List_x_Tracks WHERE tid = OLD.tid;
         DELETE FROM LastItem WHERE tid = OLD.tid;
+        DELETE FROM Circled WHERE tid = OLD.tid;
         DELETE FROM Bookmarks WHERE tid = OLD.tid;
         DELETE FROM History WHERE tid = OLD.tid;
     END;
@@ -217,6 +231,19 @@ CREATE TRIGGER InsertHistoryTrigger AFTER INSERT ON History
         DELETE FROM LastItem;
         INSERT INTO LastItem (lid, tid) VALUES (NEW.lid, NEW.tid);
         DELETE FROM History WHERE lid = NEW.lid AND tid != NEW.tid;
+    END;
+
+CREATE TRIGGER InsertCircledTrigger2 BEFORE INSERT ON Circled
+    FOR EACH ROW
+    BEGIN
+        DELETE FROM Circled WHERE lid = NEW.lid AND tid = NEW.tid;
+    END;
+
+-- Ensures that we have at most one circled track per list.
+CREATE TRIGGER InsertCircledTrigger AFTER INSERT ON Circled
+    FOR EACH ROW
+    BEGIN
+        DELETE FROM Circled WHERE lid = NEW.lid AND tid != NEW.tid;
     END;
 
 INSERT INTO Categories (cid, name) VALUES (0, 'Uncategorized');

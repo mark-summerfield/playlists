@@ -26,14 +26,12 @@ oo::define Pld constructor {filename {max_history 26}} {
     $Db eval [readFile $::APPPATH/sql/prepare.sql] 
     $Db transaction {
         if {$exists} {
-            if {[my version] == 1} {
-                $Db eval [readFile $::APPPATH/sql/pld1to2.sql] 
-            } elseif {[my version] == 2 || [my version] == 3} {
-                $Db eval [readFile $::APPPATH/sql/pld2to4.sql] 
-            } elseif {[my version] == 4} {
-                $Db eval [readFile $::APPPATH/sql/pld4to5.sql] 
-            } elseif {[my version] == 5} {
-                $Db eval [readFile $::APPPATH/sql/pld5to6.sql] 
+            switch [my version] {
+                1 { $Db eval [readFile $::APPPATH/sql/pld1to2.sql] }
+                2 - 3 { $Db eval [readFile $::APPPATH/sql/pld2to4.sql] }
+                4 { $Db eval [readFile $::APPPATH/sql/pld4to5.sql] }
+                5 { $Db eval [readFile $::APPPATH/sql/pld5to6.sql] }
+                6 - 7 { $Db eval [readFile $::APPPATH/sql/pld6to8.sql] }
             }
         } else {
             $Db eval [readFile $::APPPATH/sql/create.sql]
@@ -118,6 +116,13 @@ oo::define Pld method bookmarks {} {
     return $bookmarks
 }
 
+oo::define Pld method bookmarks_insert {lid tid} {
+    $Db transaction {
+        $Db eval {DELETE FROM Bookmarks WHERE lid = :lid AND tid = :tid}
+        $Db eval {INSERT INTO Bookmarks (lid, tid) VALUES (:lid, :tid)}
+    }
+}
+
 oo::define Pld method bookmarks_delete {lid {tid 0}} {
     if {$tid} {
         $Db eval {DELETE FROM Bookmarks WHERE lid = :lid AND tid = :tid}
@@ -126,10 +131,19 @@ oo::define Pld method bookmarks_delete {lid {tid 0}} {
     }
 }
 
-oo::define Pld method bookmarks_insert {lid tid} {
+oo::define Pld method circled {lid tid} {
+    $Db eval {SELECT COUNT(*) FROM Circled WHERE lid = :lid AND tid = :tid}
+}
+
+oo::define Pld method circle_toggle {lid tid} {
     $Db transaction {
-        $Db eval {DELETE FROM Bookmarks WHERE lid = :lid AND tid = :tid}
-        $Db eval {INSERT INTO Bookmarks (lid, tid) VALUES (:lid, :tid)}
+        if {[$Db eval {SELECT COUNT(*) FROM Circled
+                       WHERE lid = :lid AND tid = :tid}]} {
+            $Db eval {DELETE FROM Circled WHERE lid = :lid AND tid = :tid}
+        } else {
+            $Db eval {INSERT INTO Circled (lid, tid) VALUES (:lid, :tid)}
+        }
+
     }
 }
 

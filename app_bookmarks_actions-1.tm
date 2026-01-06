@@ -1,6 +1,6 @@
 # Copyright © 2025 Mark Summerfield. All rights reserved.
 
-oo::define App method on_bookmarks_add {} {
+oo::define App method on_bookmarks_insert {} {
     lassign [my GetLidAndTid] lid tid
     if {$tid} {
         $Pldb bookmarks_insert $lid $tid

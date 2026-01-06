@@ -1,6 +1,7 @@
 playlists.tk # VERSION
 app-1.tm
 app_ui-1.tm
+app_menus-1.tm
 app_populate-1.tm
 app_actions-1.tm
 app_file_actions-1.tm
@@ -29,6 +30,7 @@ sql/pld1to2.sql
 sql/pld2to4.sql
 sql/pld4to5.sql
 sql/pld5to6.sql
+sql/pld6to8.sql
 
 ref-1.tm
 util-1.tm
@@ -47,8 +49,6 @@ db-1.tm
 README.md
 
 st.sh
-
-# NOTE idea: "circled" stars
 
 # See https://mplayerhq.hu and esp. https://mplayerhq.hu/DOCS/tech/slave.txt
 

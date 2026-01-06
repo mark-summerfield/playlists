@@ -22,7 +22,7 @@ oo::define App method populate_history_menu {} {
 
 oo::define App method populate_bookmarks_menu {} {
     .menu.bookmarks delete 0 end
-    .menu.bookmarks add command -command [callback on_bookmarks_add] \
+    .menu.bookmarks add command -command [callback on_bookmarks_insert] \
         -label "Add Current" -accelerator Ctrl+A -compound left \
         -image [ui::icon bookmark-add.svg $::MENU_ICON_SIZE]
     .menu.bookmarks add command -command [callback on_bookmarks_remove] \
@@ -76,6 +76,7 @@ oo::define App method populate_tracktree {lid {sel_tid 0}} {
         set i [expr {$n < 10 ? "\u2004\u2004${n}" : $n}]
         if {$artist ne ""} { set artist " · $artist" }
         set txt "$i. [humanize_trackname $filename $name]$artist · $secs"
+        if {[$Pldb circled $lid $tid]} { set stars ${stars}c }
         $TrackTree insert {} end -id $lid:$tid -text $txt -tags $stars
         if {!$sel_tid} { set sel_tid $tid }
     }
