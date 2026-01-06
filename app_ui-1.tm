@@ -281,7 +281,7 @@ oo::define App method make_playbar {} {
         -image [ui::icon media-skip-forward.svg $::MENU_ICON_SIZE] \
         -takefocus 0
     $tip .mf.play.nextButton "Play Next • F6"
-    ttk::progressbar .mf.play.progress -anchor center
+    ttk::progressbar .mf.play.progress -justify center -anchor center
     ttk::label .mf.play.statusLabel -relief sunken
     ttk::button .mf.play.moveTopButton -takefocus 0 \
         -command [callback on_track_move_top] \
@@ -361,7 +361,8 @@ oo::define App method make_bindings {} {
 oo::define App method on_pos data {
     lassign $data pos total
     .mf.play.progress configure -value $pos -maximum $total \
-        -text "[humanize_secs $pos]/[humanize_secs $total]"
+        -text "[humanize_secs $pos]/[humanize_secs $total]" \
+        -length [winfo width .mf.play.progress]
     if {$GotSecs < 2} {
         incr GotSecs ;# Need to double-check in case of fast track change
         set ttid [$TrackTree selection]

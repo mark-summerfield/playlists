@@ -5,6 +5,10 @@ nagelfar.sh \
     | grep -v No.info.on.package.*found \
     | grep -v Variable.*is.never.read \
     | grep -v Unknown.subcommand..home..to..file \
+    | grep -v Unknown.subcommand..show..to \
+    | grep -v Suspicious.variable.name...my.varname \
+    | grep -v Bad.option..command.to..regsub \
+    | grep -v Bad.option..striped.to..ttk::treeview \
     | grep -v Found.constant.*which.is.also.a.variable
 du -sh .git
 ls -sh .*.str
