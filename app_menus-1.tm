@@ -102,7 +102,7 @@ oo::define App method make_track_menu {} {
         -foreground $::STARS0 -image [ui::icon star0.svg $::MENU_ICON_SIZE]
     .menu.track add command -command [callback on_track_toggle_circled] \
         -label "Toggle Circled" -underline 0 -compound left \
-        -image [ui::icon circled.svg $::MENU_ICON_SIZE]
+        -accelerator Ctrl+T -image [ui::icon circled.svg $::MENU_ICON_SIZE]
     .menu.track add separator
     .menu.track add command -command [callback on_track_goto_current] \
         -label "Goto Current" -underline 0 -compound left \
