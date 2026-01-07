@@ -22,14 +22,19 @@ proc db::first {row {default {}}} {
 proc db::dump {db filename} {
     set out [open $filename w]
     try {
+        puts $out "PRAGMA USER_VERSION\
+            [$db onecolumn "PRAGMA USER_VERSION"];"
         puts $out "BEGIN TRANSACTION;"
         $db transaction {
+            puts $out "-- Create Schema"
             $db eval {SELECT sql FROM sqlite_master
                       WHERE sql IS NOT NULL
                       AND type IN ('table','index','trigger','view')
+                      AND name NOT LIKE 'sqlite_%'
                       ORDER BY type='table' DESC, type, name} {
                 puts $out "$sql;"
             }
+            puts $out "-- Insert Data"
             $db eval {SELECT name FROM sqlite_master
                       WHERE type='table' AND name NOT LIKE 'sqlite_%'} {
                 set table_name $name
