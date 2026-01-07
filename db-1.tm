@@ -34,9 +34,8 @@ proc db::dump {db filename} {
                 puts $out "$sql;"
             }
             puts $out "-- Insert Data"
-            $db eval {SELECT name FROM sqlite_master
+            $db eval {SELECT name AS table_name FROM sqlite_master
                       WHERE type='table' AND name NOT LIKE 'sqlite_%'} {
-                set table_name $name
                 set column_names [list]
                 set quoted_column_names [list]
                 $db eval "PRAGMA table_info(\"$table_name\")" {
