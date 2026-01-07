@@ -34,6 +34,7 @@ oo::define App method make_widgets {} {
     my make_track_tree
     $right setwidget $TrackTree
     .mf.pw add $right
+    my make_track_tree_context_menu
     my make_playbar
 }
 
@@ -56,6 +57,9 @@ oo::define App method make_track_tree {} {
         -image [ui::icon star1c.svg $::MENU_ICON_SIZE]
     $TrackTree tag configure 0c -foreground $::STARS0 \
         -image [ui::icon star0c.svg $::MENU_ICON_SIZE]
+}
+
+oo::define App method make_track_tree_context_menu {} {
     set TrackTreeContextMenu [menu $TrackTree.contextMenu]
     $TrackTreeContextMenu add command -command [callback on_track_rename] \
         -label Rename… -underline 0 -compound left \
@@ -72,6 +76,10 @@ oo::define App method make_track_tree {} {
     $TrackTreeContextMenu add command -command [callback on_track_stars 0] \
         -label "0 Poor" -underline 0 -compound left \
         -foreground $::STARS0 -image [ui::icon star0.svg $::MENU_ICON_SIZE]
+    $TrackTreeContextMenu add command \
+        -command [callback on_track_toggle_circled] \
+        -label "Toggle Circled" -underline 0 -compound left \
+        -image [ui::icon circled.svg $::MENU_ICON_SIZE]
     $TrackTreeContextMenu add separator
     $TrackTreeContextMenu add command -label "Copy to List…" -underline 0 \
         -compound left -command [callback on_track_copy_to_list] \

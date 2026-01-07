@@ -10,7 +10,7 @@ tcl::tm::path add $APPPATH
 
 package require app
 
-const VERSION 1.4.0
+const VERSION 1.4.1
 
 set app [App new]
 $app show
