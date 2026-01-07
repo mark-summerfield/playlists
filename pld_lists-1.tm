@@ -17,7 +17,7 @@ oo::define Pld method lists {} {
 }
 
 oo::define Pld method list_name lid {
-    db::first [$Db eval {SELECT name FROM Lists WHERE lid = :lid LIMIT 1}]
+    $Db onecolumn {SELECT name FROM Lists WHERE lid = :lid LIMIT 1}
 }
 
 oo::define Pld method list_first_for_cid cid {

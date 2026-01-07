@@ -17,8 +17,7 @@ oo::define Pld method cid_for_name name {
 }
 
 oo::define Pld method category_name cid {
-    db::first [$Db eval {SELECT name FROM Categories WHERE cid = :cid
-                         LIMIT 1}]
+    $Db onecolumn {SELECT name FROM Categories WHERE cid = :cid LIMIT 1}
 }
 
 oo::define Pld method category_names {{casefold 0}} {
