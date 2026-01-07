@@ -50,6 +50,8 @@ oo::define Pld method filename {} { return $Filename }
 
 oo::define Pld method version {} { $Db eval {PRAGMA USER_VERSION} }
 
+oo::define Pld method db {} { return $Db }
+
 oo::define Pld method last_item {} {
     set item [$Db eval {SELECT lid, tid FROM LastItem LIMIT 1}]
     if {![llength $item]} { set item [list 0 0] }

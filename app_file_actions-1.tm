@@ -2,8 +2,18 @@
 
 package require about_form
 package require config_form
+package require db
 package require ref
 package require util
+
+oo::define App method on_file_export {} {
+    if {[set filename [tk_getSaveFile -parent . \
+            -title "Export Database — [tk appname]" \
+            -filetypes {{{SQL Files} {.sql}}}]] ne ""} {
+        db::dump [$Pldb db] $filename
+        my update_status "Exported database to [file tail $filename]"
+    }
+}
 
 oo::define App method on_config {} {
     set config [Config new]

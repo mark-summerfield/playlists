@@ -19,8 +19,12 @@ oo::define App method make_menubar {} {
 oo::define App method make_file_menu {} {
     menu .menu.file
     .menu add cascade -menu .menu.file -label File -underline 0
+    .menu.file add command -command [callback on_file_export] \
+        -label Export… -underline 0 -compound left \
+        -image [ui::icon export.svg $::MENU_ICON_SIZE]
+    .menu.file add separator
     .menu.file add command -command [callback on_config] -label Config… \
-        -underline 0  -compound left \
+        -underline 0 -compound left \
         -image [ui::icon preferences-system.svg $::MENU_ICON_SIZE]
     .menu.file add command -command [callback on_about] -label About \
         -underline 0 -compound left \

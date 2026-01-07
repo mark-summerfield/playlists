@@ -35,7 +35,7 @@ oo::define App method on_list_add_folder {} {
 oo::define App method on_list_add_tracks {} {
     if {[set lid [my GetLid]] != -1} {
         set filenames [tk_getOpenFile -title "Add Tracks — [tk appname]" \
-            -multiple 1 -filetypes [Mplayer filetypes] \
+            -multiple 1 -filetypes [Mplayer filetypes] -parent . \
             -initialdir [get_music_dir]]
         my AddTracks $lid $filenames
     }
