@@ -14,7 +14,6 @@ proc db::sqlite_version {} {
     }
 }
 
-# TODO delete once all uses replaced with: $Db onecolumn
 proc db::first {row {default {}}} {
     expr {[llength $row] ? [lindex $row 0] : $default}
 }
