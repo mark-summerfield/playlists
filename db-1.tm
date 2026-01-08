@@ -14,10 +14,6 @@ proc db::sqlite_version {} {
     }
 }
 
-proc db::first {row {default {}}} {
-    expr {[llength $row] ? [lindex $row 0] : $default}
-}
-
 proc db::dump {db filename} {
     set out [open $filename w]
     try {
