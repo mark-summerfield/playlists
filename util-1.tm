@@ -1,5 +1,6 @@
 # Copyright © 2025 Mark Summerfield. All rights reserved.
 
+# See: https://en.wikipedia.org/wiki/ANSI_escape_code
 proc ansi str {
     if {[dict exists [chan configure stdout] -mode]} { ;# tty
         # fg: w=white r=red g=green e=blue c=cyan m=magenta y=yellow k=black
@@ -12,9 +13,10 @@ proc ansi str {
             <b> \x1B\[1m <i> \x1B\[3m <u> \x1B\[4m <!> \x1B\[;0m /< < /> >
         }
     } else {
-        const COLOR_MAP {<w> "" <r> "" <g> "" <b> "" <c> "" <m> "" <y> ""
-                         <k> "" <W> "" <R> "" <G> "" <B> "" <C> "" <M> ""
-                         <Y> "" <K> "" <!> "" /<  < />  >}
+        const COLOR_MAP {
+            <w> "" <r> "" <g> "" <e> "" <c> "" <m> "" <y> "" <k> "" <W> ""
+            <R> "" <G> "" <E> "" <C> "" <M> "" <Y> "" <K> "" <b> "" <i> ""
+            <u> "" <!> "" /< < /> >}
     }
     return [string map $COLOR_MAP ${str}]
 }
@@ -38,7 +40,7 @@ proc ldelete {lst item} {
 
 proc lrandom lst { lindex $lst [expr {int(rand() * [llength $lst])}] }
 
-proc lstride {lst stride} {
+proc lstride {lst {stride 2}} {
     set strides {}
     for {set i 0; set j [expr {$stride - 1}]} {$i < [llength $lst]} \
             {incr i $stride; incr j $stride} {
@@ -49,6 +51,8 @@ proc lstride {lst stride} {
 
 namespace eval util {}
 
+# Converts: -w -x Arg -y=Arg -zArg --one --two=Arg --three Arg one two
+# into:     -w -x Arg -y Arg -z Arg --one --two Arg --three Arg one two
 proc util::pre_process_args argv {
     set ppargv [list]
     foreach arg $argv {
