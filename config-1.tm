@@ -20,7 +20,7 @@ oo::define Config constructor {} {
     set Geometry ""
     set SashPos 0
     set AutoPlayNext 1
-    set AutoCircle 0
+    set AutoCircle 1
     set SkipBy 5
     if {[file exists $Filename] && [file size $Filename]} {
         set ini [ini::open $Filename -encoding utf-8 r]
