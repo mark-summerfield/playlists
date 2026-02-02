@@ -10,6 +10,7 @@ oo::singleton create Config {
     variable Geometry
     variable SashPos
     variable AutoPlayNext
+    variable AutoCircle
     variable SkipBy
 }
 
@@ -19,6 +20,7 @@ oo::define Config constructor {} {
     set Geometry ""
     set SashPos 0
     set AutoPlayNext 1
+    set AutoCircle 0
     set SkipBy 5
     if {[file exists $Filename] && [file size $Filename]} {
         set ini [ini::open $Filename -encoding utf-8 r]
@@ -33,6 +35,7 @@ oo::define Config constructor {} {
             set SashPos [ini::value $ini General SashPos $SashPos]
             set AutoPlayNext [ini::value $ini General AutoPlayNext \
                 $AutoPlayNext]
+            set AutoCircle [ini::value $ini General AutoCircle $AutoCircle]
             set SkipBy [ini::value $ini General SkipBy $SkipBy]
         } on error err {
             puts "invalid config in '$Filename'; using defaults: $err"
@@ -50,6 +53,7 @@ oo::define Config method save {} {
         ini::set $ini General Geometry [wm geometry .]
         ini::set $ini General SashPos [my sashpos]
         ini::set $ini General AutoPlayNext [my auto_play_next]
+        ini::set $ini General AutoCircle [my auto_circle]
         ini::set $ini General SkipBy [my skip_by]
         ini::commit $ini
     } finally {
@@ -74,11 +78,16 @@ oo::define Config method set_auto_play_next auto_play_next {
     set AutoPlayNext $auto_play_next
 }
 
+oo::define Config method auto_circle {} { return $AutoCircle }
+oo::define Config method set_auto_circle auto_circle {
+    set AutoCircle $auto_circle
+}
+
 oo::define Config method skip_by {} { return $SkipBy }
 oo::define Config method set_skip_by skip_by { set SkipBy $skip_by }
 
 oo::define Config method to_string {} {
     return "Config filename=$Filename blinking=$Blinking\
         scaling=[tk scaling] geometry=$Geometry sashpos=$SashPos\
-        auto_play_next=$AutoPlayNext skip_by=$SkipBy"
+        auto_play_next=$AutoPlayNext auto_circle=$AutoCircleskip_by=$SkipBy"
 }

@@ -86,6 +86,7 @@ oo::define App method play_db_track {lid tid filename {goto 0}} {
         my populate_history_menu
         lassign [$Pldb track_names $tid] _ name
         wm title . "[humanize_trackname $filename $name] — [tk appname]"
+        if {[[Config new] auto_circle]} { my on_track_circle $lid $tid }
         $Player play $filename
     }
 }

@@ -145,7 +145,15 @@ oo::define Pld method circle_toggle {lid tid} {
         } else {
             $Db eval {INSERT INTO Circled (lid, tid) VALUES (:lid, :tid)}
         }
+    }
+}
 
+oo::define Pld method circle {lid tid} {
+    $Db transaction {
+        if {![$Db eval {SELECT COUNT(*) FROM Circled
+                        WHERE lid = :lid AND tid = :tid}]} {
+            $Db eval {INSERT INTO Circled (lid, tid) VALUES (:lid, :tid)}
+        }
     }
 }
 

@@ -36,6 +36,11 @@ oo::define App method on_track_toggle_circled {} {
     }
 }
 
+oo::define App method on_track_circle {lid tid} {
+    $Pldb circle $lid $tid
+    my populate_tracktree $lid $tid
+}
+
 oo::define App method on_track_copy_name {} {
     lassign [my GetLidAndTid] lid tid
     if {$tid} {

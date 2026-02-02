@@ -13,6 +13,7 @@ oo::class create ConfigForm {
     variable Debug
     variable Blinking
     variable AutoPlayNext
+    variable AutoCircle
 }
 
 oo::define ConfigForm constructor {ok pldb debug} {
@@ -23,6 +24,7 @@ oo::define ConfigForm constructor {ok pldb debug} {
     set config [Config new]
     set Blinking [$config blinking]
     set AutoPlayNext [$config auto_play_next]
+    set AutoCircle [$config auto_circle]
     my make_widgets 
     my make_layout
     my make_bindings
@@ -58,6 +60,12 @@ oo::define ConfigForm method make_widgets {} {
     $tip .configForm.mf.autoPlayCheckbutton \
         "Whether to automatically play the next track after the current\
         one finishes."
+    ttk::checkbutton .configForm.mf.autoCircleCheckbutton \
+        -text "Auto Circle" -underline 6 -variable [my varname AutoCircle]
+    if {$AutoCircle} { .configForm.mf.autoCircleCheckbutton state selected }
+    $tip .configForm.mf.autoCircleCheckbutton \
+        "Whether to automatically circle the playlist’s currently\
+        playing track (and uncircle any other track in the playlist)."
     ttk::label .configForm.mf.skipLabel -text "Skip by (seconds)" \
         -underline 1
     ttk::spinbox .configForm.mf.skipSpinbox -format %.0f -from 1.0 \
@@ -96,10 +104,11 @@ oo::define ConfigForm method make_layout {} {
         -sticky we {*}$opts
     grid .configForm.mf.blinkCheckbutton -row 2 -column 1 -sticky we
     grid .configForm.mf.autoPlayCheckbutton -row 3 -column 1 -sticky we
-    grid .configForm.mf.skipLabel -row 4 -column 0 -sticky w {*}$opts
-    grid .configForm.mf.skipSpinbox -row 4 -column 1 -columnspan 2 \
+    grid .configForm.mf.autoCircleCheckbutton -row 4 -column 1 -sticky we
+    grid .configForm.mf.skipLabel -row 5 -column 0 -sticky w {*}$opts
+    grid .configForm.mf.skipSpinbox -row 5 -column 1 -columnspan 2 \
         -sticky we {*}$opts
-    grid .configForm.mf.debugCheckbutton -row 5 -column 1 -sticky we
+    grid .configForm.mf.debugCheckbutton -row 6 -column 1 -sticky we
     grid .configForm.mf.playlistsFileLabel -row 7 -column 0 -sticky we \
         {*}$opts
     grid .configForm.mf.playlistsFilenameLabel -row 7 -column 1 \
@@ -124,6 +133,7 @@ oo::define ConfigForm method make_bindings {} {
     bind .configForm <Alt-a> {.configForm.mf.autoPlayCheckbutton invoke}
     bind .configForm <Alt-b> {.configForm.mf.blinkCheckbutton invoke}
     bind .configForm <Alt-d> {.configForm.mf.debugCheckbutton invoke}
+    bind .configForm <Alt-i> {.configForm.mf.autoCircleCheckbutton invoke}
     bind .configForm <Alt-k> {focus .configForm.mf.skipSpinbox}
     bind .configForm <Alt-o> [callback on_ok]
     bind .configForm <Alt-s> {focus .configForm.mf.scaleSpinbox}
@@ -134,6 +144,7 @@ oo::define ConfigForm method on_ok {} {
     tk scaling [.configForm.mf.scaleSpinbox get]
     $config set_blinking $Blinking
     $config set_auto_play_next $AutoPlayNext
+    $config set_auto_circle $AutoCircle
     $config set_skip_by [.configForm.mf.skipSpinbox get]
     $DebugRef set $Debug
     $Ok set 1
