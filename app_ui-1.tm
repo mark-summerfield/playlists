@@ -27,6 +27,7 @@ oo::define App method make_widgets {} {
     set left [scrollutil::scrollarea .mf.pw.left]
     set ListTree [ttk::treeview .mf.pw.left.tv -selectmode browse \
         -show tree -striped 1]
+    ui::apply_treeview_bindings $ListTree
     $left setwidget $ListTree
     .mf.pw add $left
     set ListTreeContextMenu [menu $ListTree.contextMenu]
@@ -41,6 +42,7 @@ oo::define App method make_widgets {} {
 oo::define App method make_track_tree {} {
     set TrackTree [ttk::treeview .mf.pw.right.tv -selectmode browse \
         -show tree -style List.Treeview -striped 1]
+    ui::apply_treeview_bindings $TrackTree
     $TrackTree tag configure 3 -foreground $::STARS3 \
         -image [ui::icon star3.svg $::MENU_ICON_SIZE]
     $TrackTree tag configure 2 -foreground $::STARS2 \
