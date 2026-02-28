@@ -3,7 +3,7 @@
 namespace eval ogg {}
 
 proc ogg::metadata filename {
-    if {![regexp -nocase {^.*.(?:ogg|oga)$} $filename]} {
+    if {![regexp -nocase {^.*.og[ga]$} $filename]} {
         return [list 0 "" ""] ;# secs title artist
     }
     set title ""
