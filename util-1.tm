@@ -1,4 +1,4 @@
-# Copyright © 2025 Mark Summerfield. All rights reserved.
+# Copyright © 2025-26 Mark Summerfield. All rights reserved.
 
 # See: https://en.wikipedia.org/wiki/ANSI_escape_code
 proc ansi str {

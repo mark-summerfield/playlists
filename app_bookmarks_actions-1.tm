@@ -1,4 +1,4 @@
-# Copyright © 2025 Mark Summerfield. All rights reserved.
+# Copyright © 2025-26 Mark Summerfield. All rights reserved.
 
 oo::define App method on_bookmarks_insert {} {
     lassign [my GetLidAndTid] lid tid

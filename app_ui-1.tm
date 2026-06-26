@@ -1,4 +1,4 @@
-# Copyright © 2025 Mark Summerfield. All rights reserved.
+# Copyright © 2025-26 Mark Summerfield. All rights reserved.
 
 package require mplayer
 package require scrollutil_tile 2
@@ -204,8 +204,9 @@ oo::define App method make_bindings {} {
 
 oo::define App method on_pos data {
     lassign $data pos total
+    set pc [expr {int(round($pos / $total * 100))}]
     .mf.play.progress configure -value $pos -maximum $total \
-        -text "[humanize_secs $pos]/[humanize_secs $total]" \
+        -text "$pc% [humanize_secs $pos]/[humanize_secs $total]" \
         -length [winfo width .mf.play.progress]
     if {$GotSecs < 2} {
         incr GotSecs ;# Need to double-check in case of fast track change
