@@ -8,9 +8,12 @@ if {![catch {file readlink [info script]} name]} {
 }
 tcl::tm::path add $APPPATH
 
+const APPNAME Playlists
+const VERSION 1.5.2
+
+package require config
+Config new ;# we need tk scaling done early
+
 package require app
 
-const VERSION 1.5.1
-
-set app [App new]
-$app show
+[App new] show

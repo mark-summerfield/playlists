@@ -1,6 +1,5 @@
 # Copyright © 2025-26 Mark Summerfield. All rights reserved.
 
-package require config
 package require pld
 package require ui
 
@@ -32,8 +31,7 @@ package require app_ui
 
 oo::define App constructor {} {
     ui::wishinit
-    tk appname Playlists
-    Config new ;# we need tk scaling done early
+    tk appname $::APPNAME
     set ListTreeExpanded 0
     set FindWhat ""
     set FindArtists 0
