@@ -61,29 +61,29 @@ oo::define Config method save {} {
     }
 }
 
-oo::define Config method filename {} { return $Filename }
+oo::define Config method filename {} { set Filename }
 oo::define Config method set_filename filename { set Filename $filename }
 
-oo::define Config method blinking {} { return $Blinking }
+oo::define Config method blinking {} { set Blinking }
 oo::define Config method set_blinking blinking { set Blinking $blinking }
 
-oo::define Config method geometry {} { return $Geometry }
+oo::define Config method geometry {} { set Geometry }
 oo::define Config method set_geometry geometry { set Geometry $geometry }
 
-oo::define Config method sashpos {} { return $SashPos }
+oo::define Config method sashpos {} { set SashPos }
 oo::define Config method set_sashpos sashpos { set SashPos $sashpos }
 
-oo::define Config method auto_play_next {} { return $AutoPlayNext }
+oo::define Config method auto_play_next {} { set AutoPlayNext }
 oo::define Config method set_auto_play_next auto_play_next {
     set AutoPlayNext $auto_play_next
 }
 
-oo::define Config method auto_circle {} { return $AutoCircle }
+oo::define Config method auto_circle {} { set AutoCircle }
 oo::define Config method set_auto_circle auto_circle {
     set AutoCircle $auto_circle
 }
 
-oo::define Config method skip_by {} { return $SkipBy }
+oo::define Config method skip_by {} { set SkipBy }
 oo::define Config method set_skip_by skip_by { set SkipBy $skip_by }
 
 oo::define Config method to_string {} {

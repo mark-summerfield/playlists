@@ -18,7 +18,7 @@ proc ansi str {
             <R> "" <G> "" <E> "" <C> "" <M> "" <Y> "" <K> "" <b> "" <i> ""
             <u> "" <!> "" /< < /> >}
     }
-    return [string map $COLOR_MAP ${str}]
+    string map $COLOR_MAP ${str}
 }
 
 proc commas n {regsub -all {\d(?=(\d{3})+($|\.))} $n {\0,}}
@@ -35,18 +35,18 @@ proc ldelete {lst item} {
     if {[set i [lsearch -exact $lst $item]] != -1} {
         return [lremove $lst $i]
     }
-    return $lst
+    set lst
 }
 
 proc lrandom lst { lindex $lst [expr {int(rand() * [llength $lst])}] }
 
 proc lstride {lst {stride 2}} {
     set strides {}
-    for {set i 0; set j [expr {$stride - 1}]} {$i < [llength $lst]} \
-            {incr i $stride; incr j $stride} {
+    for {set i 0; set j [expr {$stride - 1}]} {$i < [llength $lst]} {
+            incr i $stride; incr j $stride} {
         lappend strides [lrange $lst $i $j]
     }
-    return $strides
+    set strides
 }
 
 namespace eval util {}
@@ -81,7 +81,7 @@ proc util::term_width {{defwidth 72}} {
     if {[dict exists [chan configure stdout] -mode]} { ;# tty
         return [lindex [chan configure stdout -winsize] 0]
     }
-    return $defwidth ;# redirected
+    set defwidth ;# redirected
 }
 
 proc util::islink filename { expr {![catch {file link $filename}]} }
