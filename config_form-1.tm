@@ -113,8 +113,7 @@ oo::define ConfigForm method make_layout {} {
         {*}$opts
     grid .configForm.mf.playlistsFilenameLabel -row 7 -column 1 \
         -columnspan 2 -sticky we {*}$opts
-    grid .configForm.mf.configFileLabel -row 8 -column 0 -sticky we \
-        {*}$opts
+    grid .configForm.mf.configFileLabel -row 8 -column 0 -sticky we {*}$opts
     grid .configForm.mf.configFilenameLabel -row 8 -column 1 \
         -columnspan 2 -sticky we {*}$opts
     grid .configForm.mf.buttons -row 9 -column 0 -columnspan 3 \
