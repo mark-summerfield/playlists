@@ -22,7 +22,7 @@ oo::define Pld constructor {filename {max_history 26}} {
     set ListTracks [list]
     set Db Pldb#[incr N]
     set exists [file isfile $Filename]
-    sqlite3 $Db $Filename
+    sqlite3 $Db $Filename -nomutex 1
     $Db eval [readFile $::APPPATH/sql/prepare.sql] 
     $Db transaction {
         if {$exists} {

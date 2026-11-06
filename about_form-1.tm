@@ -99,7 +99,7 @@ oo::define AboutForm method Populate {} {
     {*}$add "[string repeat " " 60]\n" {center hr}
     {*}$add "Tcl/Tk $::tcl_patchLevel (${bits}-bit)\n" center
     set db DB#[string range [clock clicks] end-8 end]
-    sqlite3 $db :memory:
+    sqlite3 $db :memory: -nomutex 1
     set sql_version [$db version]
     $db close
     {*}$add "SQLite $sql_version\n" center
